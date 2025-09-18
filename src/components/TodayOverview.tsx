@@ -24,15 +24,20 @@ const TodayOverview: React.FC<TodayOverviewProps> = ({
   console.log('All sessions:', sessions.length);
   console.log('Sessions sample:', sessions.slice(0, 3).map(s => ({ id: s.id, date: s.date, day: s.day })));
   
-  // Sessions für heute - nur Wochentag-basiert (zuverlässiger)
-  const todaySessions = sessions.filter(session => {
-    // Nur Sessions die dem heutigen Wochentag entsprechen
+  // Sessions für heute - nur erste Session des heutigen Wochentags
+  const allTodaySessions = sessions.filter(session => {
     const dayMatch = session.day === todayWeekday;
-    
-    console.log(`Heute-Filter: ${session.title}, Session-Tag: ${session.day}, Heute-Tag: ${todayWeekday}, Match: ${dayMatch}`);
-    
+    console.log(`Heute-Filter: ${session.title}, Woche: ${session.week}, Session-Tag: ${session.day}, Heute-Tag: ${todayWeekday}, Match: ${dayMatch}`);
     return dayMatch;
   });
+  
+  // Nur die erste Session für heute nehmen (aus der ersten Woche)
+  const todaySessions = allTodaySessions.length > 0 
+    ? [allTodaySessions.find(s => s.week === 1) || allTodaySessions[0]].filter(Boolean)
+    : [];
+  
+  console.log('Alle Sessions für heute:', allTodaySessions.length);
+  console.log('Gefiltert auf eine Session:', todaySessions.length);
   
   console.log('Today sessions found:', todaySessions.length);
   console.log('Today sessions:', todaySessions.map(s => ({ title: s.title, date: s.date, day: s.day })));

@@ -5,6 +5,7 @@ import StatsCards from './StatsCards';
 import TrainingOverview from './TrainingOverview';
 import AddTraining from './AddTraining';
 import BadgeShowcase from './BadgeShowcase';
+import SyncManager from './SyncManager';
 
 interface DashboardProps {
   sessions: TrainingSession[];
@@ -91,6 +92,9 @@ const Dashboard: React.FC<DashboardProps> = ({
         {/* Badge Showcase */}
         <BadgeShowcase badges={userStats.badges} />
       </div>
+
+      {/* Sync Manager */}
+      <SyncManager />
     </div>
   );
 };

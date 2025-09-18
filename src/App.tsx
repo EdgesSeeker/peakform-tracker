@@ -80,6 +80,7 @@ function App() {
   // Save to localStorage whenever data changes
   useEffect(() => {
     if (sessions.length > 0) {
+      console.log('💾 Speichere Sessions:', sessions.length, 'davon completed:', sessions.filter(s => s.completed).length);
       storageManager.saveSessions(sessions);
     }
   }, [sessions]);
@@ -93,23 +94,14 @@ function App() {
   }, [quickCheck]);
 
   const completeSession = (sessionId: string) => {
-    setSessions(prev => prev.map(session => {
-      if (session.id === sessionId && !session.completed) {
-        const points = calculatePoints(session);
-        
-        // Update user stats
-        setUserStats(prevStats => ({
-          ...prevStats,
-          totalSessions: prevStats.totalSessions + 1,
-          totalDistance: prevStats.totalDistance + (session.distance || 0),
-          totalDuration: prevStats.totalDuration + session.duration,
-          points: prevStats.points + points
-        }));
-
-        return { ...session, completed: true };
-      }
-      return session;
-    }));
+    console.log('🎯 Session wird abgeschlossen:', sessionId);
+    
+    // Verwende updateSession für konsistente Logik
+    const sessionToComplete = sessions.find(s => s.id === sessionId);
+    if (sessionToComplete && !sessionToComplete.completed) {
+      const completedSession = { ...sessionToComplete, completed: true };
+      updateSession(completedSession);
+    }
   };
 
   const updateSession = (updatedSession: TrainingSession) => {
@@ -126,23 +118,52 @@ function App() {
         if (!existingSession.completed && updatedSession.completed) {
           // Session wurde abgeschlossen - Stats erhöhen
           const points = calculatePoints(updatedSession);
+          const distance = updatedSession.distance || 0;
+          const duration = updatedSession.duration;
           
-          setUserStats(prevStats => ({
-            ...prevStats,
-            totalSessions: prevStats.totalSessions + 1,
-            totalDistance: prevStats.totalDistance + (updatedSession.distance || 0),
-            totalDuration: prevStats.totalDuration + updatedSession.duration,
-            points: prevStats.points + points
-          }));
+          console.log('📈 Stats erhöhen:', {
+            title: updatedSession.title,
+            distance: distance,
+            duration: duration,
+            points: points
+          });
+          
+          setUserStats(prevStats => {
+            const newStats = {
+              ...prevStats,
+              totalSessions: prevStats.totalSessions + 1,
+              totalDistance: prevStats.totalDistance + distance,
+              totalDuration: prevStats.totalDuration + duration,
+              points: prevStats.points + points
+            };
+            
+            console.log('📊 Neue Stats:', {
+              sessions: newStats.totalSessions,
+              distance: newStats.totalDistance,
+              duration: newStats.totalDuration,
+              points: newStats.points
+            });
+            
+            return newStats;
+          });
         } else if (existingSession.completed && !updatedSession.completed) {
           // Session wurde "entabgehakt" - Stats reduzieren
           const points = calculatePoints(existingSession);
+          const distance = existingSession.distance || 0;
+          const duration = existingSession.duration;
+          
+          console.log('📉 Stats reduzieren:', {
+            title: existingSession.title,
+            distance: distance,
+            duration: duration,
+            points: points
+          });
           
           setUserStats(prevStats => ({
             ...prevStats,
             totalSessions: Math.max(0, prevStats.totalSessions - 1),
-            totalDistance: Math.max(0, prevStats.totalDistance - (existingSession.distance || 0)),
-            totalDuration: Math.max(0, prevStats.totalDuration - existingSession.duration),
+            totalDistance: Math.max(0, prevStats.totalDistance - distance),
+            totalDuration: Math.max(0, prevStats.totalDuration - duration),
             points: Math.max(0, prevStats.points - points)
           }));
         }

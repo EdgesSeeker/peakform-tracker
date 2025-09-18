@@ -25,7 +25,7 @@ const StatsCards: React.FC<StatsCardsProps> = ({ userStats }) => {
     {
       icon: Clock,
       label: 'Trainingszeit',
-      value: `${Math.floor(userStats.totalDuration / 60)}h ${userStats.totalDuration % 60}m`,
+      value: `${Math.floor(userStats.totalDuration / 60)}h ${userStats.totalDuration % 60}min`,
       color: 'text-purple-600',
       bgColor: 'bg-purple-50'
     },

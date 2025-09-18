@@ -93,7 +93,7 @@ const Progress: React.FC<ProgressProps> = ({ sessions, userStats }) => {
           </div>
           <div className="text-sm text-gray-600">Trainingszeit</div>
           <div className="text-xs text-gray-500 mt-1">
-            {userStats.totalDuration % 60}min zusätzlich
+            {userStats.totalDuration % 60} Min zusätzlich
           </div>
         </div>
 

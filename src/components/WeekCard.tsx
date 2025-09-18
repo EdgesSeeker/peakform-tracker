@@ -51,7 +51,7 @@ const WeekCard: React.FC<WeekCardProps> = ({
             <div className="text-sm text-gray-600">Gesamt-Distanz</div>
           </div>
           <div className="text-center">
-            <div className="text-2xl font-bold text-gray-900">{Math.floor(totalDuration / 60)}h {totalDuration % 60}m</div>
+            <div className="text-2xl font-bold text-gray-900">{Math.floor(totalDuration / 60)}h {totalDuration % 60}min</div>
             <div className="text-sm text-gray-600">Trainingszeit</div>
           </div>
         </div>
@@ -138,7 +138,7 @@ const WeekCard: React.FC<WeekCardProps> = ({
         </div>
         <div>
           <div className="text-lg font-semibold text-gray-900">
-            {Math.floor(totalDuration / 60)}h {totalDuration % 60}m
+            {Math.floor(totalDuration / 60)}h {totalDuration % 60}min
           </div>
           <div className="text-xs text-gray-600">Zeit</div>
         </div>
