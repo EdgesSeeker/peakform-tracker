@@ -1,0 +1,243 @@
+import React, { useState } from 'react';
+import { TrainingSession } from '../types';
+import { 
+  Dumbbell, 
+  Heart, 
+  Waves, 
+  Flower, 
+  Clock, 
+  MapPin, 
+  Zap,
+  Circle,
+  Edit
+} from 'lucide-react';
+import ManualTracker from './ManualTracker';
+
+interface TrainingCardProps {
+  session: TrainingSession;
+  onComplete: (sessionId: string) => void;
+  onUpdate?: (updatedSession: TrainingSession) => void;
+  compact?: boolean;
+}
+
+const TrainingCard: React.FC<TrainingCardProps> = ({ 
+  session, 
+  onComplete, 
+  onUpdate,
+  compact = false 
+}) => {
+  const [showTracker, setShowTracker] = useState(false);
+  const getIcon = () => {
+    switch (session.type) {
+      case 'strength':
+        return Dumbbell;
+      case 'cardio':
+        return Heart;
+      case 'swimming':
+        return Waves;
+      case 'yoga':
+        return Flower;
+      default:
+        return Zap;
+    }
+  };
+
+  const getTypeColor = () => {
+    switch (session.type) {
+      case 'strength':
+        return 'text-red-600 bg-red-50';
+      case 'cardio':
+        return 'text-blue-600 bg-blue-50';
+      case 'swimming':
+        return 'text-cyan-600 bg-cyan-50';
+      case 'yoga':
+        return 'text-green-600 bg-green-50';
+      default:
+        return 'text-gray-600 bg-gray-50';
+    }
+  };
+
+  const getTypeLabel = () => {
+    switch (session.type) {
+      case 'strength':
+        return 'Kraft';
+      case 'cardio':
+        return 'Ausdauer';
+      case 'swimming':
+        return 'Schwimmen';
+      case 'yoga':
+        return 'Yoga';
+      default:
+        return 'Training';
+    }
+  };
+
+  const Icon = getIcon();
+  const colorClasses = getTypeColor();
+
+  const handleTrackingComplete = (updatedSession: TrainingSession) => {
+    if (onUpdate) {
+      onUpdate(updatedSession);
+    } else {
+      onComplete(updatedSession.id);
+    }
+    setShowTracker(false);
+  };
+
+  if (compact) {
+  return (
+    <div 
+      className={`training-card ${session.completed ? 'completed' : ''} p-4`}
+    >
+      <div className="flex items-center justify-between mb-2">
+        <div className={`p-2 rounded-lg ${colorClasses}`}>
+          <Icon size={16} />
+        </div>
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            // Toggle: Abhaken oder wieder aufheben
+            if (session.completed) {
+              // Session wieder als "nicht abgeschlossen" markieren
+              const uncompletedSession = { ...session, completed: false };
+              if (onUpdate) {
+                onUpdate(uncompletedSession);
+              }
+            } else {
+              onComplete(session.id);
+            }
+          }}
+          className="text-gray-400 hover:text-success-500 transition-colors"
+          title={session.completed ? "Als offen markieren" : "Als erledigt markieren"}
+        >
+          {session.completed ? (
+            <div className="w-5 h-5 bg-success-500 rounded-full flex items-center justify-center">
+              <span className="text-white text-xs">✓</span>
+            </div>
+          ) : (
+            <Circle size={20} />
+          )}
+        </button>
+      </div>
+        
+        <h3 className="font-medium text-gray-900 text-sm mb-1 line-clamp-2">
+          {session.title}
+        </h3>
+        
+        <div className="flex items-center gap-2 text-xs text-gray-500">
+          <Clock size={12} />
+          <span>{session.duration}min</span>
+          {session.distance && (
+            <>
+              <MapPin size={12} />
+              <span>{session.distance}km</span>
+            </>
+          )}
+        </div>
+        
+        <div className={`badge badge-secondary mt-2 text-xs`}>
+          {getTypeLabel()}
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div 
+      className={`training-card ${session.completed ? 'completed' : ''}`}
+    >
+      <div className="flex items-start justify-between mb-4">
+        <div className={`p-3 rounded-lg ${colorClasses}`}>
+          <Icon size={24} />
+        </div>
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            // Toggle: Abhaken oder wieder aufheben
+            if (session.completed) {
+              // Session wieder als "nicht abgeschlossen" markieren
+              const uncompletedSession = { ...session, completed: false };
+              if (onUpdate) {
+                onUpdate(uncompletedSession);
+              }
+            } else {
+              onComplete(session.id);
+            }
+          }}
+          className="text-gray-400 hover:text-success-500 transition-colors"
+          title={session.completed ? "Als offen markieren" : "Als erledigt markieren"}
+        >
+          {session.completed ? (
+            <div className="w-6 h-6 bg-success-500 rounded-full flex items-center justify-center">
+              <span className="text-white text-sm">✓</span>
+            </div>
+          ) : (
+            <Circle size={24} />
+          )}
+        </button>
+      </div>
+
+      <h3 className="font-semibold text-gray-900 mb-2">
+        {session.title}
+      </h3>
+      
+      <p className="text-gray-600 text-sm mb-4 line-clamp-2">
+        {session.description}
+      </p>
+
+      <div className="flex items-center gap-4 text-sm text-gray-500 mb-4">
+        <div className="flex items-center gap-1">
+          <Clock size={16} />
+          <span>{session.duration} Min</span>
+        </div>
+        {session.distance && (
+          <div className="flex items-center gap-1">
+            <MapPin size={16} />
+            <span>{session.distance} km</span>
+          </div>
+        )}
+        {session.exercises && (
+          <div className="flex items-center gap-1">
+            <Dumbbell size={16} />
+            <span>{session.exercises.length} Übungen</span>
+          </div>
+        )}
+      </div>
+
+      <div className="flex items-center justify-between">
+        <div className={`badge ${session.completed ? 'badge-success' : 'badge-secondary'}`}>
+          {getTypeLabel()}
+        </div>
+        
+        {!session.completed && onUpdate && (
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              setShowTracker(true);
+            }}
+            className="p-1 text-primary-600 hover:bg-primary-50 rounded transition-colors"
+            title="Training tracken"
+          >
+            <Edit size={14} />
+          </button>
+        )}
+        
+        {session.notes && (
+          <div className="text-xs text-gray-400 max-w-24 truncate">
+            {session.notes}
+          </div>
+        )}
+      </div>
+
+      {showTracker && (
+        <ManualTracker
+          session={session}
+          onSave={handleTrackingComplete}
+          onCancel={() => setShowTracker(false)}
+        />
+      )}
+    </div>
+  );
+};
+
+export default TrainingCard;
