@@ -2,14 +2,22 @@ import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Home, Calendar, TrendingUp, Zap, Activity, Clock, BookOpen } from 'lucide-react';
 import SettingsMenu from './SettingsMenu';
-// import { TrainingSession } from '../types';
+import { TrainingSession, UserStats, QuickCheck } from '../types';
 import ThemeToggle from './ThemeToggle';
 
 interface NavigationProps {
-  sessions?: any[];
+  sessions?: TrainingSession[];
+  userStats?: UserStats;
+  quickCheck?: QuickCheck;
+  onDataUpdated?: (sessions: TrainingSession[], userStats: UserStats, quickCheck: QuickCheck) => void;
 }
 
-const Navigation: React.FC<NavigationProps> = ({ sessions = [] }) => {
+const Navigation: React.FC<NavigationProps> = ({ 
+  sessions = [], 
+  userStats, 
+  quickCheck, 
+  onDataUpdated 
+}) => {
   const location = useLocation();
   
   const isActive = (path: string) => location.pathname === path;
@@ -80,13 +88,23 @@ const Navigation: React.FC<NavigationProps> = ({ sessions = [] }) => {
             
             {/* Theme Toggle & Settings Menu */}
             <ThemeToggle />
-            <SettingsMenu sessions={sessions} />
+            <SettingsMenu 
+              sessions={sessions} 
+              userStats={userStats}
+              quickCheck={quickCheck}
+              onDataUpdated={onDataUpdated}
+            />
           </div>
 
           {/* Mobile Navigation Toggle */}
           <div className="md:hidden flex items-center gap-2">
             <ThemeToggle />
-            <SettingsMenu sessions={sessions} />
+            <SettingsMenu 
+              sessions={sessions} 
+              userStats={userStats}
+              quickCheck={quickCheck}
+              onDataUpdated={onDataUpdated}
+            />
           </div>
         </div>
 

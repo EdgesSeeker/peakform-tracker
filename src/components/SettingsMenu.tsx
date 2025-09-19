@@ -1,17 +1,28 @@
 import React, { useState } from 'react';
-import { Settings, RotateCcw, Download, AlertTriangle, Shield, Info, Calendar } from 'lucide-react';
+import { Settings, RotateCcw, Download, AlertTriangle, Shield, Info, Calendar, Cloud } from 'lucide-react';
 import storageManager from '../utils/storage';
 import GoogleCalendarSimple from './GoogleCalendarSimple';
+import CloudSync from './CloudSync';
+import { TrainingSession, UserStats, QuickCheck } from '../types';
 
 interface SettingsMenuProps {
-  sessions?: any[];
+  sessions?: TrainingSession[];
+  userStats?: UserStats;
+  quickCheck?: QuickCheck;
+  onDataUpdated?: (sessions: TrainingSession[], userStats: UserStats, quickCheck: QuickCheck) => void;
 }
 
-const SettingsMenu: React.FC<SettingsMenuProps> = ({ sessions = [] }) => {
+const SettingsMenu: React.FC<SettingsMenuProps> = ({ 
+  sessions = [], 
+  userStats,
+  quickCheck,
+  onDataUpdated 
+}) => {
   const [isOpen, setIsOpen] = useState(false);
   const [showResetConfirm, setShowResetConfirm] = useState(false);
   const [showStorageInfo, setShowStorageInfo] = useState(false);
   const [showGoogleCalendarSetup, setShowGoogleCalendarSetup] = useState(false);
+  const [showCloudSync, setShowCloudSync] = useState(false);
 
   const resetPlan = () => {
     console.log('🔄 Plan wird zurückgesetzt...');
@@ -70,6 +81,22 @@ const SettingsMenu: React.FC<SettingsMenuProps> = ({ sessions = [] }) => {
               <div className="font-medium text-gray-900 dark:text-gray-100 text-sm">Einstellungen</div>
             </div>
             
+            <button
+              onClick={() => {
+                setShowCloudSync(true);
+                setIsOpen(false);
+              }}
+              className="w-full px-4 py-3 text-left hover:bg-gray-50 dark:hover:bg-gray-700 dark:bg-gray-900 flex items-center gap-3 transition-colors"
+            >
+              <Cloud size={16} className="text-purple-500" />
+              <div>
+                <div className="text-sm font-medium text-gray-900 dark:text-gray-100">Geräte-Sync</div>
+                <div className="text-xs text-gray-500 dark:text-gray-500">
+                  Daten zwischen Geräten synchronisieren
+                </div>
+              </div>
+            </button>
+
             <button
               onClick={() => {
                 setShowGoogleCalendarSetup(true);
@@ -248,6 +275,17 @@ const SettingsMenu: React.FC<SettingsMenuProps> = ({ sessions = [] }) => {
             </div>
           </div>
         </div>
+      )}
+
+      {/* Cloud Sync Modal */}
+      {showCloudSync && userStats && quickCheck && onDataUpdated && (
+        <CloudSync
+          sessions={sessions}
+          userStats={userStats}
+          quickCheck={quickCheck}
+          onDataUpdated={onDataUpdated}
+          onClose={() => setShowCloudSync(false)}
+        />
       )}
 
       {/* Google Calendar Simple Modal */}

@@ -207,6 +207,24 @@ function App() {
     });
   };
 
+  // Callback für Sync-Updates
+  const handleDataUpdated = (newSessions: TrainingSession[], newUserStats: UserStats, newQuickCheck: QuickCheck) => {
+    console.log('🔄 Daten von Sync aktualisiert:', {
+      sessions: newSessions.length,
+      completedSessions: newSessions.filter(s => s.completed).length,
+      stats: newUserStats.totalSessions
+    });
+    
+    setSessions(newSessions);
+    setUserStats(newUserStats);
+    setQuickCheck(newQuickCheck);
+    
+    // Speichere die aktualisierten Daten
+    storageManager.saveSessions(newSessions);
+    storageManager.saveStats(newUserStats);
+    storageManager.saveQuickCheck(newQuickCheck);
+  };
+
   const swapSessions = (sessionId1: string, sessionId2: string) => {
     setSessions(prev => {
       const newSessions = [...prev];
@@ -275,7 +293,12 @@ function App() {
     <ThemeProvider>
       <Router>
         <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col transition-colors duration-200">
-          <Navigation sessions={sessions} />
+          <Navigation 
+            sessions={sessions} 
+            userStats={userStats}
+            quickCheck={quickCheck}
+            onDataUpdated={handleDataUpdated}
+          />
           <main className="flex-1 container mx-auto px-4 py-6 pb-8">
             <Routes>
             <Route 
