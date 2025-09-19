@@ -15,6 +15,7 @@ import { TrainingSession, UserStats, QuickCheck } from './types';
 import { getAdjustedPlan } from './data/detailedHybridPlan';
 import { badgeDefinitions, calculatePoints } from './data/badges';
 import storageManager from './utils/storage';
+import autoCloudSync from './services/autoCloudSync';
 
 function App() {
   const [sessions, setSessions] = useState<TrainingSession[]>([]);
@@ -72,6 +73,19 @@ function App() {
     // Storage-Status loggen
     const status = storageManager.getStorageStatus();
     console.log('📊 Storage-Status:', status);
+
+    // Auto-Sync starten
+    autoCloudSync.startAutoSync(
+      () => sessions,
+      () => userStats,
+      () => quickCheck,
+      handleDataUpdated
+    );
+
+    // Cleanup beim Unmount
+    return () => {
+      autoCloudSync.stopAutoSync();
+    };
   }, []);
 
   // Save to localStorage whenever data changes

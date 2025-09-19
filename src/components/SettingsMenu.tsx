@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Settings, RotateCcw, Download, AlertTriangle, Shield, Info, Calendar, Cloud } from 'lucide-react';
 import storageManager from '../utils/storage';
 import GoogleCalendarSimple from './GoogleCalendarSimple';
-import DeviceSync from './DeviceSync';
+import AutoSyncStatus from './AutoSyncStatus';
 import { TrainingSession, UserStats, QuickCheck } from '../types';
 
 interface SettingsMenuProps {
@@ -90,9 +90,9 @@ const SettingsMenu: React.FC<SettingsMenuProps> = ({
             >
               <Cloud size={16} className="text-purple-500" />
               <div>
-                <div className="text-sm font-medium text-gray-900 dark:text-gray-100">Geräte-Sync</div>
+                <div className="text-sm font-medium text-gray-900 dark:text-gray-100">Auto-Sync</div>
                 <div className="text-xs text-gray-500 dark:text-gray-500">
-                  Daten zwischen Geräten synchronisieren
+                  Automatische Synchronisation
                 </div>
               </div>
             </button>
@@ -277,9 +277,9 @@ const SettingsMenu: React.FC<SettingsMenuProps> = ({
         </div>
       )}
 
-      {/* Device Sync Modal */}
+      {/* Auto Sync Status Modal */}
       {showCloudSync && userStats && quickCheck && onDataUpdated && (
-        <DeviceSync
+        <AutoSyncStatus
           sessions={sessions}
           userStats={userStats}
           quickCheck={quickCheck}
