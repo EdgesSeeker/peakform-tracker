@@ -17,6 +17,7 @@ if ('serviceWorker' in navigator && process.env.NODE_ENV === 'production') {
             newWorker.addEventListener('statechange', () => {
               if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
                 // New version available
+                // eslint-disable-next-line no-restricted-globals
                 if (confirm('Neue Version verfügbar! Jetzt aktualisieren?')) {
                   window.location.reload();
                 }
