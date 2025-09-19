@@ -109,27 +109,8 @@ const Navigation: React.FC<NavigationProps> = ({ sessions = [] }) => {
             ))}
           </div>
           
-          {/* Secondary Items für Mobile */}
-          {secondaryItems.length > 0 && (
-            <div className="mt-2 px-2">
-              <div className="flex justify-center">
-                {secondaryItems.map(({ path, icon: Icon, label }) => (
-                  <Link
-                    key={path}
-                    to={path}
-                    className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all duration-200 ${
-                      isActive(path)
-                        ? 'bg-primary-500 text-white font-semibold'
-                        : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700'
-                    }`}
-                  >
-                    <Icon size={16} />
-                    <span className="text-sm font-medium">{label}</span>
-                  </Link>
-                ))}
-              </div>
-            </div>
-          )}
+          {/* Secondary Items für Mobile - VERSTECKT, nur 5 Haupticons */}
+          {/* Log ist über Desktop-Dropdown erreichbar */}
         </div>
       </div>
     </nav>
