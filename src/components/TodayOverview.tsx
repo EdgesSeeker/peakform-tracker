@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { TrainingSession } from '../types';
-import { Calendar, Clock, AlertCircle, Play, Eye, ChevronRight, Target, Pause, Square, Timer } from 'lucide-react';
+import { Calendar, Clock, AlertCircle, Play, Eye, ChevronRight, Target, Pause, Square, Timer, Edit } from 'lucide-react';
 import TrainingCard from './TrainingCard';
 import WorkoutDetails from './WorkoutDetails';
+import ManualTracker from './ManualTracker';
 import EmptyState from './EmptyState';
 import storageManager from '../utils/storage';
 
@@ -18,6 +19,7 @@ const TodayOverview: React.FC<TodayOverviewProps> = ({
   onUpdateSession
 }) => {
   const [showWorkoutDetails, setShowWorkoutDetails] = useState(false);
+  const [showManualTracker, setShowManualTracker] = useState(false);
   const [workoutTimer, setWorkoutTimer] = useState<{
     isRunning: boolean;
     startTime: Date | null;
@@ -372,14 +374,11 @@ const TodayOverview: React.FC<TodayOverviewProps> = ({
                       
                       {/* Manual Tracking Button */}
                       <button
-                        onClick={() => {
-                          // Öffne das Tracking-Modal durch Klick auf die TrainingCard
-                          const editButton = document.querySelector(`[data-session-id="${session.id}"] .edit-button`) as HTMLElement;
-                          if (editButton) editButton.click();
-                        }}
-                        className="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white text-sm font-medium rounded-lg transition-colors"
+                        onClick={() => setShowManualTracker(true)}
+                        className="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white text-sm font-medium rounded-lg transition-colors flex items-center justify-center gap-2"
                         title="Detailliert tracken"
                       >
+                        <Edit size={16} />
                         Detailliert tracken
                       </button>
                     </div>
@@ -400,6 +399,18 @@ const TodayOverview: React.FC<TodayOverviewProps> = ({
               </div>
             ))}
           </div>
+
+          {/* Manual Tracker Modal */}
+          {showManualTracker && todaySessions.length > 0 && (
+            <ManualTracker
+              session={todaySessions[0]}
+              onSave={(updatedSession) => {
+                onUpdateSession(updatedSession);
+                setShowManualTracker(false);
+              }}
+              onCancel={() => setShowManualTracker(false)}
+            />
+          )}
 
           {completedToday.length === todaySessions.length && todaySessions.length > 0 && (
             <div className="mt-6 p-4 bg-success-50 rounded-lg border border-success-200">
