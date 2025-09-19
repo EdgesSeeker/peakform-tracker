@@ -37,7 +37,7 @@ const QuickCheckWidget: React.FC<QuickCheckWidgetProps> = ({ quickCheck, onUpdat
             key={rating}
             onClick={() => onChange(rating as 1 | 2 | 3 | 4 | 5)}
             className={`quick-check-button quick-check-${rating} ${
-              currentValue === rating ? 'ring-2 ring-offset-2' : ''
+              currentValue === rating ? 'ring-2 ring-offset-2 ring-primary-500 bg-primary-100' : ''
             }`}
           >
             {rating}

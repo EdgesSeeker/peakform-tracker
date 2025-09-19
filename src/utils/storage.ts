@@ -14,7 +14,8 @@ class StorageManager {
     stats: 'peakform-stats',
     quickcheck: 'peakform-quickcheck',
     backup: 'peakform-backup',
-    lastBackup: 'peakform-last-backup'
+    lastBackup: 'peakform-last-backup',
+    uiState: 'peakform-ui-state'
   };
 
   private readonly BACKUP_INTERVAL = 24 * 60 * 60 * 1000; // 24 Stunden
@@ -268,6 +269,36 @@ class StorageManager {
       stress: 3,
       date: new Date()
     };
+  }
+
+  // UI-Zustand speichern
+  saveUIState(key: string, value: any): boolean {
+    try {
+      const currentState = this.loadUIState();
+      const newState = { ...currentState, [key]: value };
+      localStorage.setItem(this.STORAGE_KEYS.uiState, JSON.stringify(newState));
+      return true;
+    } catch (error) {
+      console.error('❌ Fehler beim Speichern des UI-Zustands:', error);
+      return false;
+    }
+  }
+
+  // UI-Zustand laden
+  loadUIState(): { [key: string]: any } {
+    try {
+      const data = localStorage.getItem(this.STORAGE_KEYS.uiState);
+      return data ? JSON.parse(data) : {};
+    } catch (error) {
+      console.error('❌ Fehler beim Laden des UI-Zustands:', error);
+      return {};
+    }
+  }
+
+  // Spezifischen UI-Zustand laden
+  getUIState(key: string, defaultValue: any = null): any {
+    const state = this.loadUIState();
+    return state[key] !== undefined ? state[key] : defaultValue;
   }
 }
 

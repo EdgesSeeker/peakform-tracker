@@ -60,11 +60,7 @@ function App() {
       }
     }
 
-    // Stats laden
-    const savedStats = storageManager.loadStats();
-    if (savedStats) {
-      setUserStats(savedStats);
-    }
+    // Stats werden aus Sessions berechnet, nicht geladen
 
     // QuickCheck laden
     const savedQuickCheck = storageManager.loadQuickCheck();
@@ -93,6 +89,75 @@ function App() {
     storageManager.saveQuickCheck(quickCheck);
   }, [quickCheck]);
 
+  // Stats aus Sessions berechnen
+  const calculateStatsFromSessions = (allSessions: TrainingSession[]): UserStats => {
+    const completedSessions = allSessions.filter(s => s.completed);
+    
+    const totalSessions = completedSessions.length;
+    const totalDistance = completedSessions.reduce((sum, s) => sum + (s.distance || 0), 0);
+    const totalDuration = completedSessions.reduce((sum, s) => sum + s.duration, 0);
+    const points = completedSessions.reduce((sum, s) => sum + calculatePoints(s), 0);
+    
+    // Streak-Berechnung (Reset erst nach 2 verpassten Sessions)
+    let currentStreak = 0;
+    let longestStreak = 0;
+    let tempStreak = 0;
+    
+    const today = new Date();
+    const sortedSessions = completedSessions
+      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+    
+    for (let i = 0; i < sortedSessions.length; i++) {
+      const sessionDate = new Date(sortedSessions[i].date);
+      const daysDiff = Math.floor((today.getTime() - sessionDate.getTime()) / (1000 * 60 * 60 * 24));
+      
+      if (i === 0 && daysDiff <= 2) { // Erweitert auf 2 Tage Toleranz
+        currentStreak = 1;
+        tempStreak = 1;
+      } else if (i > 0) {
+        const prevDate = new Date(sortedSessions[i - 1].date);
+        const daysBetween = Math.floor((prevDate.getTime() - sessionDate.getTime()) / (1000 * 60 * 60 * 24));
+        
+        if (daysBetween <= 2) { // Erweitert auf 2 Tage zwischen Sessions
+          tempStreak++;
+          if (i === 1) currentStreak = tempStreak;
+        } else {
+          if (longestStreak < tempStreak) longestStreak = tempStreak;
+          tempStreak = 1;
+          if (i === 1) currentStreak = 0; // Reset nur bei > 2 Tagen Pause
+        }
+      }
+    }
+    
+    if (longestStreak < tempStreak) longestStreak = tempStreak;
+    
+    return {
+      totalSessions,
+      totalDistance,
+      totalDuration,
+      currentStreak,
+      longestStreak,
+      points,
+      badges: badgeDefinitions,
+      personalRecords: []
+    };
+  };
+
+  // Stats neu berechnen wenn Sessions sich ändern
+  useEffect(() => {
+    if (sessions.length > 0) {
+      const newStats = calculateStatsFromSessions(sessions);
+      setUserStats(newStats);
+      console.log('📊 Stats neu berechnet:', {
+        sessions: newStats.totalSessions,
+        distance: newStats.totalDistance.toFixed(1),
+        duration: newStats.totalDuration,
+        points: newStats.points,
+        streak: newStats.currentStreak
+      });
+    }
+  }, [sessions]);
+
   const completeSession = (sessionId: string) => {
     console.log('🎯 Session wird abgeschlossen:', sessionId);
     
@@ -114,74 +179,11 @@ function App() {
         const newSessions = [...prev];
         newSessions[existingSessionIndex] = updatedSession;
         
-        // Handle stats changes
-        if (!existingSession.completed && updatedSession.completed) {
-          // Session wurde abgeschlossen - Stats erhöhen
-          const points = calculatePoints(updatedSession);
-          const distance = updatedSession.distance || 0;
-          const duration = updatedSession.duration;
-          
-          console.log('📈 Stats erhöhen:', {
-            title: updatedSession.title,
-            distance: distance,
-            duration: duration,
-            points: points
-          });
-          
-          setUserStats(prevStats => {
-            const newStats = {
-              ...prevStats,
-              totalSessions: prevStats.totalSessions + 1,
-              totalDistance: prevStats.totalDistance + distance,
-              totalDuration: prevStats.totalDuration + duration,
-              points: prevStats.points + points
-            };
-            
-            console.log('📊 Neue Stats:', {
-              sessions: newStats.totalSessions,
-              distance: newStats.totalDistance,
-              duration: newStats.totalDuration,
-              points: newStats.points
-            });
-            
-            return newStats;
-          });
-        } else if (existingSession.completed && !updatedSession.completed) {
-          // Session wurde "entabgehakt" - Stats reduzieren
-          const points = calculatePoints(existingSession);
-          const distance = existingSession.distance || 0;
-          const duration = existingSession.duration;
-          
-          console.log('📉 Stats reduzieren:', {
-            title: existingSession.title,
-            distance: distance,
-            duration: duration,
-            points: points
-          });
-          
-          setUserStats(prevStats => ({
-            ...prevStats,
-            totalSessions: Math.max(0, prevStats.totalSessions - 1),
-            totalDistance: Math.max(0, prevStats.totalDistance - distance),
-            totalDuration: Math.max(0, prevStats.totalDuration - duration),
-            points: Math.max(0, prevStats.points - points)
-          }));
-        }
+        // Stats werden automatisch durch useEffect neu berechnet
         
         return newSessions;
       } else {
-        // Add new session
-        if (updatedSession.completed) {
-          const points = calculatePoints(updatedSession);
-          
-          setUserStats(prevStats => ({
-            ...prevStats,
-            totalSessions: prevStats.totalSessions + 1,
-            totalDistance: prevStats.totalDistance + (updatedSession.distance || 0),
-            totalDuration: prevStats.totalDuration + updatedSession.duration,
-            points: prevStats.points + points
-          }));
-        }
+        // Stats werden automatisch durch useEffect neu berechnet
         
         return [...prev, updatedSession];
       }
@@ -190,19 +192,48 @@ function App() {
 
   const deleteSession = (sessionId: string) => {
     setSessions(prev => {
-      const sessionToDelete = prev.find(s => s.id === sessionId);
-      if (sessionToDelete && sessionToDelete.completed) {
-        // Update stats when deleting completed session
-        const points = calculatePoints(sessionToDelete);
-        setUserStats(prevStats => ({
-          ...prevStats,
-          totalSessions: Math.max(0, prevStats.totalSessions - 1),
-          totalDistance: Math.max(0, prevStats.totalDistance - (sessionToDelete.distance || 0)),
-          totalDuration: Math.max(0, prevStats.totalDuration - sessionToDelete.duration),
-          points: Math.max(0, prevStats.points - points)
-        }));
-      }
+      // Stats werden automatisch durch useEffect neu berechnet
       return prev.filter(s => s.id !== sessionId);
+    });
+  };
+
+  const swapSessions = (sessionId1: string, sessionId2: string) => {
+    setSessions(prev => {
+      const newSessions = [...prev];
+      const session1Index = newSessions.findIndex(s => s.id === sessionId1);
+      const session2Index = newSessions.findIndex(s => s.id === sessionId2);
+
+      if (session1Index !== -1 && session2Index !== -1) {
+        // Komplett tauschen - alle Eigenschaften inklusive day und date
+        const session1 = newSessions[session1Index];
+        const session2 = newSessions[session2Index];
+        
+        // Tausche day und date zwischen den Sessions
+        const tempDay = session1.day;
+        const tempDate = session1.date;
+        
+        newSessions[session1Index] = {
+          ...session1,
+          day: session2.day,
+          date: session2.date
+        };
+        
+        newSessions[session2Index] = {
+          ...session2,
+          day: tempDay,
+          date: tempDate
+        };
+
+        console.log('🔄 Sessions getauscht:', {
+          session1: `${newSessions[session1Index].title} (Tag ${newSessions[session1Index].day})`,
+          session2: `${newSessions[session2Index].title} (Tag ${newSessions[session2Index].day})`
+        });
+        
+        // Explizite Benachrichtigung über erfolgreichen Tausch
+        console.log('✅ Tausch erfolgreich! Dashboard und Heute-Sessions werden automatisch aktualisiert.');
+      }
+
+      return newSessions;
     });
   };
 
@@ -224,23 +255,8 @@ function App() {
         return prev;
       }
 
-      // Neue Sessions hinzufügen
-      const updatedSessions = [...prev, ...uniqueNewSessions];
-      
-      // Stats aktualisieren
-      const totalDistance = uniqueNewSessions.reduce((sum, s) => sum + (s.distance || 0), 0);
-      const totalDuration = uniqueNewSessions.reduce((sum, s) => sum + s.duration, 0);
-      const totalPoints = uniqueNewSessions.reduce((sum, s) => sum + calculatePoints(s), 0);
-      
-      setUserStats(prevStats => ({
-        ...prevStats,
-        totalSessions: prevStats.totalSessions + uniqueNewSessions.length,
-        totalDistance: prevStats.totalDistance + totalDistance,
-        totalDuration: prevStats.totalDuration + totalDuration,
-        points: prevStats.points + totalPoints
-      }));
-
-      return updatedSessions;
+      // Neue Sessions hinzufügen - Stats werden automatisch durch useEffect neu berechnet
+      return [...prev, ...uniqueNewSessions];
     });
   };
 
@@ -268,6 +284,7 @@ function App() {
                   sessions={sessions}
                   onCompleteSession={completeSession}
                   onUpdateSession={updateSession}
+                  onSwapSessions={swapSessions}
                 />
               } 
             />

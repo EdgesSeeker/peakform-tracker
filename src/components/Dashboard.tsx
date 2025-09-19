@@ -51,6 +51,12 @@ const Dashboard: React.FC<DashboardProps> = ({
   console.log('Current week sessions:', currentWeekSessions.length);
   console.log('Upcoming sessions:', upcomingSessions.length);
   console.log('Today weekday:', todayWeekday);
+  
+  // Debug: Show all sessions with their days
+  console.log('🔍 Alle Sessions mit Tagen:');
+  sessions.forEach(s => {
+    console.log(`- ${s.title}: Tag ${s.day} (Woche ${s.week}) - ${s.completed ? 'Erledigt' : 'Offen'}`);
+  });
 
   return (
     <div className="space-y-8 animate-fade-in">

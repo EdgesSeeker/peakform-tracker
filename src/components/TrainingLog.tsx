@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { TrainingSession } from '../types';
+import storageManager from '../utils/storage';
 import { 
   BookOpen, 
   Edit, 
@@ -14,7 +15,9 @@ import {
   Flower,
   Search,
   ChevronDown,
-  ChevronUp
+  ChevronUp,
+  Timer,
+  Watch
 } from 'lucide-react';
 import ManualTracker from './ManualTracker';
 
@@ -29,13 +32,51 @@ const TrainingLog: React.FC<TrainingLogProps> = ({
   onUpdateSession,
   onDeleteSession
 }) => {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [filterType, setFilterType] = useState<'all' | 'strength' | 'cardio' | 'swimming' | 'yoga'>('all');
-  const [filterCompleted, setFilterCompleted] = useState<'all' | 'completed' | 'pending'>('all');
-  const [sortBy, setSortBy] = useState<'date' | 'type' | 'duration'>('date');
-  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
+  const [searchTerm, setSearchTerm] = useState(() => 
+    storageManager.getUIState('trainingLog.searchTerm', '')
+  );
+  const [filterType, setFilterType] = useState<'all' | 'strength' | 'cardio' | 'swimming' | 'yoga'>(() =>
+    storageManager.getUIState('trainingLog.filterType', 'all')
+  );
+  const [filterCompleted, setFilterCompleted] = useState<'all' | 'completed' | 'pending'>(() =>
+    storageManager.getUIState('trainingLog.filterCompleted', 'all')
+  );
+  const [sortBy, setSortBy] = useState<'date' | 'type' | 'duration'>(() =>
+    storageManager.getUIState('trainingLog.sortBy', 'date')
+  );
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>(() =>
+    storageManager.getUIState('trainingLog.sortOrder', 'desc')
+  );
   const [editingSession, setEditingSession] = useState<TrainingSession | null>(null);
-  const [expandedSessions, setExpandedSessions] = useState<Set<string>>(new Set());
+  const [expandedSessions, setExpandedSessions] = useState<Set<string>>(() => {
+    const saved = storageManager.getUIState('expandedSessions', []);
+    return new Set(saved);
+  });
+
+  // Persistiere UI-Zustände
+  useEffect(() => {
+    storageManager.saveUIState('expandedSessions', Array.from(expandedSessions));
+  }, [expandedSessions]);
+
+  useEffect(() => {
+    storageManager.saveUIState('trainingLog.searchTerm', searchTerm);
+  }, [searchTerm]);
+
+  useEffect(() => {
+    storageManager.saveUIState('trainingLog.filterType', filterType);
+  }, [filterType]);
+
+  useEffect(() => {
+    storageManager.saveUIState('trainingLog.filterCompleted', filterCompleted);
+  }, [filterCompleted]);
+
+  useEffect(() => {
+    storageManager.saveUIState('trainingLog.sortBy', sortBy);
+  }, [sortBy]);
+
+  useEffect(() => {
+    storageManager.saveUIState('trainingLog.sortOrder', sortOrder);
+  }, [sortOrder]);
 
   // Filter and sort sessions
   const filteredSessions = sessions
@@ -268,13 +309,22 @@ const TrainingLog: React.FC<TrainingLogProps> = ({
                           <span>{formatDate(session.date)}</span>
                         </div>
                         <div className="flex items-center gap-1">
-                          <Clock size={14} />
+                          {session.notes && session.notes.includes('Timer:') ? (
+                            <Timer size={14} className="text-primary-600" />
+                          ) : (
+                            <Clock size={14} />
+                          )}
                           <span>{session.duration} Min</span>
+                          {session.notes && session.notes.includes('Timer:') && (
+                            <span className="text-xs bg-primary-100 text-primary-700 px-2 py-1 rounded">
+                              ⏱️ Timer
+                            </span>
+                          )}
                         </div>
                         {session.distance && (
                           <div className="flex items-center gap-1">
                             <MapPin size={14} />
-                            <span>{session.distance} km</span>
+                            <span>{session.distance.toFixed(1)} km</span>
                           </div>
                         )}
                         {session.exercises && (
@@ -312,8 +362,30 @@ const TrainingLog: React.FC<TrainingLogProps> = ({
                           )}
                           {session.notes && (
                             <div>
-                              <h4 className="font-medium text-gray-900 mb-1">Notizen:</h4>
-                              <p className="text-gray-600 text-sm">{session.notes}</p>
+                              <h4 className="font-medium text-gray-900 mb-1 flex items-center gap-2">
+                                {session.notes.includes('Timer:') ? (
+                                  <>
+                                    <Watch size={16} className="text-primary-600" />
+                                    Notizen & Timer-Info:
+                                  </>
+                                ) : (
+                                  'Notizen:'
+                                )}
+                              </h4>
+                              <div className="text-gray-600 text-sm">
+                                {session.notes.includes('Timer:') ? (
+                                  <div className="space-y-2">
+                                    {session.notes.split(' | ').map((note, index) => (
+                                      <div key={index} className={note.startsWith('Timer:') ? 'flex items-center gap-2 font-mono text-primary-700 bg-primary-50 px-3 py-2 rounded border border-primary-200' : 'text-gray-600'}>
+                                        {note.startsWith('Timer:') && <Timer size={14} />}
+                                        {note}
+                                      </div>
+                                    ))}
+                                  </div>
+                                ) : (
+                                  <p>{session.notes}</p>
+                                )}
+                              </div>
                             </div>
                           )}
                         </div>

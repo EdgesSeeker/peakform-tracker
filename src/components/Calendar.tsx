@@ -7,9 +7,10 @@ interface CalendarProps {
   sessions: TrainingSession[];
   onCompleteSession: (sessionId: string) => void;
   onUpdateSession?: (updatedSession: TrainingSession) => void;
+  onSwapSessions?: (sessionId1: string, sessionId2: string) => void;
 }
 
-const Calendar: React.FC<CalendarProps> = ({ sessions, onCompleteSession, onUpdateSession }) => {
+const Calendar: React.FC<CalendarProps> = ({ sessions, onCompleteSession, onUpdateSession, onSwapSessions }) => {
   const [selectedWeek, setSelectedWeek] = useState<number | null>(null);
 
   // Group sessions by week
@@ -141,6 +142,7 @@ const Calendar: React.FC<CalendarProps> = ({ sessions, onCompleteSession, onUpda
               sessions={sessionsByWeek[selectedWeek] || []}
               onCompleteSession={onCompleteSession}
               onUpdateSession={onUpdateSession}
+              onSwapSessions={onSwapSessions}
               detailed={true}
             />
           </div>
@@ -154,6 +156,7 @@ const Calendar: React.FC<CalendarProps> = ({ sessions, onCompleteSession, onUpda
                 sessions={sessionsByWeek[week] || []}
                 onCompleteSession={onCompleteSession}
                 onUpdateSession={onUpdateSession}
+                onSwapSessions={onSwapSessions}
                 detailed={false}
               />
             </div>

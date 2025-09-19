@@ -9,7 +9,8 @@ import {
   MapPin, 
   Zap,
   Circle,
-  Edit
+  Edit,
+  Timer
 } from 'lucide-react';
 import ManualTracker from './ManualTracker';
 
@@ -187,13 +188,22 @@ const TrainingCard: React.FC<TrainingCardProps> = ({
 
       <div className="flex items-center gap-4 text-sm text-gray-500 mb-4">
         <div className="flex items-center gap-1">
-          <Clock size={16} />
+          {session.notes && session.notes.includes('Timer:') ? (
+            <Timer size={16} className="text-primary-600" />
+          ) : (
+            <Clock size={16} />
+          )}
           <span>{session.duration} Min</span>
+          {session.notes && session.notes.includes('Timer:') && (
+            <span className="text-xs bg-primary-100 text-primary-700 px-2 py-1 rounded ml-1">
+              ⏱️
+            </span>
+          )}
         </div>
         {session.distance && (
           <div className="flex items-center gap-1">
             <MapPin size={16} />
-            <span>{session.distance} km</span>
+            <span>{session.distance.toFixed(1)} km</span>
           </div>
         )}
         {session.exercises && (
@@ -224,7 +234,13 @@ const TrainingCard: React.FC<TrainingCardProps> = ({
         
         {session.notes && (
           <div className="text-xs text-gray-400 max-w-24 truncate">
-            {session.notes}
+            {session.notes.includes('Timer:') ? (
+              <span className="text-primary-600 font-medium">
+                ⏱️ {session.notes.split('Timer: ')[1] || 'Timer'}
+              </span>
+            ) : (
+              session.notes
+            )}
           </div>
         )}
       </div>

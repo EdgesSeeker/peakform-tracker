@@ -101,12 +101,130 @@ export const detailedHybridPlan: TrainingSession[] = [
     type: 'strength',
     subtype: 'upper',
     title: 'Oberkörper',
-    description: 'Bankdrücken, Schulterdrücken, Rudern, Klimmzüge',
+    description: 'Kompaktes Oberkörper-Workout mit Langhantel, Kurzhanteln und Kettlebell',
     duration: 60,
     completed: false,
     date: new Date(2024, 0, 4),
     week: 1,
     day: 4,
+    workoutPlan: {
+      warmup: {
+        title: 'Aufwärmen',
+        duration: '5–10 Minuten',
+        exercises: [
+          {
+            id: 'warmup-1',
+            name: 'Seilspringen oder Hampelmänner',
+            sets: '1',
+            reps: '5 Min',
+            instructions: 'Lockeres Tempo, Körper aktivieren'
+          },
+          {
+            id: 'warmup-2',
+            name: 'Schulterkreisen & Armkreisen',
+            sets: '2',
+            reps: '10 pro Richtung',
+            instructions: 'Große, kontrollierte Bewegungen'
+          },
+          {
+            id: 'warmup-3',
+            name: 'Leichte Push-ups',
+            sets: '1',
+            reps: '5-10',
+            instructions: 'Auf Knien falls nötig'
+          }
+        ]
+      },
+      main: {
+        title: 'Haupttraining',
+        duration: '~50 Minuten',
+        exercises: [
+          {
+            id: 'main-1',
+            name: 'Schulterdrücken',
+            sets: '4',
+            reps: '8–12',
+            equipment: 'Kurzhanteln oder Langhantel',
+            instructions: 'Kontrollierte Bewegung, Schultern stabilisieren'
+          },
+          {
+            id: 'main-2',
+            name: 'Bankdrücken / Floor Press',
+            sets: '4',
+            reps: '8–12',
+            equipment: 'Kurzhantel oder Langhantel',
+            instructions: 'Vollständige Bewegungsamplitude'
+          },
+          {
+            id: 'main-3',
+            name: 'Einarmiges Kurzhantel-Rudern',
+            sets: '3',
+            reps: '10–12 pro Seite',
+            equipment: 'Kurzhantel',
+            instructions: 'Rücken gerade, Ellbogen nah am Körper'
+          },
+          {
+            id: 'main-4',
+            name: 'Bizeps Curls',
+            sets: '3',
+            reps: '10–12',
+            equipment: 'Kurzhantel oder Langhantel',
+            instructions: 'Keine Schwungbewegung, kontrolliert'
+          },
+          {
+            id: 'main-5',
+            name: 'Trizeps-Kickbacks oder Overhead-Trizeps',
+            sets: '3',
+            reps: '10–12',
+            equipment: 'Kurzhantel/Kettlebell',
+            instructions: 'Oberarm fixiert, nur Unterarm bewegt'
+          },
+          {
+            id: 'main-6',
+            name: 'Seitheben',
+            sets: '3',
+            reps: '12–15',
+            equipment: 'Kurzhantel',
+            instructions: 'Leichte Gewichte, saubere Technik'
+          },
+          {
+            id: 'main-7',
+            name: 'Kettlebell Swings',
+            sets: '3',
+            reps: '15–20',
+            equipment: 'Kettlebell',
+            instructions: 'Hüfte antreiben, Rücken & Core aktivieren'
+          }
+        ]
+      },
+      cooldown: {
+        title: 'Cooldown / Stretch',
+        duration: '5 Minuten',
+        exercises: [
+          {
+            id: 'cooldown-1',
+            name: 'Schulterdehnungen',
+            sets: '2',
+            reps: '30 Sek halten',
+            instructions: 'Arm über Brust ziehen, andere Seite'
+          },
+          {
+            id: 'cooldown-2',
+            name: 'Brustdehnungen',
+            sets: '2',
+            reps: '30 Sek halten',
+            instructions: 'Türrahmen nutzen oder Wand'
+          },
+          {
+            id: 'cooldown-3',
+            name: 'Armdehnungen',
+            sets: '2',
+            reps: '20 Sek pro Arm',
+            instructions: 'Trizeps und Bizeps dehnen'
+          }
+        ]
+      }
+    },
     exercises: [
       {
         id: 'bench',

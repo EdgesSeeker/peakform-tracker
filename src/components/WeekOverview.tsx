@@ -15,6 +15,15 @@ const WeekOverview: React.FC<WeekOverviewProps> = ({
   onCompleteSession,
   onUpdateSession
 }) => {
+  // Debug: Log sessions für diese Woche
+  console.log(`📅 WeekOverview Woche ${weekNumber}:`);
+  sessions.forEach(s => {
+    console.log(`- ${s.title}: Tag ${s.day} (${s.completed ? 'Erledigt' : 'Offen'})`);
+  });
+  
+  const today = new Date();
+  const todayWeekday = today.getDay() === 0 ? 7 : today.getDay(); // 0=So->7, 1=Mo->1, etc.
+  console.log(`🗓️ Heute: ${today.toLocaleDateString('de-DE')}, Wochentag: ${todayWeekday} (${['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'][today.getDay()]})`);
   const completedSessions = sessions.filter(s => s.completed).length;
   const totalSessions = sessions.length;
   const completionPercentage = totalSessions > 0 ? (completedSessions / totalSessions) * 100 : 0;
@@ -81,10 +90,13 @@ const WeekOverview: React.FC<WeekOverviewProps> = ({
 
       {/* Training Sessions Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-7 gap-4">
-        {sessions.map((session, index) => {
+        {sessions
+          .sort((a, b) => a.day - b.day) // Sortiere nach Tag für korrekte Reihenfolge
+          .map((session) => {
           const today = new Date();
-          const todayWeekday = today.getDay() || 7; // 1=Mo, 7=So
+          const todayWeekday = today.getDay() === 0 ? 7 : today.getDay(); // 0=So->7, 1=Mo->1, etc.
           const isToday = session.day === todayWeekday;
+          console.log(`🔍 Session: ${session.title}, Session-Tag: ${session.day}, Heute-Tag: ${todayWeekday}, isToday: ${isToday}`);
           
           return (
             <div key={session.id} className="space-y-2">
@@ -93,7 +105,7 @@ const WeekOverview: React.FC<WeekOverviewProps> = ({
                   ? 'bg-primary-500 text-white font-bold shadow-md' 
                   : 'text-gray-600'
               }`}>
-                {dayNames[index] || `Tag ${index + 1}`}
+                {dayNames[session.day - 1] || `Tag ${session.day}`}
               </div>
               <div className={isToday ? 'transform scale-105 transition-transform' : ''}>
                 <TrainingCard 

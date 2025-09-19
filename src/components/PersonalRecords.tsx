@@ -63,8 +63,8 @@ const PersonalRecords: React.FC<PersonalRecordsProps> = ({ sessions, personalRec
       if (longestSwim.distance && longestSwim.distance > 0) {
         prs['Längste Schwimmeinheit'] = {
           exercise: 'Längste Schwimmeinheit',
-          value: longestSwim.distance * 1000, // Convert to meters
-          unit: 'm',
+          value: longestSwim.distance, // Keep in km for consistency
+          unit: 'km',
           date: longestSwim.date
         };
       }

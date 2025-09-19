@@ -15,6 +15,29 @@ export interface TrainingSession {
   watts?: number; // for cycling
   notes?: string;
   calories?: number;
+  workoutPlan?: WorkoutPlan;
+}
+
+export interface WorkoutPlan {
+  warmup?: WorkoutSection;
+  main: WorkoutSection;
+  cooldown?: WorkoutSection;
+}
+
+export interface WorkoutSection {
+  title: string;
+  duration: string;
+  exercises: WorkoutExercise[];
+}
+
+export interface WorkoutExercise {
+  id: string;
+  name: string;
+  sets: string;
+  reps: string;
+  equipment?: string;
+  instructions?: string;
+  completed?: boolean;
 }
 
 export interface Exercise {
@@ -22,6 +45,10 @@ export interface Exercise {
   name: string;
   sets: Set[];
   type: 'strength' | 'cardio' | 'mobility';
+  completed?: boolean;
+  instructions?: string;
+  targetSets?: number;
+  targetReps?: string;
 }
 
 export interface Set {

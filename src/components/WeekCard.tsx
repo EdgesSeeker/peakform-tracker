@@ -1,21 +1,98 @@
 import React from 'react';
 import { TrainingSession } from '../types';
 import TrainingCard from './TrainingCard';
-import { Calendar, Circle } from 'lucide-react';
+import { Calendar, Circle, Move } from 'lucide-react';
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent,
+} from '@dnd-kit/core';
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
+import {
+  useSortable,
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 
 interface WeekCardProps {
   week: number;
   sessions: TrainingSession[];
   onCompleteSession: (sessionId: string) => void;
   onUpdateSession?: (updatedSession: TrainingSession) => void;
+  onSwapSessions?: (sessionId1: string, sessionId2: string) => void;
   detailed?: boolean;
 }
+
+// Sortable Training Card Component
+const SortableTrainingCard: React.FC<{
+  session: TrainingSession;
+  onComplete: (sessionId: string) => void;
+  onUpdate?: (updatedSession: TrainingSession) => void;
+  dayName: string;
+  dayNumber: number;
+}> = ({ session, onComplete, onUpdate, dayName, dayNumber }) => {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: session.id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  };
+
+  return (
+    <div ref={setNodeRef} style={style} className="space-y-2">
+      <div className="flex items-center justify-between mb-2">
+        <div className="flex items-center gap-2">
+          <span className="text-sm font-medium text-gray-600">
+            {dayName} - Tag {dayNumber}
+          </span>
+          {session.completed ? (
+            <div className="w-4 h-4 bg-success-500 rounded-full flex items-center justify-center">
+              <span className="text-white text-xs">✓</span>
+            </div>
+          ) : (
+            <Circle size={16} className="text-gray-400" />
+          )}
+        </div>
+        <div
+          {...attributes}
+          {...listeners}
+          className="p-1 hover:bg-gray-100 rounded cursor-grab active:cursor-grabbing"
+          title="Drag to reorder"
+        >
+          <Move size={16} className="text-gray-400" />
+        </div>
+      </div>
+      <TrainingCard 
+        session={session}
+        onComplete={onComplete}
+        onUpdate={onUpdate}
+      />
+    </div>
+  );
+};
 
 const WeekCard: React.FC<WeekCardProps> = ({ 
   week, 
   sessions, 
   onCompleteSession, 
   onUpdateSession,
+  onSwapSessions,
   detailed = false 
 }) => {
   const completedSessions = sessions.filter(s => s.completed).length;
@@ -27,6 +104,47 @@ const WeekCard: React.FC<WeekCardProps> = ({
   const totalDuration = sessions.reduce((sum, s) => sum + s.duration, 0);
 
   const dayNames = ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'];
+
+  // DnD sensors
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
+
+  // Handle drag end
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    
+    console.log('🔄 Drag ended:', { activeId: active.id, overId: over?.id });
+    
+    if (!over || active.id === over.id) {
+      console.log('❌ Drag cancelled - no valid drop target');
+      return;
+    }
+
+    if (!onSwapSessions) {
+      console.log('❌ onSwapSessions function not provided');
+      return;
+    }
+
+    // Find sessions to swap
+    const activeSession = sessions.find(s => s.id === active.id);
+    const overSession = sessions.find(s => s.id === over.id);
+
+    console.log('🔍 Sessions to swap:', {
+      active: activeSession ? `${activeSession.title} (Tag ${activeSession.day})` : 'Not found',
+      over: overSession ? `${overSession.title} (Tag ${overSession.day})` : 'Not found'
+    });
+
+    if (activeSession && overSession) {
+      console.log('✅ Calling onSwapSessions...');
+      onSwapSessions(activeSession.id, overSession.id);
+    } else {
+      console.log('❌ Could not find sessions to swap');
+    }
+  };
 
   const getWeekPhase = (weekNumber: number) => {
     if (weekNumber <= 2) return { phase: 'Grundlage', color: 'bg-blue-100 text-blue-800' };
@@ -70,30 +188,29 @@ const WeekCard: React.FC<WeekCardProps> = ({
           </div>
         </div>
 
-        {/* Training Sessions */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          {sessions.map((session, index) => (
-            <div key={session.id} className="space-y-2">
-              <div className="flex items-center gap-2 mb-2">
-                <span className="text-sm font-medium text-gray-600">
-                  {dayNames[index]} - Tag {index + 1}
-                </span>
-                {session.completed ? (
-                  <div className="w-4 h-4 bg-success-500 rounded-full flex items-center justify-center">
-                    <span className="text-white text-xs">✓</span>
-                  </div>
-                ) : (
-                  <Circle size={16} className="text-gray-400" />
-                )}
-              </div>
-              <TrainingCard 
-                session={session}
-                onComplete={onCompleteSession}
-                onUpdate={onUpdateSession}
-              />
+        {/* Training Sessions with Drag & Drop */}
+        <DndContext
+          sensors={sensors}
+          collisionDetection={closestCenter}
+          onDragEnd={handleDragEnd}
+        >
+          <SortableContext items={sessions.map(s => s.id)} strategy={verticalListSortingStrategy}>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+              {sessions
+                .sort((a, b) => a.day - b.day) // Sortiere nach Tag für korrekte Anzeige
+                .map((session, index) => (
+                <SortableTrainingCard
+                  key={session.id}
+                  session={session}
+                  onComplete={onCompleteSession}
+                  onUpdate={onUpdateSession}
+                  dayName={dayNames[session.day - 1]} // Verwende session.day statt index
+                  dayNumber={session.day} // Verwende session.day statt index + 1
+                />
+              ))}
             </div>
-          ))}
-        </div>
+          </SortableContext>
+        </DndContext>
       </div>
     );
   }
