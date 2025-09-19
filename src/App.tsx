@@ -15,7 +15,7 @@ import { TrainingSession, UserStats, QuickCheck } from './types';
 import { getAdjustedPlan } from './data/detailedHybridPlan';
 import { badgeDefinitions, calculatePoints } from './data/badges';
 import storageManager from './utils/storage';
-import autoCloudSync from './services/autoCloudSync';
+import firebaseSync from './services/firebaseSync';
 
 function App() {
   const [sessions, setSessions] = useState<TrainingSession[]>([]);
@@ -74,8 +74,8 @@ function App() {
     const status = storageManager.getStorageStatus();
     console.log('📊 Storage-Status:', status);
 
-    // Auto-Sync starten
-    autoCloudSync.startAutoSync(
+    // Firebase Auto-Sync starten
+    firebaseSync.startAutoSync(
       () => sessions,
       () => userStats,
       () => quickCheck,
@@ -84,7 +84,7 @@ function App() {
 
     // Cleanup beim Unmount
     return () => {
-      autoCloudSync.stopAutoSync();
+      firebaseSync.stopAutoSync();
     };
   }, []);
 

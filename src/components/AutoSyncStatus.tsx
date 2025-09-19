@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Cloud, Wifi, WifiOff, Check, RefreshCw, X } from 'lucide-react';
-import autoCloudSync from '../services/autoCloudSync';
+import firebaseSync from '../services/firebaseSync';
 import { TrainingSession, UserStats, QuickCheck } from '../types';
 
 interface AutoSyncStatusProps {
@@ -18,13 +18,13 @@ const AutoSyncStatus: React.FC<AutoSyncStatusProps> = ({
   onDataUpdated, 
   onClose 
 }) => {
-  const [syncStatus, setSyncStatus] = useState(autoCloudSync.getSyncStatus());
+  const [syncStatus, setSyncStatus] = useState(firebaseSync.getSyncStatus());
   const [isLoading, setIsLoading] = useState(false);
   const [lastResult, setLastResult] = useState<string>('');
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setSyncStatus(autoCloudSync.getSyncStatus());
+      setSyncStatus(firebaseSync.getSyncStatus());
     }, 5000); // Update alle 5 Sekunden
 
     return () => clearInterval(interval);
@@ -34,7 +34,7 @@ const AutoSyncStatus: React.FC<AutoSyncStatusProps> = ({
     setIsLoading(true);
     
     try {
-      const result = await autoCloudSync.forceSyncNow(sessions, userStats, quickCheck, onDataUpdated);
+      const result = await firebaseSync.forceSyncNow(sessions, userStats, quickCheck, onDataUpdated);
       setLastResult(result);
     } catch (error) {
       setLastResult('Manueller Sync fehlgeschlagen');
