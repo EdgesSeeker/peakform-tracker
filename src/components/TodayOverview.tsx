@@ -231,10 +231,10 @@ const TodayOverview: React.FC<TodayOverviewProps> = ({
               <Calendar className="w-6 h-6 text-primary-600" />
             </div>
             <div>
-              <h2 className="text-xl font-bold text-gray-900">
+              <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">
                 Heute • {formatDate(today)}
               </h2>
-              <p className="text-gray-600">
+              <p className="text-gray-600 dark:text-gray-400">
                 Dein Trainingsplan für {todayName}
               </p>
             </div>
@@ -246,17 +246,17 @@ const TodayOverview: React.FC<TodayOverviewProps> = ({
                 <div className="text-3xl font-bold text-primary-600 font-mono">
                   {formatTime(getCurrentTime())}
                 </div>
-                <div className="text-sm text-gray-600 flex items-center gap-1">
+                <div className="text-sm text-gray-600 dark:text-gray-400 flex items-center gap-1">
                   <Timer size={14} />
                   {workoutTimer.isRunning ? 'Läuft...' : 'Pausiert'}
                 </div>
               </div>
             ) : (
               <div>
-                <div className="text-2xl font-bold text-gray-900">
+                <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">
                   {completedToday.length}/{todaySessions.length}
                 </div>
-                <div className="text-sm text-gray-600">Heute erledigt</div>
+                <div className="text-sm text-gray-600 dark:text-gray-400">Heute erledigt</div>
               </div>
             )}
           </div>
@@ -294,7 +294,7 @@ const TodayOverview: React.FC<TodayOverviewProps> = ({
         <div className="card">
           <div className="flex items-center gap-2 mb-6">
             <Target className="w-5 h-5 text-primary-600" />
-            <h3 className="text-lg font-semibold text-gray-900">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
               Heutiges Training
             </h3>
             {pendingToday.length > 0 && (
@@ -430,10 +430,10 @@ const TodayOverview: React.FC<TodayOverviewProps> = ({
           <div className="text-gray-400 mb-4">
             <Calendar size={48} className="mx-auto" />
           </div>
-          <h3 className="text-lg font-semibold text-gray-900 mb-2">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
             Kein Training für heute geplant
           </h3>
-          <p className="text-gray-600">
+          <p className="text-gray-600 dark:text-gray-400">
             Heute ist ein Ruhetag oder du hast bereits alles erledigt!
           </p>
         </div>
@@ -442,10 +442,10 @@ const TodayOverview: React.FC<TodayOverviewProps> = ({
       {/* Wochen-Fortschritt */}
       <div className="card">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-semibold text-gray-900">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
             Diese Woche (Woche {thisWeek})
           </h3>
-          <div className="text-sm text-gray-600">
+          <div className="text-sm text-gray-600 dark:text-gray-400">
             {weekCompleted.length}/{thisWeekSessions.length} Sessions
           </div>
         </div>
@@ -477,8 +477,8 @@ const TodayOverview: React.FC<TodayOverviewProps> = ({
                     : daySessions.length > 0
                     ? dayCompleted.length === daySessions.length
                       ? 'bg-success-100 text-success-800'
-                      : 'bg-gray-100 text-gray-700'
-                    : 'bg-gray-50 text-gray-400'
+                      : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300'
+                    : 'bg-gray-50 dark:bg-gray-900 text-gray-400'
                 }`}
               >
                 <div className="text-xs font-medium mb-1">{day}</div>
@@ -497,7 +497,7 @@ const TodayOverview: React.FC<TodayOverviewProps> = ({
           <div className="p-2 bg-primary-100 rounded-lg">
             <Play className="w-5 h-5 text-primary-600" />
           </div>
-          <h3 className="text-lg font-semibold text-gray-900">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
             Deine Woche im Überblick
           </h3>
         </div>
@@ -507,25 +507,25 @@ const TodayOverview: React.FC<TodayOverviewProps> = ({
             <div className="text-2xl font-bold text-primary-600">
               {weekCompleted.length}
             </div>
-            <div className="text-sm text-gray-600">Abgeschlossen</div>
+            <div className="text-sm text-gray-600 dark:text-gray-400">Abgeschlossen</div>
           </div>
           <div>
             <div className="text-2xl font-bold text-orange-600">
               {thisWeekSessions.length - weekCompleted.length}
             </div>
-            <div className="text-sm text-gray-600">Verbleibend</div>
+            <div className="text-sm text-gray-600 dark:text-gray-400">Verbleibend</div>
           </div>
           <div>
             <div className="text-2xl font-bold text-green-600">
               {Math.round(thisWeekSessions.length > 0 ? (weekCompleted.length / thisWeekSessions.length) * 100 : 0)}%
             </div>
-            <div className="text-sm text-gray-600">Fortschritt</div>
+            <div className="text-sm text-gray-600 dark:text-gray-400">Fortschritt</div>
           </div>
           <div>
             <div className="text-2xl font-bold text-purple-600">
               {thisWeekSessions.reduce((sum, s) => sum + (s.completed ? s.duration : 0), 0)}
             </div>
-            <div className="text-sm text-gray-600">Min trainiert</div>
+            <div className="text-sm text-gray-600 dark:text-gray-400">Min trainiert</div>
           </div>
         </div>
       </div>

@@ -120,21 +120,21 @@ const ManualTracker: React.FC<ManualTrackerProps> = ({ session, onSave, onCancel
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-      <div className="bg-white rounded-xl shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
-        <div className="sticky top-0 bg-white border-b border-gray-200 p-6 rounded-t-xl">
+      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+        <div className="sticky top-0 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 p-6 rounded-t-xl">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="p-2 bg-primary-100 rounded-lg">
                 <Icon className="w-6 h-6 text-primary-600" />
               </div>
               <div>
-                <h2 className="text-xl font-bold text-gray-900">{session.title}</h2>
-                <p className="text-sm text-gray-600">{session.description}</p>
+                <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">{session.title}</h2>
+                <p className="text-sm text-gray-600 dark:text-gray-400">{session.description}</p>
               </div>
             </div>
             <button
               onClick={onCancel}
-              className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+              className="p-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:bg-gray-700 rounded-lg transition-colors"
             >
               <X size={20} />
             </button>
@@ -145,7 +145,7 @@ const ManualTracker: React.FC<ManualTrackerProps> = ({ session, onSave, onCancel
           {/* Basic Info */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 <Clock size={16} className="inline mr-1" />
                 Dauer (Minuten)
               </label>
@@ -153,14 +153,14 @@ const ManualTracker: React.FC<ManualTrackerProps> = ({ session, onSave, onCancel
                 type="number"
                 value={formData.duration}
                 onChange={(e) => setFormData(prev => ({ ...prev, duration: parseInt(e.target.value) || 0 }))}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                 min="1"
               />
             </div>
 
             {(session.type === 'cardio' || session.type === 'swimming') && (
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   <MapPin size={16} className="inline mr-1" />
                   Distanz (km)
                 </label>
@@ -169,14 +169,14 @@ const ManualTracker: React.FC<ManualTrackerProps> = ({ session, onSave, onCancel
                   step="0.1"
                   value={formData.distance}
                   onChange={(e) => setFormData(prev => ({ ...prev, distance: parseFloat(e.target.value) || 0 }))}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                   min="0"
                 />
               </div>
             )}
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 <Zap size={16} className="inline mr-1" />
                 Kalorien (optional)
               </label>
@@ -184,7 +184,7 @@ const ManualTracker: React.FC<ManualTrackerProps> = ({ session, onSave, onCancel
                 type="number"
                 value={formData.calories}
                 onChange={(e) => setFormData(prev => ({ ...prev, calories: parseInt(e.target.value) || 0 }))}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                 min="0"
               />
             </div>
@@ -192,13 +192,13 @@ const ManualTracker: React.FC<ManualTrackerProps> = ({ session, onSave, onCancel
 
           {/* Notes */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Notizen
             </label>
             <textarea
               value={formData.notes}
               onChange={(e) => setFormData(prev => ({ ...prev, notes: e.target.value }))}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
               rows={3}
               placeholder="Wie war das Training? Besonderheiten?"
             />
@@ -208,7 +208,7 @@ const ManualTracker: React.FC<ManualTrackerProps> = ({ session, onSave, onCancel
           {session.type === 'strength' && (
             <div>
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-semibold text-gray-900">Übungen</h3>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Übungen</h3>
                 <button
                   onClick={addExercise}
                   className="btn-primary"
@@ -220,14 +220,14 @@ const ManualTracker: React.FC<ManualTrackerProps> = ({ session, onSave, onCancel
 
               <div className="space-y-6">
                 {formData.exercises.map((exercise, exerciseIndex) => (
-                  <div key={exercise.id} className="border border-gray-200 rounded-lg p-4">
+                  <div key={exercise.id} className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
                     <div className="flex items-center gap-3 mb-4">
                       <input
                         type="text"
                         value={exercise.name}
                         onChange={(e) => updateExercise(exerciseIndex, 'name', e.target.value)}
                         placeholder="Übungsname (z.B. Kniebeuge)"
-                        className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                        className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                       />
                       <button
                         onClick={() => removeExercise(exerciseIndex)}
@@ -238,7 +238,7 @@ const ManualTracker: React.FC<ManualTrackerProps> = ({ session, onSave, onCancel
                     </div>
 
                     <div className="space-y-2">
-                      <div className="grid grid-cols-4 gap-2 text-sm font-medium text-gray-700 px-2">
+                      <div className="grid grid-cols-4 gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 px-2">
                         <div>Satz</div>
                         <div>Wiederholungen</div>
                         <div>Gewicht (kg)</div>
@@ -247,14 +247,14 @@ const ManualTracker: React.FC<ManualTrackerProps> = ({ session, onSave, onCancel
 
                       {exercise.sets.map((set, setIndex) => (
                         <div key={setIndex} className="grid grid-cols-4 gap-2 items-center">
-                          <div className="text-center text-sm text-gray-500 py-2">
+                          <div className="text-center text-sm text-gray-500 dark:text-gray-500 py-2">
                             {setIndex + 1}
                           </div>
                           <input
                             type="number"
                             value={set.reps || ''}
                             onChange={(e) => updateSet(exerciseIndex, setIndex, 'reps', parseInt(e.target.value) || 0)}
-                            className="px-2 py-1 border border-gray-300 rounded text-center"
+                            className="px-2 py-1 border border-gray-300 dark:border-gray-600 rounded text-center"
                             min="1"
                           />
                           <input
@@ -262,7 +262,7 @@ const ManualTracker: React.FC<ManualTrackerProps> = ({ session, onSave, onCancel
                             step="0.5"
                             value={set.weight || ''}
                             onChange={(e) => updateSet(exerciseIndex, setIndex, 'weight', parseFloat(e.target.value) || 0)}
-                            className="px-2 py-1 border border-gray-300 rounded text-center"
+                            className="px-2 py-1 border border-gray-300 dark:border-gray-600 rounded text-center"
                             min="0"
                           />
                           <button
@@ -276,7 +276,7 @@ const ManualTracker: React.FC<ManualTrackerProps> = ({ session, onSave, onCancel
 
                       <button
                         onClick={() => addSet(exerciseIndex)}
-                        className="w-full py-2 border-2 border-dashed border-gray-300 rounded-lg text-gray-500 hover:border-primary-300 hover:text-primary-600 transition-colors"
+                        className="w-full py-2 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg text-gray-500 dark:text-gray-500 hover:border-primary-300 hover:text-primary-600 transition-colors"
                       >
                         <Plus size={16} className="inline mr-1" />
                         Satz hinzufügen
@@ -286,7 +286,7 @@ const ManualTracker: React.FC<ManualTrackerProps> = ({ session, onSave, onCancel
                 ))}
 
                 {formData.exercises.length === 0 && (
-                  <div className="text-center py-8 text-gray-500">
+                  <div className="text-center py-8 text-gray-500 dark:text-gray-500">
                     <Dumbbell size={48} className="mx-auto mb-2 text-gray-300" />
                     <p>Noch keine Übungen hinzugefügt</p>
                     <p className="text-sm">Klicke auf "Übung hinzufügen" um zu starten</p>
@@ -298,7 +298,7 @@ const ManualTracker: React.FC<ManualTrackerProps> = ({ session, onSave, onCancel
         </div>
 
         {/* Footer */}
-        <div className="sticky bottom-0 bg-gray-50 border-t border-gray-200 p-6 rounded-b-xl">
+        <div className="sticky bottom-0 bg-gray-50 dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700 p-6 rounded-b-xl">
           <div className="flex gap-3 justify-end">
             <button
               onClick={onCancel}

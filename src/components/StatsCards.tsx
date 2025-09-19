@@ -47,8 +47,8 @@ const StatsCards: React.FC<StatsCardsProps> = ({ userStats }) => {
               <stat.icon className={`w-6 h-6 ${stat.color}`} />
             </div>
             <div>
-              <p className="text-sm text-gray-600 mb-1">{stat.label}</p>
-              <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
+              <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">{stat.label}</p>
+              <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">{stat.value}</p>
             </div>
           </div>
         </div>

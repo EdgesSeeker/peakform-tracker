@@ -20,10 +20,10 @@ const UpcomingSessions: React.FC<UpcomingSessionsProps> = ({
         <div className="text-success-500 mb-4">
           <Calendar size={48} className="mx-auto" />
         </div>
-        <h3 className="text-lg font-semibold text-gray-900 mb-2">
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
           Alle Sessions abgeschlossen! 🎉
         </h3>
-        <p className="text-gray-600">
+        <p className="text-gray-600 dark:text-gray-400">
           Fantastische Arbeit! Du hast alle geplanten Trainingseinheiten absolviert.
         </p>
       </div>
@@ -34,7 +34,7 @@ const UpcomingSessions: React.FC<UpcomingSessionsProps> = ({
     <div className="card">
       <div className="flex items-center gap-2 mb-6">
         <Calendar className="w-5 h-5 text-primary-600" />
-        <h2 className="text-lg font-semibold text-gray-900">
+        <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
           Kommende Sessions
         </h2>
       </div>

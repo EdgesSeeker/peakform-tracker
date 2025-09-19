@@ -136,7 +136,7 @@ const TrainingLog: React.FC<TrainingLogProps> = ({
       case 'cardio': return 'text-blue-600 bg-blue-50';
       case 'swimming': return 'text-cyan-600 bg-cyan-50';
       case 'yoga': return 'text-green-600 bg-green-50';
-      default: return 'text-gray-600 bg-gray-50';
+      default: return 'text-gray-600 dark:text-gray-400 bg-gray-50 dark:bg-gray-900';
     }
   };
 
@@ -182,8 +182,8 @@ const TrainingLog: React.FC<TrainingLogProps> = ({
           <BookOpen className="w-6 h-6 text-primary-600" />
         </div>
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Training Log</h1>
-          <p className="text-gray-600">Alle deine Trainingseinheiten im Überblick</p>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Training Log</h1>
+          <p className="text-gray-600 dark:text-gray-400">Alle deine Trainingseinheiten im Überblick</p>
         </div>
       </div>
 
@@ -198,7 +198,7 @@ const TrainingLog: React.FC<TrainingLogProps> = ({
               placeholder="Suchen..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
             />
           </div>
 
@@ -206,7 +206,7 @@ const TrainingLog: React.FC<TrainingLogProps> = ({
           <select
             value={filterType}
             onChange={(e) => setFilterType(e.target.value as any)}
-            className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+            className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
           >
             <option value="all">Alle Typen</option>
             <option value="strength">Krafttraining</option>
@@ -219,7 +219,7 @@ const TrainingLog: React.FC<TrainingLogProps> = ({
           <select
             value={filterCompleted}
             onChange={(e) => setFilterCompleted(e.target.value as any)}
-            className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+            className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
           >
             <option value="all">Alle Status</option>
             <option value="completed">Abgeschlossen</option>
@@ -231,7 +231,7 @@ const TrainingLog: React.FC<TrainingLogProps> = ({
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value as any)}
-              className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+              className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
             >
               <option value="date">Datum</option>
               <option value="type">Typ</option>
@@ -239,7 +239,7 @@ const TrainingLog: React.FC<TrainingLogProps> = ({
             </select>
             <button
               onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
-              className="px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+              className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 dark:bg-gray-900 transition-colors"
             >
               {sortOrder === 'asc' ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
             </button>
@@ -247,8 +247,8 @@ const TrainingLog: React.FC<TrainingLogProps> = ({
         </div>
 
         {/* Results count */}
-        <div className="mt-4 pt-4 border-t border-gray-200">
-          <p className="text-sm text-gray-600">
+        <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+          <p className="text-sm text-gray-600 dark:text-gray-400">
             {filteredSessions.length} von {sessions.length} Sessions
           </p>
         </div>
@@ -261,10 +261,10 @@ const TrainingLog: React.FC<TrainingLogProps> = ({
             <div className="text-gray-400 mb-4">
               <BookOpen size={48} className="mx-auto" />
             </div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
               Keine Sessions gefunden
             </h3>
-            <p className="text-gray-600">
+            <p className="text-gray-600 dark:text-gray-400">
               {searchTerm || filterType !== 'all' || filterCompleted !== 'all' 
                 ? 'Versuche andere Filter oder Suchbegriffe'
                 : 'Füge deine erste Trainingseinheit hinzu!'}
@@ -295,15 +295,15 @@ const TrainingLog: React.FC<TrainingLogProps> = ({
                     {/* Main Info */}
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-2">
-                        <h3 className="font-semibold text-gray-900">{session.title}</h3>
+                        <h3 className="font-semibold text-gray-900 dark:text-gray-100">{session.title}</h3>
                         <span className={`badge ${session.completed ? 'badge-success' : 'badge-secondary'}`}>
                           {session.completed ? 'Abgeschlossen' : 'Offen'}
                         </span>
                       </div>
                       
-                      <p className="text-gray-600 text-sm mb-3">{session.description}</p>
+                      <p className="text-gray-600 dark:text-gray-400 text-sm mb-3">{session.description}</p>
                       
-                      <div className="flex items-center gap-4 text-sm text-gray-500">
+                      <div className="flex items-center gap-4 text-sm text-gray-500 dark:text-gray-500">
                         <div className="flex items-center gap-1">
                           <Calendar size={14} />
                           <span>{formatDate(session.date)}</span>
@@ -337,15 +337,15 @@ const TrainingLog: React.FC<TrainingLogProps> = ({
 
                       {/* Expanded Details */}
                       {isExpanded && (
-                        <div className="mt-4 pt-4 border-t border-gray-200">
+                        <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
                           {session.exercises && (
                             <div className="mb-4">
-                              <h4 className="font-medium text-gray-900 mb-2">Übungen:</h4>
+                              <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-2">Übungen:</h4>
                               <div className="space-y-2">
                                 {session.exercises.map((exercise, index) => (
-                                  <div key={index} className="bg-gray-50 rounded p-3">
-                                    <div className="font-medium text-gray-900 mb-1">{exercise.name}</div>
-                                    <div className="text-sm text-gray-600">
+                                  <div key={index} className="bg-gray-50 dark:bg-gray-900 rounded p-3">
+                                    <div className="font-medium text-gray-900 dark:text-gray-100 mb-1">{exercise.name}</div>
+                                    <div className="text-sm text-gray-600 dark:text-gray-400">
                                       {exercise.sets.map((set, setIndex) => (
                                         <span key={setIndex}>
                                           {set.reps && set.weight ? `${set.reps}x${set.weight}kg` : 
@@ -362,7 +362,7 @@ const TrainingLog: React.FC<TrainingLogProps> = ({
                           )}
                           {session.notes && (
                             <div>
-                              <h4 className="font-medium text-gray-900 mb-1 flex items-center gap-2">
+                              <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-1 flex items-center gap-2">
                                 {session.notes.includes('Timer:') ? (
                                   <>
                                     <Watch size={16} className="text-primary-600" />
@@ -372,11 +372,11 @@ const TrainingLog: React.FC<TrainingLogProps> = ({
                                   'Notizen:'
                                 )}
                               </h4>
-                              <div className="text-gray-600 text-sm">
+                              <div className="text-gray-600 dark:text-gray-400 text-sm">
                                 {session.notes.includes('Timer:') ? (
                                   <div className="space-y-2">
                                     {session.notes.split(' | ').map((note, index) => (
-                                      <div key={index} className={note.startsWith('Timer:') ? 'flex items-center gap-2 font-mono text-primary-700 bg-primary-50 px-3 py-2 rounded border border-primary-200' : 'text-gray-600'}>
+                                      <div key={index} className={note.startsWith('Timer:') ? 'flex items-center gap-2 font-mono text-primary-700 bg-primary-50 px-3 py-2 rounded border border-primary-200' : 'text-gray-600 dark:text-gray-400'}>
                                         {note.startsWith('Timer:') && <Timer size={14} />}
                                         {note}
                                       </div>
@@ -397,7 +397,7 @@ const TrainingLog: React.FC<TrainingLogProps> = ({
                   <div className="flex items-center gap-2">
                     <button
                       onClick={() => toggleExpanded(session.id)}
-                      className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+                      className="p-2 text-gray-400 hover:text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-600 dark:bg-gray-700 rounded-lg transition-colors"
                       title={isExpanded ? 'Weniger anzeigen' : 'Details anzeigen'}
                     >
                       {isExpanded ? <ChevronUp size={18} /> : <ChevronDown size={18} />}

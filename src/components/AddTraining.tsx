@@ -76,10 +76,10 @@ const AddTraining: React.FC<AddTrainingProps> = ({ onAddTraining }) => {
               <Plus size={32} />
             </div>
           </div>
-          <h3 className="text-xl font-semibold text-gray-900 mb-3">
+          <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-3">
             Training hinzufügen
           </h3>
-          <p className="text-gray-600 mb-8 max-w-sm mx-auto">
+          <p className="text-gray-600 dark:text-gray-400 mb-8 max-w-sm mx-auto">
             Füge ein abgeschlossenes Training zu deiner Historie hinzu und sammle Punkte
           </p>
           <button
@@ -90,8 +90,8 @@ const AddTraining: React.FC<AddTrainingProps> = ({ onAddTraining }) => {
             Neues Training hinzufügen
           </button>
           
-          <div className="mt-6 pt-6 border-t border-gray-200">
-            <div className="flex items-center justify-center gap-6 text-sm text-gray-500">
+          <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
+            <div className="flex items-center justify-center gap-6 text-sm text-gray-500 dark:text-gray-500">
               <div className="flex items-center gap-2">
                 <div className="w-2 h-2 bg-red-400 rounded-full"></div>
                 <span>Krafttraining</span>
@@ -119,16 +119,16 @@ const AddTraining: React.FC<AddTrainingProps> = ({ onAddTraining }) => {
     <div className="card">
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-3">
-          <div className={`p-2 bg-gray-100 rounded-lg ${selectedType?.color}`}>
+          <div className={`p-2 bg-gray-100 dark:bg-gray-700 rounded-lg ${selectedType?.color}`}>
             <Icon size={24} />
           </div>
-          <h3 className="text-lg font-semibold text-gray-900">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
             Training hinzufügen
           </h3>
         </div>
         <button
           onClick={() => setShowForm(false)}
-          className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+          className="p-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:bg-gray-700 rounded-lg transition-colors"
         >
           <X size={20} />
         </button>
@@ -137,7 +137,7 @@ const AddTraining: React.FC<AddTrainingProps> = ({ onAddTraining }) => {
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Training Type */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-3">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
             Art des Trainings
           </label>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
@@ -151,7 +151,7 @@ const AddTraining: React.FC<AddTrainingProps> = ({ onAddTraining }) => {
                   className={`p-3 border rounded-lg transition-all ${
                     formData.type === type.value
                       ? 'border-primary-500 bg-primary-50 text-primary-700'
-                      : 'border-gray-300 hover:border-gray-400'
+                      : 'border-gray-300 dark:border-gray-600 hover:border-gray-400'
                   }`}
                 >
                   <TypeIcon size={20} className="mx-auto mb-1" />
@@ -164,14 +164,14 @@ const AddTraining: React.FC<AddTrainingProps> = ({ onAddTraining }) => {
 
         {/* Title */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
             Titel *
           </label>
           <input
             type="text"
             value={formData.title}
             onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
             placeholder="z.B. Brust/Trizeps Training"
             required
           />
@@ -180,7 +180,7 @@ const AddTraining: React.FC<AddTrainingProps> = ({ onAddTraining }) => {
         {/* Duration and Distance */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               <Clock size={16} className="inline mr-1" />
               Dauer (Minuten) *
             </label>
@@ -188,7 +188,7 @@ const AddTraining: React.FC<AddTrainingProps> = ({ onAddTraining }) => {
               type="number"
               value={formData.duration}
               onChange={(e) => setFormData(prev => ({ ...prev, duration: parseInt(e.target.value) || 0 }))}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
               min="1"
               required
             />
@@ -196,7 +196,7 @@ const AddTraining: React.FC<AddTrainingProps> = ({ onAddTraining }) => {
 
           {(formData.type === 'cardio' || formData.type === 'swimming') && (
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 <MapPin size={16} className="inline mr-1" />
                 Distanz (km)
               </label>
@@ -205,7 +205,7 @@ const AddTraining: React.FC<AddTrainingProps> = ({ onAddTraining }) => {
                 step="0.1"
                 value={formData.distance}
                 onChange={(e) => setFormData(prev => ({ ...prev, distance: parseFloat(e.target.value) || 0 }))}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                 min="0"
               />
             </div>
@@ -214,34 +214,34 @@ const AddTraining: React.FC<AddTrainingProps> = ({ onAddTraining }) => {
 
         {/* Description */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
             Beschreibung
           </label>
           <input
             type="text"
             value={formData.description}
             onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
             placeholder="Kurze Beschreibung des Trainings"
           />
         </div>
 
         {/* Notes */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
             Notizen
           </label>
           <textarea
             value={formData.notes}
             onChange={(e) => setFormData(prev => ({ ...prev, notes: e.target.value }))}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
             rows={3}
             placeholder="Wie war das Training? Besonderheiten?"
           />
         </div>
 
         {/* Submit Buttons */}
-        <div className="flex gap-3 pt-4 border-t border-gray-200">
+        <div className="flex gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
           <button
             type="button"
             onClick={() => setShowForm(false)}

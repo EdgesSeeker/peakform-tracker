@@ -83,16 +83,16 @@ const SyncManager: React.FC = () => {
     <div className="card bg-gradient-to-r from-blue-50 to-purple-50 border-blue-200">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">
-          <div className={`p-2 rounded-lg ${isOnline ? 'bg-green-100' : 'bg-gray-100'}`}>
+          <div className={`p-2 rounded-lg ${isOnline ? 'bg-green-100' : 'bg-gray-100 dark:bg-gray-700'}`}>
             {isOnline ? (
               <Wifi className="w-5 h-5 text-green-600" />
             ) : (
-              <WifiOff className="w-5 h-5 text-gray-600" />
+              <WifiOff className="w-5 h-5 text-gray-600 dark:text-gray-400" />
             )}
           </div>
           <div>
-            <h3 className="font-semibold text-gray-900">Geräte-Sync</h3>
-            <p className="text-sm text-gray-600">
+            <h3 className="font-semibold text-gray-900 dark:text-gray-100">Geräte-Sync</h3>
+            <p className="text-sm text-gray-600 dark:text-gray-400">
               Synchronisiere zwischen Handy und PC
             </p>
           </div>
@@ -111,27 +111,27 @@ const SyncManager: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <button
               onClick={exportForSync}
-              className="flex items-center gap-3 p-4 bg-white border border-blue-200 rounded-lg hover:bg-blue-50 transition-colors"
+              className="flex items-center gap-3 p-4 bg-white dark:bg-gray-800 border border-blue-200 rounded-lg hover:bg-blue-50 transition-colors"
             >
               <div className="p-2 bg-blue-100 rounded-lg">
                 <Upload className="w-5 h-5 text-blue-600" />
               </div>
               <div className="text-left">
-                <div className="font-medium text-gray-900">Daten teilen</div>
-                <div className="text-sm text-gray-600">An anderes Gerät senden</div>
+                <div className="font-medium text-gray-900 dark:text-gray-100">Daten teilen</div>
+                <div className="text-sm text-gray-600 dark:text-gray-400">An anderes Gerät senden</div>
               </div>
             </button>
 
             <button
               onClick={importFromSync}
-              className="flex items-center gap-3 p-4 bg-white border border-purple-200 rounded-lg hover:bg-purple-50 transition-colors"
+              className="flex items-center gap-3 p-4 bg-white dark:bg-gray-800 border border-purple-200 rounded-lg hover:bg-purple-50 transition-colors"
             >
               <div className="p-2 bg-purple-100 rounded-lg">
                 <Download className="w-5 h-5 text-purple-600" />
               </div>
               <div className="text-left">
-                <div className="font-medium text-gray-900">Daten empfangen</div>
-                <div className="text-sm text-gray-600">Von anderem Gerät laden</div>
+                <div className="font-medium text-gray-900 dark:text-gray-100">Daten empfangen</div>
+                <div className="text-sm text-gray-600 dark:text-gray-400">Von anderem Gerät laden</div>
               </div>
             </button>
           </div>
@@ -145,10 +145,10 @@ const SyncManager: React.FC = () => {
             </ol>
           </div>
 
-          <div className="flex items-center gap-2 text-sm text-gray-600">
+          <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
             <Monitor size={16} />
             <span>PC</span>
-            <div className="flex-1 border-t border-dashed border-gray-300"></div>
+            <div className="flex-1 border-t border-dashed border-gray-300 dark:border-gray-600"></div>
             <Smartphone size={16} />
             <span>Handy</span>
           </div>

@@ -46,10 +46,10 @@ const BadgeGallery: React.FC<BadgeGalleryProps> = ({ badges }) => {
       {/* Header */}
       <div className="text-center">
         <Award className="w-12 h-12 text-yellow-500 mx-auto mb-4" />
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">
+        <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">
           Badge-Sammlung
         </h2>
-        <p className="text-gray-600">
+        <p className="text-gray-600 dark:text-gray-400">
           {earnedBadges.length} von {badges.length} Badges erreicht
         </p>
         <div className="mt-4 max-w-md mx-auto">
@@ -59,7 +59,7 @@ const BadgeGallery: React.FC<BadgeGalleryProps> = ({ badges }) => {
               style={{ width: `${(earnedBadges.length / badges.length) * 100}%` }}
             />
           </div>
-          <div className="text-sm text-gray-600 mt-2">
+          <div className="text-sm text-gray-600 dark:text-gray-400 mt-2">
             {Math.round((earnedBadges.length / badges.length) * 100)}% abgeschlossen
           </div>
         </div>
@@ -68,10 +68,10 @@ const BadgeGallery: React.FC<BadgeGalleryProps> = ({ badges }) => {
       {/* Badge Categories */}
       {Object.entries(groupedBadges).map(([category, categoryBadges]) => (
         <div key={category} className="space-y-4">
-          <h3 className="text-xl font-semibold text-gray-900 flex items-center gap-2">
+          <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100 flex items-center gap-2">
             <div className={`w-4 h-4 rounded-full bg-gradient-to-r ${categoryColors[category as keyof typeof categoryColors]}`} />
             {categoryNames[category as keyof typeof categoryNames]}
-            <span className="text-sm font-normal text-gray-500">
+            <span className="text-sm font-normal text-gray-500 dark:text-gray-500">
               ({categoryBadges.filter(b => b.earned).length}/{categoryBadges.length})
             </span>
           </h3>
@@ -83,7 +83,7 @@ const BadgeGallery: React.FC<BadgeGalleryProps> = ({ badges }) => {
                 className={`card transition-all duration-300 ${
                   badge.earned
                     ? 'bg-gradient-to-br from-white to-yellow-50 border-yellow-200 shadow-lg animate-bounce-in'
-                    : 'bg-gray-50 border-gray-200 opacity-60'
+                    : 'bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700 opacity-60'
                 }`}
               >
                 <div className="text-center">
@@ -94,13 +94,13 @@ const BadgeGallery: React.FC<BadgeGalleryProps> = ({ badges }) => {
                   
                   {/* Badge Info */}
                   <h4 className={`font-semibold mb-2 ${
-                    badge.earned ? 'text-gray-900' : 'text-gray-500'
+                    badge.earned ? 'text-gray-900 dark:text-gray-100' : 'text-gray-500 dark:text-gray-500'
                   }`}>
                     {badge.name}
                   </h4>
                   
                   <p className={`text-sm mb-4 ${
-                    badge.earned ? 'text-gray-600' : 'text-gray-400'
+                    badge.earned ? 'text-gray-600 dark:text-gray-400' : 'text-gray-400'
                   }`}>
                     {badge.description}
                   </p>
@@ -113,7 +113,7 @@ const BadgeGallery: React.FC<BadgeGalleryProps> = ({ badges }) => {
                           ✓ Erreicht
                         </div>
                         {badge.earnedDate && (
-                          <div className="text-xs text-gray-500">
+                          <div className="text-xs text-gray-500 dark:text-gray-500">
                             {formatDate(badge.earnedDate)}
                           </div>
                         )}
@@ -134,19 +134,19 @@ const BadgeGallery: React.FC<BadgeGalleryProps> = ({ badges }) => {
       {/* Motivational Section */}
       {unearnedBadges.length > 0 && (
         <div className="card bg-gradient-to-r from-primary-50 to-secondary-50 text-center">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
             🎯 Nächste Herausforderungen
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {unearnedBadges.slice(0, 3).map((badge) => (
-              <div key={badge.id} className="p-4 bg-white rounded-lg">
+              <div key={badge.id} className="p-4 bg-white dark:bg-gray-800 rounded-lg">
                 <div className="text-2xl mb-2">{badge.icon}</div>
-                <div className="font-medium text-gray-900 text-sm">{badge.name}</div>
-                <div className="text-xs text-gray-600 mt-1">{badge.description}</div>
+                <div className="font-medium text-gray-900 dark:text-gray-100 text-sm">{badge.name}</div>
+                <div className="text-xs text-gray-600 dark:text-gray-400 mt-1">{badge.description}</div>
               </div>
             ))}
           </div>
-          <p className="text-sm text-gray-600 mt-4">
+          <p className="text-sm text-gray-600 dark:text-gray-400 mt-4">
             Bleib dran und sammle alle Badges! 🏆
           </p>
         </div>

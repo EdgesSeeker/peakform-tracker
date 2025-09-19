@@ -58,7 +58,7 @@ const SortableTrainingCard: React.FC<{
     <div ref={setNodeRef} style={style} className="space-y-2">
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-2">
-          <span className="text-sm font-medium text-gray-600">
+          <span className="text-sm font-medium text-gray-600 dark:text-gray-400">
             {dayName} - Tag {dayNumber}
           </span>
           {session.completed ? (
@@ -72,7 +72,7 @@ const SortableTrainingCard: React.FC<{
         <div
           {...attributes}
           {...listeners}
-          className="p-1 hover:bg-gray-100 rounded cursor-grab active:cursor-grabbing"
+          className="p-1 hover:bg-gray-100 dark:hover:bg-gray-600 dark:bg-gray-700 rounded cursor-grab active:cursor-grabbing"
           title="Drag to reorder"
         >
           <Move size={16} className="text-gray-400" />
@@ -161,24 +161,24 @@ const WeekCard: React.FC<WeekCardProps> = ({
         {/* Week Stats */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
           <div className="text-center">
-            <div className="text-2xl font-bold text-gray-900">{completedSessions}/{totalSessions}</div>
-            <div className="text-sm text-gray-600">Sessions</div>
+            <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">{completedSessions}/{totalSessions}</div>
+            <div className="text-sm text-gray-600 dark:text-gray-400">Sessions</div>
           </div>
           <div className="text-center">
-            <div className="text-2xl font-bold text-gray-900">{totalDistance.toFixed(1)}km</div>
-            <div className="text-sm text-gray-600">Gesamt-Distanz</div>
+            <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">{totalDistance.toFixed(1)}km</div>
+            <div className="text-sm text-gray-600 dark:text-gray-400">Gesamt-Distanz</div>
           </div>
           <div className="text-center">
-            <div className="text-2xl font-bold text-gray-900">{Math.floor(totalDuration / 60)}h {totalDuration % 60}min</div>
-            <div className="text-sm text-gray-600">Trainingszeit</div>
+            <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">{Math.floor(totalDuration / 60)}h {totalDuration % 60}min</div>
+            <div className="text-sm text-gray-600 dark:text-gray-400">Trainingszeit</div>
           </div>
         </div>
 
         {/* Progress Bar */}
         <div className="mb-6">
           <div className="flex justify-between items-center mb-2">
-            <span className="text-sm font-medium text-gray-700">Wochenfortschritt</span>
-            <span className="text-sm text-gray-500">{Math.round(completionPercentage)}%</span>
+            <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Wochenfortschritt</span>
+            <span className="text-sm text-gray-500 dark:text-gray-500">{Math.round(completionPercentage)}%</span>
           </div>
           <div className="progress-bar">
             <div 
@@ -220,7 +220,7 @@ const WeekCard: React.FC<WeekCardProps> = ({
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
           <Calendar className="w-5 h-5 text-primary-600" />
-          <h3 className="text-lg font-semibold text-gray-900">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
             Woche {week}
           </h3>
         </div>
@@ -232,8 +232,8 @@ const WeekCard: React.FC<WeekCardProps> = ({
       {/* Progress */}
       <div className="mb-4">
         <div className="flex justify-between items-center mb-2">
-          <span className="text-sm text-gray-600">Fortschritt</span>
-          <span className="text-sm font-medium text-gray-900">
+          <span className="text-sm text-gray-600 dark:text-gray-400">Fortschritt</span>
+          <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
             {completedSessions}/{totalSessions}
           </span>
         </div>
@@ -248,21 +248,21 @@ const WeekCard: React.FC<WeekCardProps> = ({
       {/* Quick Stats */}
       <div className="grid grid-cols-2 gap-4 text-center">
         <div>
-          <div className="text-lg font-semibold text-gray-900">
+          <div className="text-lg font-semibold text-gray-900 dark:text-gray-100">
             {totalDistance.toFixed(1)}km
           </div>
-          <div className="text-xs text-gray-600">Distanz</div>
+          <div className="text-xs text-gray-600 dark:text-gray-400">Distanz</div>
         </div>
         <div>
-          <div className="text-lg font-semibold text-gray-900">
+          <div className="text-lg font-semibold text-gray-900 dark:text-gray-100">
             {Math.floor(totalDuration / 60)}h {totalDuration % 60}min
           </div>
-          <div className="text-xs text-gray-600">Zeit</div>
+          <div className="text-xs text-gray-600 dark:text-gray-400">Zeit</div>
         </div>
       </div>
 
       {/* Session Preview */}
-      <div className="mt-4 pt-4 border-t border-gray-100">
+      <div className="mt-4 pt-4 border-t border-gray-100 dark:border-gray-700">
         <div className="flex -space-x-1">
           {sessions.slice(0, 7).map((session, index) => (
             <div
@@ -270,7 +270,7 @@ const WeekCard: React.FC<WeekCardProps> = ({
               className={`w-8 h-8 rounded-full border-2 border-white flex items-center justify-center text-xs font-medium ${
                 session.completed 
                   ? 'bg-success-500 text-white' 
-                  : 'bg-gray-200 text-gray-600'
+                  : 'bg-gray-200 dark:bg-gray-600 text-gray-600 dark:text-gray-400'
               }`}
               title={`${dayNames[index]}: ${session.title}`}
             >

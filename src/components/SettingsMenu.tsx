@@ -1,11 +1,17 @@
 import React, { useState } from 'react';
-import { Settings, RotateCcw, Download, AlertTriangle, Shield, Info } from 'lucide-react';
+import { Settings, RotateCcw, Download, AlertTriangle, Shield, Info, Calendar } from 'lucide-react';
 import storageManager from '../utils/storage';
+import GoogleCalendarSimple from './GoogleCalendarSimple';
 
-const SettingsMenu: React.FC = () => {
+interface SettingsMenuProps {
+  sessions?: any[];
+}
+
+const SettingsMenu: React.FC<SettingsMenuProps> = ({ sessions = [] }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [showResetConfirm, setShowResetConfirm] = useState(false);
   const [showStorageInfo, setShowStorageInfo] = useState(false);
+  const [showGoogleCalendarSetup, setShowGoogleCalendarSetup] = useState(false);
 
   const resetPlan = () => {
     console.log('🔄 Plan wird zurückgesetzt...');
@@ -46,7 +52,7 @@ const SettingsMenu: React.FC = () => {
       <button
         onClick={() => setIsOpen(!isOpen)}
         className={`p-2 rounded-lg transition-colors ${
-          isOpen ? 'bg-gray-100 text-gray-900' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+          isOpen ? 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100' : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 dark:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-700 dark:bg-gray-900'
         }`}
         title="Einstellungen"
       >
@@ -59,22 +65,38 @@ const SettingsMenu: React.FC = () => {
             className="fixed inset-0 z-10" 
             onClick={() => setIsOpen(false)}
           />
-          <div className="absolute right-0 top-full mt-2 w-64 bg-white rounded-lg shadow-xl border border-gray-200 py-2 z-20">
-            <div className="px-4 py-2 border-b border-gray-100">
-              <div className="font-medium text-gray-900 text-sm">Einstellungen</div>
+          <div className="absolute right-0 top-full mt-2 w-64 bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 py-2 z-20">
+            <div className="px-4 py-2 border-b border-gray-100 dark:border-gray-700">
+              <div className="font-medium text-gray-900 dark:text-gray-100 text-sm">Einstellungen</div>
             </div>
             
+            <button
+              onClick={() => {
+                setShowGoogleCalendarSetup(true);
+                setIsOpen(false);
+              }}
+              className="w-full px-4 py-3 text-left hover:bg-gray-50 dark:hover:bg-gray-700 dark:bg-gray-900 flex items-center gap-3 transition-colors"
+            >
+              <Calendar size={16} className="text-blue-500" />
+              <div>
+                <div className="text-sm font-medium text-gray-900 dark:text-gray-100">Google Calendar</div>
+                    <div className="text-xs text-gray-500 dark:text-gray-500">
+                      Einfache Integration
+                    </div>
+              </div>
+            </button>
+
             <button
               onClick={() => {
                 setShowStorageInfo(true);
                 setIsOpen(false);
               }}
-              className="w-full px-4 py-3 text-left hover:bg-gray-50 flex items-center gap-3 transition-colors"
+              className="w-full px-4 py-3 text-left hover:bg-gray-50 dark:hover:bg-gray-700 dark:bg-gray-900 flex items-center gap-3 transition-colors"
             >
               <Info size={16} className="text-blue-500" />
               <div>
-                <div className="text-sm font-medium text-gray-900">Speicher-Status</div>
-                <div className="text-xs text-gray-500">{storageStatus.sessionsCount} Sessions, {storageStatus.storageUsed}KB</div>
+                <div className="text-sm font-medium text-gray-900 dark:text-gray-100">Speicher-Status</div>
+                <div className="text-xs text-gray-500 dark:text-gray-500">{storageStatus.sessionsCount} Sessions, {storageStatus.storageUsed}KB</div>
               </div>
             </button>
 
@@ -82,12 +104,12 @@ const SettingsMenu: React.FC = () => {
               onClick={() => {
                 createManualBackup();
               }}
-              className="w-full px-4 py-3 text-left hover:bg-gray-50 flex items-center gap-3 transition-colors"
+              className="w-full px-4 py-3 text-left hover:bg-gray-50 dark:hover:bg-gray-700 dark:bg-gray-900 flex items-center gap-3 transition-colors"
             >
               <Shield size={16} className="text-green-500" />
               <div>
-                <div className="text-sm font-medium text-gray-900">Backup erstellen</div>
-                <div className="text-xs text-gray-500">Sicherheitskopie anlegen</div>
+                <div className="text-sm font-medium text-gray-900 dark:text-gray-100">Backup erstellen</div>
+                <div className="text-xs text-gray-500 dark:text-gray-500">Sicherheitskopie anlegen</div>
               </div>
             </button>
             
@@ -96,28 +118,28 @@ const SettingsMenu: React.FC = () => {
                 exportData();
                 setIsOpen(false);
               }}
-              className="w-full px-4 py-3 text-left hover:bg-gray-50 flex items-center gap-3 transition-colors"
+              className="w-full px-4 py-3 text-left hover:bg-gray-50 dark:hover:bg-gray-700 dark:bg-gray-900 flex items-center gap-3 transition-colors"
             >
-              <Download size={16} className="text-gray-500" />
+              <Download size={16} className="text-gray-500 dark:text-gray-500" />
               <div>
-                <div className="text-sm font-medium text-gray-900">Daten exportieren</div>
-                <div className="text-xs text-gray-500">Backup als JSON-Datei</div>
+                <div className="text-sm font-medium text-gray-900 dark:text-gray-100">Daten exportieren</div>
+                <div className="text-xs text-gray-500 dark:text-gray-500">Backup als JSON-Datei</div>
               </div>
             </button>
             
-            <div className="border-t border-gray-100 my-1"></div>
+            <div className="border-t border-gray-100 dark:border-gray-700 my-1"></div>
             
             <button
               onClick={() => {
                 setShowResetConfirm(true);
                 setIsOpen(false);
               }}
-              className="w-full px-4 py-3 text-left hover:bg-gray-50 flex items-center gap-3 transition-colors"
+              className="w-full px-4 py-3 text-left hover:bg-gray-50 dark:hover:bg-gray-700 dark:bg-gray-900 flex items-center gap-3 transition-colors"
             >
               <RotateCcw size={16} className="text-orange-500" />
               <div>
-                <div className="text-sm font-medium text-gray-900">Plan zurücksetzen</div>
-                <div className="text-xs text-gray-500">Neu starten mit heutigem Datum</div>
+                <div className="text-sm font-medium text-gray-900 dark:text-gray-100">Plan zurücksetzen</div>
+                <div className="text-xs text-gray-500 dark:text-gray-500">Neu starten mit heutigem Datum</div>
               </div>
             </button>
           </div>
@@ -126,17 +148,17 @@ const SettingsMenu: React.FC = () => {
 
       {showResetConfirm && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-xl shadow-xl max-w-md w-full p-6">
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl max-w-md w-full p-6">
             <div className="flex items-center gap-3 mb-4">
               <div className="p-2 bg-orange-100 rounded-lg">
                 <AlertTriangle className="w-6 h-6 text-orange-600" />
               </div>
-              <h3 className="text-lg font-semibold text-gray-900">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
                 Plan zurücksetzen?
               </h3>
             </div>
             
-            <p className="text-gray-600 mb-6">
+            <p className="text-gray-600 dark:text-gray-400 mb-6">
               Dies wird alle deine Trainings und Fortschritte löschen und den 8-Wochen-Plan 
               neu mit dem heutigen Datum starten.
             </p>
@@ -144,7 +166,7 @@ const SettingsMenu: React.FC = () => {
             <div className="flex gap-3">
               <button
                 onClick={() => setShowResetConfirm(false)}
-                className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+                className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 dark:bg-gray-900 transition-colors"
               >
                 Abbrechen
               </button>
@@ -161,12 +183,12 @@ const SettingsMenu: React.FC = () => {
 
       {showStorageInfo && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-xl shadow-xl max-w-md w-full p-6">
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl max-w-md w-full p-6">
             <div className="flex items-center gap-3 mb-4">
               <div className="p-2 bg-blue-100 rounded-lg">
                 <Info className="w-6 h-6 text-blue-600" />
               </div>
-              <h3 className="text-lg font-semibold text-gray-900">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
                 Speicher-Status
               </h3>
             </div>
@@ -174,20 +196,20 @@ const SettingsMenu: React.FC = () => {
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4 text-sm">
                 <div>
-                  <div className="font-medium text-gray-900">Sessions:</div>
-                  <div className="text-gray-600">{storageStatus.sessionsCount}</div>
+                  <div className="font-medium text-gray-900 dark:text-gray-100">Sessions:</div>
+                  <div className="text-gray-600 dark:text-gray-400">{storageStatus.sessionsCount}</div>
                 </div>
                 <div>
-                  <div className="font-medium text-gray-900">Speicher:</div>
-                  <div className="text-gray-600">{storageStatus.storageUsed} KB</div>
+                  <div className="font-medium text-gray-900 dark:text-gray-100">Speicher:</div>
+                  <div className="text-gray-600 dark:text-gray-400">{storageStatus.storageUsed} KB</div>
                 </div>
                 <div>
-                  <div className="font-medium text-gray-900">Stats:</div>
-                  <div className="text-gray-600">{storageStatus.hasStats ? '✅' : '❌'}</div>
+                  <div className="font-medium text-gray-900 dark:text-gray-100">Stats:</div>
+                  <div className="text-gray-600 dark:text-gray-400">{storageStatus.hasStats ? '✅' : '❌'}</div>
                 </div>
                 <div>
-                  <div className="font-medium text-gray-900">Backup:</div>
-                  <div className="text-gray-600">{storageStatus.hasBackup ? '✅' : '❌'}</div>
+                  <div className="font-medium text-gray-900 dark:text-gray-100">Backup:</div>
+                  <div className="text-gray-600 dark:text-gray-400">{storageStatus.hasBackup ? '✅' : '❌'}</div>
                 </div>
               </div>
               
@@ -210,7 +232,7 @@ const SettingsMenu: React.FC = () => {
             <div className="flex gap-3 mt-6">
               <button
                 onClick={() => setShowStorageInfo(false)}
-                className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+                className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 dark:bg-gray-900 transition-colors"
               >
                 Schließen
               </button>
@@ -226,6 +248,14 @@ const SettingsMenu: React.FC = () => {
             </div>
           </div>
         </div>
+      )}
+
+      {/* Google Calendar Simple Modal */}
+      {showGoogleCalendarSetup && (
+        <GoogleCalendarSimple 
+          sessions={sessions}
+          onClose={() => setShowGoogleCalendarSetup(false)} 
+        />
       )}
     </div>
   );

@@ -54,7 +54,7 @@ const TrainingCard: React.FC<TrainingCardProps> = ({
       case 'yoga':
         return 'text-green-600 bg-green-50';
       default:
-        return 'text-gray-600 bg-gray-50';
+        return 'text-gray-600 dark:text-gray-400 bg-gray-50 dark:bg-gray-900';
     }
   };
 
@@ -121,11 +121,11 @@ const TrainingCard: React.FC<TrainingCardProps> = ({
         </button>
       </div>
         
-        <h3 className="font-medium text-gray-900 text-sm mb-1 line-clamp-2">
+        <h3 className="font-medium text-gray-900 dark:text-gray-100 text-sm mb-1 line-clamp-2">
           {session.title}
         </h3>
         
-        <div className="flex items-center gap-2 text-xs text-gray-500">
+        <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-500">
           <Clock size={12} />
           <span>{session.duration}min</span>
           {session.distance && (
@@ -178,15 +178,15 @@ const TrainingCard: React.FC<TrainingCardProps> = ({
         </button>
       </div>
 
-      <h3 className="font-semibold text-gray-900 mb-2">
+      <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-2">
         {session.title}
       </h3>
       
-      <p className="text-gray-600 text-sm mb-4 line-clamp-2">
+      <p className="text-gray-600 dark:text-gray-400 text-sm mb-4 line-clamp-2">
         {session.description}
       </p>
 
-      <div className="flex items-center gap-4 text-sm text-gray-500 mb-4">
+      <div className="flex items-center gap-4 text-sm text-gray-500 dark:text-gray-500 mb-4">
         <div className="flex items-center gap-1">
           {session.notes && session.notes.includes('Timer:') ? (
             <Timer size={16} className="text-primary-600" />

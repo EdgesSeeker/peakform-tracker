@@ -10,6 +10,7 @@ import StravaIntegration from './components/StravaIntegration';
 import StravaCallback from './components/StravaCallback';
 import ResetPlan from './components/ResetPlan';
 import PWAInstall from './components/PWAInstall';
+import { ThemeProvider } from './contexts/ThemeContext';
 import { TrainingSession, UserStats, QuickCheck } from './types';
 import { getAdjustedPlan } from './data/detailedHybridPlan';
 import { badgeDefinitions, calculatePoints } from './data/badges';
@@ -146,6 +147,16 @@ function App() {
   // Stats neu berechnen wenn Sessions sich ändern
   useEffect(() => {
     if (sessions.length > 0) {
+      const completedCount = sessions.filter(s => s.completed).length;
+      const totalCount = sessions.length;
+      
+      console.log('🔍 Session-Debug:', {
+        totalSessions: totalCount,
+        completedSessions: completedCount,
+        completedSessionIds: sessions.filter(s => s.completed).map(s => s.id),
+        sampleSessions: sessions.slice(0, 3).map(s => ({ id: s.id, title: s.title, completed: s.completed }))
+      });
+      
       const newStats = calculateStatsFromSessions(sessions);
       setUserStats(newStats);
       console.log('📊 Stats neu berechnet:', {
@@ -175,7 +186,6 @@ function App() {
       
       if (existingSessionIndex >= 0) {
         // Update existing session
-        const existingSession = prev[existingSessionIndex];
         const newSessions = [...prev];
         newSessions[existingSessionIndex] = updatedSession;
         
@@ -237,6 +247,7 @@ function App() {
     });
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const updateQuickCheck = (field: keyof Omit<QuickCheck, 'date'>, value: 1 | 2 | 3 | 4 | 5) => {
     setQuickCheck(prev => ({
       ...prev,
@@ -261,11 +272,12 @@ function App() {
   };
 
   return (
-    <Router>
-      <div className="min-h-screen bg-gray-50 flex flex-col">
-        <Navigation />
-        <main className="flex-1 container mx-auto px-4 py-6 pb-8">
-          <Routes>
+    <ThemeProvider>
+      <Router>
+        <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col transition-colors duration-200">
+          <Navigation sessions={sessions} />
+          <main className="flex-1 container mx-auto px-4 py-6 pb-8">
+            <Routes>
             <Route 
               path="/" 
               element={
@@ -330,15 +342,16 @@ function App() {
               element={<StravaCallback />} 
             />
           </Routes>
-        </main>
-        
-        {/* PWA Install Prompt */}
-        <PWAInstall />
-        
-        {/* Reset Plan Button */}
-        <ResetPlan />
-      </div>
-    </Router>
+          </main>
+          
+          {/* PWA Install Prompt */}
+          <PWAInstall />
+          
+          {/* Reset Plan Button */}
+          <ResetPlan />
+        </div>
+      </Router>
+    </ThemeProvider>
   );
 }
 

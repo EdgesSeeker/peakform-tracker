@@ -4,11 +4,12 @@
 
 @layer base {
   * {
-    @apply border-gray-200;
+    @apply border-gray-200 dark:border-gray-700;
   }
   
   body {
     @apply bg-gray-50 text-gray-900 font-sans;
+    @apply dark:bg-gray-900 dark:text-gray-100;
     font-feature-settings: "rlig" 1, "calt" 1;
   }
   
@@ -20,26 +21,32 @@
 @layer components {
   .card {
     @apply bg-white rounded-xl shadow-sm border border-gray-100 p-6;
+    @apply dark:bg-gray-800 dark:border-gray-700;
   }
   
   .card-hover {
     @apply transition-all duration-200 hover:shadow-md hover:-translate-y-1;
+    @apply dark:hover:shadow-gray-900/20;
   }
   
   .btn-primary {
     @apply bg-primary-500 hover:bg-primary-600 text-white font-medium px-4 py-2 rounded-lg transition-colors duration-200 flex items-center gap-2;
+    @apply dark:bg-primary-600 dark:hover:bg-primary-700;
   }
   
   .btn-secondary {
     @apply bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium px-4 py-2 rounded-lg transition-colors duration-200 flex items-center gap-2;
+    @apply dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-gray-200;
   }
   
   .btn-success {
     @apply bg-success-500 hover:bg-success-600 text-white font-medium px-4 py-2 rounded-lg transition-colors duration-200 flex items-center gap-2;
+    @apply dark:bg-success-600 dark:hover:bg-success-700;
   }
   
   .progress-bar {
     @apply w-full bg-gray-200 rounded-full h-3;
+    @apply dark:bg-gray-700;
   }
   
   .progress-fill {
@@ -52,14 +59,17 @@
   
   .badge-success {
     @apply bg-success-100 text-success-800;
+    @apply dark:bg-success-900/30 dark:text-success-300;
   }
   
   .badge-primary {
     @apply bg-primary-100 text-primary-800;
+    @apply dark:bg-primary-900/30 dark:text-primary-300;
   }
   
   .badge-secondary {
     @apply bg-gray-100 text-gray-800;
+    @apply dark:bg-gray-700 dark:text-gray-200;
   }
   
   .quick-check-button {
@@ -92,6 +102,7 @@
   
   .training-card.completed {
     @apply bg-success-50 border-success-200;
+    @apply dark:bg-success-900/20 dark:border-success-700;
   }
 }
 
@@ -105,13 +116,25 @@
   border-radius: 4px;
 }
 
+.dark ::-webkit-scrollbar-track {
+  background: #374151;
+}
+
 ::-webkit-scrollbar-thumb {
   background: #cbd5e1;
   border-radius: 4px;
 }
 
+.dark ::-webkit-scrollbar-thumb {
+  background: #6b7280;
+}
+
 ::-webkit-scrollbar-thumb:hover {
   background: #94a3b8;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
 }
 
 /* Animation classes */

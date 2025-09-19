@@ -59,27 +59,27 @@ const PWAInstall: React.FC = () => {
   }
 
   return (
-    <div className="fixed top-20 right-4 max-w-sm bg-white rounded-xl shadow-xl border border-gray-200 p-4 z-40 animate-slide-up">
+    <div className="fixed top-20 right-4 max-w-sm bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-200 dark:border-gray-700 p-4 z-40 animate-slide-up">
       <div className="flex items-start justify-between mb-3">
         <div className="flex items-center gap-2">
           <div className="p-2 bg-primary-100 rounded-lg">
             <Smartphone className="w-5 h-5 text-primary-600" />
           </div>
           <div>
-            <h3 className="font-semibold text-gray-900 text-sm">
+            <h3 className="font-semibold text-gray-900 dark:text-gray-100 text-sm">
               PeakForm installieren
             </h3>
           </div>
         </div>
         <button
           onClick={dismissPrompt}
-          className="p-1 hover:bg-gray-100 rounded transition-colors"
+          className="p-1 hover:bg-gray-100 dark:hover:bg-gray-600 dark:bg-gray-700 rounded transition-colors"
         >
           <X size={16} />
         </button>
       </div>
       
-      <p className="text-gray-600 text-sm mb-4">
+      <p className="text-gray-600 dark:text-gray-400 text-sm mb-4">
         Installiere PeakForm für schnellen Zugriff und Offline-Nutzung!
       </p>
       
@@ -93,7 +93,7 @@ const PWAInstall: React.FC = () => {
         </button>
         <button
           onClick={dismissPrompt}
-          className="px-3 py-2 text-gray-500 hover:text-gray-700 text-sm transition-colors"
+          className="px-3 py-2 text-gray-500 dark:text-gray-500 hover:text-gray-700 dark:text-gray-300 text-sm transition-colors"
         >
           Später
         </button>

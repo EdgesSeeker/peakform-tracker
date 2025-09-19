@@ -51,8 +51,8 @@ const QuickCheckWidget: React.FC<QuickCheckWidgetProps> = ({ quickCheck, onUpdat
     <div className="card">
       <div className="flex items-center gap-2 mb-6">
         <Brain className="w-5 h-5 text-primary-600" />
-        <h2 className="text-lg font-semibold text-gray-900">Quick-Check</h2>
-        <span className="text-sm text-gray-500">
+        <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Quick-Check</h2>
+        <span className="text-sm text-gray-500 dark:text-gray-500">
           Wie fühlst du dich heute?
         </span>
       </div>
@@ -61,13 +61,13 @@ const QuickCheckWidget: React.FC<QuickCheckWidgetProps> = ({ quickCheck, onUpdat
         {checkItems.map((item) => (
           <div key={item.key} className="text-center">
             <div className="flex items-center justify-center mb-3">
-              <div className="p-2 bg-gray-50 rounded-lg">
-                <item.icon className="w-5 h-5 text-gray-600" />
+              <div className="p-2 bg-gray-50 dark:bg-gray-900 rounded-lg">
+                <item.icon className="w-5 h-5 text-gray-600 dark:text-gray-400" />
               </div>
             </div>
-            <h3 className="font-medium text-gray-900 mb-3">{item.label}</h3>
+            <h3 className="font-medium text-gray-900 dark:text-gray-100 mb-3">{item.label}</h3>
             {renderRatingButtons(item.value, (value) => onUpdate(item.key, value))}
-            <div className="mt-2 text-xs text-gray-500">
+            <div className="mt-2 text-xs text-gray-500 dark:text-gray-500">
               {item.value === 1 && 'Sehr schlecht'}
               {item.value === 2 && 'Schlecht'}
               {item.value === 3 && 'Okay'}

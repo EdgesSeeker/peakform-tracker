@@ -15,11 +15,14 @@ class StorageManager {
     quickcheck: 'peakform-quickcheck',
     backup: 'peakform-backup',
     lastBackup: 'peakform-last-backup',
-    uiState: 'peakform-ui-state'
+    uiState: 'peakform-ui-state',
+    syncState: 'peakform-sync-state',
+    googleCalendar: 'peakform-google-calendar'
   };
 
-  private readonly BACKUP_INTERVAL = 24 * 60 * 60 * 1000; // 24 Stunden
-  private readonly VERSION = '1.0.0';
+  private readonly BACKUP_INTERVAL = 6 * 60 * 60 * 1000; // 6 Stunden (häufiger)
+  private readonly VERSION = '1.0.1';
+  private readonly MAX_STORAGE_SIZE = 5 * 1024 * 1024; // 5MB Limit
 
   // Sessions speichern
   saveSessions(sessions: TrainingSession[]): boolean {
@@ -45,7 +48,7 @@ class StorageManager {
       }
       
       const sessions = JSON.parse(data);
-      console.log('✅ Sessions geladen:', sessions.length);
+      // console.log('✅ Sessions geladen:', sessions.length); // Zu viele Logs
       
       // Validierung der Sessions
       if (!Array.isArray(sessions)) {
@@ -300,6 +303,132 @@ class StorageManager {
     const state = this.loadUIState();
     return state[key] !== undefined ? state[key] : defaultValue;
   }
+
+  // Erweiterte Persistierung-Funktionen
+  
+  // Prüfe ob Storage verfügbar ist
+  isStorageAvailable(): boolean {
+    try {
+      const test = '__storage_test__';
+      localStorage.setItem(test, test);
+      localStorage.removeItem(test);
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  // Prüfe Storage-Größe
+  getStorageSize(): { used: number; available: number; percentage: number } {
+    let used = 0;
+    Object.values(this.STORAGE_KEYS).forEach(key => {
+      const data = localStorage.getItem(key);
+      if (data) used += new Blob([data]).size;
+    });
+
+    const available = this.MAX_STORAGE_SIZE - used;
+    const percentage = Math.round((used / this.MAX_STORAGE_SIZE) * 100);
+
+    return { used, available, percentage };
+  }
+
+  // Automatische Bereinigung bei Storage-Problemen
+  cleanupStorage(): void {
+    try {
+      const storageInfo = this.getStorageSize();
+      
+      if (storageInfo.percentage > 80) {
+        console.log('🧹 Storage-Bereinigung gestartet...');
+        
+        // Alte Backups löschen (behalte nur das neueste)
+        const keys = Object.keys(localStorage);
+        const backupKeys = keys.filter(key => key.startsWith('peakform-backup-old'));
+        backupKeys.forEach(key => localStorage.removeItem(key));
+        
+        // UI-State bereinigen (behalte nur wichtige Einstellungen)
+        const uiState = this.loadUIState();
+        const importantKeys = ['theme', 'expandedSessions'];
+        const cleanedUIState: any = {};
+        importantKeys.forEach(key => {
+          if (uiState[key] !== undefined) {
+            cleanedUIState[key] = uiState[key];
+          }
+        });
+        localStorage.setItem(this.STORAGE_KEYS.uiState, JSON.stringify(cleanedUIState));
+        
+        console.log('✅ Storage bereinigt');
+      }
+    } catch (error) {
+      console.error('❌ Fehler bei Storage-Bereinigung:', error);
+    }
+  }
+
+  // Sync-State für Multi-Device Support
+  saveSyncState(lastSync: Date, deviceId: string): void {
+    try {
+      const syncState = {
+        lastSync: lastSync.toISOString(),
+        deviceId,
+        version: this.VERSION,
+        timestamp: Date.now()
+      };
+      localStorage.setItem(this.STORAGE_KEYS.syncState, JSON.stringify(syncState));
+    } catch (error) {
+      console.error('❌ Fehler beim Speichern des Sync-Status:', error);
+    }
+  }
+
+  getSyncState(): { lastSync: Date | null; deviceId: string | null; needsSync: boolean } {
+    try {
+      const data = localStorage.getItem(this.STORAGE_KEYS.syncState);
+      if (!data) {
+        return { lastSync: null, deviceId: null, needsSync: true };
+      }
+
+      const syncState = JSON.parse(data);
+      const lastSync = new Date(syncState.lastSync);
+      const now = new Date();
+      const hoursSinceSync = (now.getTime() - lastSync.getTime()) / (1000 * 60 * 60);
+      
+      return {
+        lastSync,
+        deviceId: syncState.deviceId,
+        needsSync: hoursSinceSync > 2 // Sync wenn älter als 2 Stunden
+      };
+    } catch (error) {
+      console.error('❌ Fehler beim Laden des Sync-Status:', error);
+      return { lastSync: null, deviceId: null, needsSync: true };
+    }
+  }
+
+  // Robustes Speichern mit Retry-Logic
+  saveWithRetry<T>(key: string, data: T, maxRetries: number = 3): boolean {
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+      try {
+        localStorage.setItem(key, JSON.stringify(data));
+        return true;
+      } catch (error) {
+        console.warn(`⚠️ Speichern fehlgeschlagen (Versuch ${attempt}/${maxRetries}):`, error);
+        
+        if (attempt === maxRetries) {
+          // Letzter Versuch: Storage bereinigen und nochmal versuchen
+          this.cleanupStorage();
+          try {
+            localStorage.setItem(key, JSON.stringify(data));
+            return true;
+          } catch (finalError) {
+            console.error('❌ Speichern endgültig fehlgeschlagen:', finalError);
+            return false;
+          }
+        }
+        
+        // Kurz warten vor nächstem Versuch
+        setTimeout(() => {}, 100);
+      }
+    }
+    return false;
+  }
 }
 
-export default new StorageManager();
+const storageManagerInstance = new StorageManager();
+export default storageManagerInstance;

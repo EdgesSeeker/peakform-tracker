@@ -39,10 +39,10 @@ const WeekOverview: React.FC<WeekOverviewProps> = ({
   return (
     <div className="card">
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-xl font-bold text-gray-900">
+        <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">
           Woche {weekNumber} Übersicht
         </h2>
-        <div className="text-sm text-gray-600">
+        <div className="text-sm text-gray-600 dark:text-gray-400">
           {completedSessions}/{totalSessions} Sessions
         </div>
       </div>
@@ -50,8 +50,8 @@ const WeekOverview: React.FC<WeekOverviewProps> = ({
       {/* Progress Bar */}
       <div className="mb-6">
         <div className="flex justify-between items-center mb-2">
-          <span className="text-sm font-medium text-gray-700">Fortschritt</span>
-          <span className="text-sm text-gray-500">{Math.round(completionPercentage)}%</span>
+          <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Fortschritt</span>
+          <span className="text-sm text-gray-500 dark:text-gray-500">{Math.round(completionPercentage)}%</span>
         </div>
         <div className="progress-bar">
           <div 
@@ -64,7 +64,7 @@ const WeekOverview: React.FC<WeekOverviewProps> = ({
       {/* Kraft vs Ausdauer Balance */}
       <div className="mb-6">
         <div className="flex justify-between items-center mb-2">
-          <span className="text-sm font-medium text-gray-700">Kraft vs. Ausdauer</span>
+          <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Kraft vs. Ausdauer</span>
         </div>
         <div className="flex rounded-lg overflow-hidden h-3">
           <div 
@@ -78,11 +78,11 @@ const WeekOverview: React.FC<WeekOverviewProps> = ({
             title={`Ausdauer: ${Math.round(cardioPercentage)}%`}
           />
           <div 
-            className="bg-gray-200 transition-all duration-300"
+            className="bg-gray-200 dark:bg-gray-600 transition-all duration-300"
             style={{ width: `${100 - strengthPercentage - cardioPercentage}%` }}
           />
         </div>
-        <div className="flex justify-between mt-2 text-xs text-gray-500">
+        <div className="flex justify-between mt-2 text-xs text-gray-500 dark:text-gray-500">
           <span>💪 Kraft ({Math.round(strengthPercentage)}%)</span>
           <span>🏃‍♂️ Ausdauer ({Math.round(cardioPercentage)}%)</span>
         </div>
@@ -103,7 +103,7 @@ const WeekOverview: React.FC<WeekOverviewProps> = ({
               <div className={`text-center text-sm font-medium px-2 py-1 rounded-lg transition-all ${
                 isToday 
                   ? 'bg-primary-500 text-white font-bold shadow-md' 
-                  : 'text-gray-600'
+                  : 'text-gray-600 dark:text-gray-400'
               }`}>
                 {dayNames[session.day - 1] || `Tag ${session.day}`}
               </div>

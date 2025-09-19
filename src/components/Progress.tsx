@@ -57,10 +57,10 @@ const Progress: React.FC<ProgressProps> = ({ sessions, userStats }) => {
     <div className="space-y-8 animate-fade-in">
       {/* Header */}
       <div className="text-center">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">
           Dein Fortschritt 📊
         </h1>
-        <p className="text-gray-600">
+        <p className="text-gray-600 dark:text-gray-400">
           Verfolge deine Entwicklung und erreichte Meilensteine
         </p>
       </div>
@@ -71,8 +71,8 @@ const Progress: React.FC<ProgressProps> = ({ sessions, userStats }) => {
           <div className="text-3xl font-bold text-primary-600 mb-2">
             {userStats.totalSessions}
           </div>
-          <div className="text-sm text-gray-600">Absolvierte Sessions</div>
-          <div className="text-xs text-gray-500 mt-1">
+          <div className="text-sm text-gray-600 dark:text-gray-400">Absolvierte Sessions</div>
+          <div className="text-xs text-gray-500 dark:text-gray-500 mt-1">
             von {sessions.length} geplant
           </div>
         </div>
@@ -81,8 +81,8 @@ const Progress: React.FC<ProgressProps> = ({ sessions, userStats }) => {
           <div className="text-3xl font-bold text-success-600 mb-2">
             {userStats.totalDistance.toFixed(1)}km
           </div>
-          <div className="text-sm text-gray-600">Gesamt-Distanz</div>
-          <div className="text-xs text-gray-500 mt-1">
+          <div className="text-sm text-gray-600 dark:text-gray-400">Gesamt-Distanz</div>
+          <div className="text-xs text-gray-500 dark:text-gray-500 mt-1">
             🏃‍♂️ Lauf + 🚴‍♂️ Rad + 🏊‍♂️ Schwimmen
           </div>
         </div>
@@ -91,8 +91,8 @@ const Progress: React.FC<ProgressProps> = ({ sessions, userStats }) => {
           <div className="text-3xl font-bold text-purple-600 mb-2">
             {Math.floor(userStats.totalDuration / 60)}h
           </div>
-          <div className="text-sm text-gray-600">Trainingszeit</div>
-          <div className="text-xs text-gray-500 mt-1">
+          <div className="text-sm text-gray-600 dark:text-gray-400">Trainingszeit</div>
+          <div className="text-xs text-gray-500 dark:text-gray-500 mt-1">
             {userStats.totalDuration % 60} Min zusätzlich
           </div>
         </div>
@@ -101,8 +101,8 @@ const Progress: React.FC<ProgressProps> = ({ sessions, userStats }) => {
           <div className="text-3xl font-bold text-orange-600 mb-2">
             {userStats.points}
           </div>
-          <div className="text-sm text-gray-600">Punkte</div>
-          <div className="text-xs text-gray-500 mt-1">
+          <div className="text-sm text-gray-600 dark:text-gray-400">Punkte</div>
+          <div className="text-xs text-gray-500 dark:text-gray-500 mt-1">
             🏆 {userStats.badges.filter(b => b.earned).length} Badges
           </div>
         </div>
@@ -110,15 +110,15 @@ const Progress: React.FC<ProgressProps> = ({ sessions, userStats }) => {
 
       {/* Weekly Progress Overview */}
       <div className="card">
-        <h2 className="text-xl font-semibold text-gray-900 mb-6">
+        <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-6">
           Wöchentlicher Fortschritt
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-8 gap-4">
           {weeklyProgress.map(week => (
             <div key={week.week} className="text-center">
               <div className="mb-2">
-                <div className="text-lg font-bold text-gray-900">W{week.week}</div>
-                <div className="text-xs text-gray-500">
+                <div className="text-lg font-bold text-gray-900 dark:text-gray-100">W{week.week}</div>
+                <div className="text-xs text-gray-500 dark:text-gray-500">
                   {week.completedSessions}/{week.totalSessions}
                 </div>
               </div>
@@ -130,7 +130,7 @@ const Progress: React.FC<ProgressProps> = ({ sessions, userStats }) => {
                   }}
                 />
               </div>
-              <div className="text-xs text-gray-600">
+              <div className="text-xs text-gray-600 dark:text-gray-400">
                 {week.totalDistance.toFixed(1)}km
               </div>
             </div>
@@ -140,15 +140,15 @@ const Progress: React.FC<ProgressProps> = ({ sessions, userStats }) => {
 
       {/* Tabs */}
       <div className="flex justify-center">
-        <div className="flex bg-gray-100 rounded-lg p-1">
+        <div className="flex bg-gray-100 dark:bg-gray-700 rounded-lg p-1">
           {tabs.map(tab => (
             <button
               key={tab.key}
               onClick={() => setActiveTab(tab.key)}
               className={`flex items-center gap-2 px-6 py-3 rounded-md font-medium transition-colors ${
                 activeTab === tab.key
-                  ? 'bg-white text-primary-600 shadow-sm'
-                  : 'text-gray-600 hover:text-gray-900'
+                  ? 'bg-white dark:bg-gray-800 text-primary-600 shadow-sm'
+                  : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 dark:text-gray-100'
               }`}
             >
               <tab.icon size={18} />

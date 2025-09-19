@@ -109,9 +109,9 @@ const PersonalRecords: React.FC<PersonalRecordsProps> = ({ sessions, personalRec
         <div className="card">
           <div className="flex items-center gap-2 mb-4">
             <Icon className={`w-5 h-5 ${color}`} />
-            <h3 className="text-lg font-semibold text-gray-900">{title}</h3>
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">{title}</h3>
           </div>
-          <div className="text-center py-8 text-gray-500">
+          <div className="text-center py-8 text-gray-500 dark:text-gray-500">
             <Trophy size={48} className="mx-auto mb-2 text-gray-300" />
             <p>Noch keine Rekorde in dieser Kategorie</p>
             <p className="text-sm">Starte dein Training, um deine ersten PRs zu setzen!</p>
@@ -124,17 +124,17 @@ const PersonalRecords: React.FC<PersonalRecordsProps> = ({ sessions, personalRec
       <div className="card">
         <div className="flex items-center gap-2 mb-4">
           <Icon className={`w-5 h-5 ${color}`} />
-          <h3 className="text-lg font-semibold text-gray-900">{title}</h3>
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">{title}</h3>
         </div>
         <div className="space-y-3">
           {prs.map((pr, index) => (
-            <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+            <div key={index} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-900 rounded-lg">
               <div>
-                <div className="font-medium text-gray-900">{pr.exercise}</div>
-                <div className="text-sm text-gray-600">{formatDate(pr.date)}</div>
+                <div className="font-medium text-gray-900 dark:text-gray-100">{pr.exercise}</div>
+                <div className="text-sm text-gray-600 dark:text-gray-400">{formatDate(pr.date)}</div>
               </div>
               <div className="text-right">
-                <div className="text-xl font-bold text-gray-900">
+                <div className="text-xl font-bold text-gray-900 dark:text-gray-100">
                   {pr.value} {pr.unit}
                 </div>
               </div>
@@ -150,10 +150,10 @@ const PersonalRecords: React.FC<PersonalRecordsProps> = ({ sessions, personalRec
       {/* Header */}
       <div className="text-center">
         <Trophy className="w-12 h-12 text-yellow-500 mx-auto mb-4" />
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">
+        <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">
           Persönliche Bestleistungen
         </h2>
-        <p className="text-gray-600">
+        <p className="text-gray-600 dark:text-gray-400">
           Deine besten Leistungen in allen Bereichen
         </p>
       </div>
@@ -189,21 +189,21 @@ const PersonalRecords: React.FC<PersonalRecordsProps> = ({ sessions, personalRec
       {/* Motivation Section */}
       <div className="card bg-gradient-to-r from-primary-50 to-secondary-50">
         <div className="text-center">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
             🎯 Nächste Ziele
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-            <div className="p-3 bg-white rounded-lg">
-              <div className="font-medium text-gray-900">Kniebeuge</div>
-              <div className="text-gray-600">Ziel: 100kg</div>
+            <div className="p-3 bg-white dark:bg-gray-800 rounded-lg">
+              <div className="font-medium text-gray-900 dark:text-gray-100">Kniebeuge</div>
+              <div className="text-gray-600 dark:text-gray-400">Ziel: 100kg</div>
             </div>
-            <div className="p-3 bg-white rounded-lg">
-              <div className="font-medium text-gray-900">Kreuzheben</div>
-              <div className="text-gray-600">Ziel: 120kg</div>
+            <div className="p-3 bg-white dark:bg-gray-800 rounded-lg">
+              <div className="font-medium text-gray-900 dark:text-gray-100">Kreuzheben</div>
+              <div className="text-gray-600 dark:text-gray-400">Ziel: 120kg</div>
             </div>
-            <div className="p-3 bg-white rounded-lg">
-              <div className="font-medium text-gray-900">Laufen</div>
-              <div className="text-gray-600">Ziel: 21km</div>
+            <div className="p-3 bg-white dark:bg-gray-800 rounded-lg">
+              <div className="font-medium text-gray-900 dark:text-gray-100">Laufen</div>
+              <div className="text-gray-600 dark:text-gray-400">Ziel: 21km</div>
             </div>
           </div>
         </div>
