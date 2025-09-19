@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Settings, RotateCcw, Download, AlertTriangle, Shield, Info, Calendar, Cloud } from 'lucide-react';
 import storageManager from '../utils/storage';
 import GoogleCalendarSimple from './GoogleCalendarSimple';
-import CloudSync from './CloudSync';
+import DeviceSync from './DeviceSync';
 import { TrainingSession, UserStats, QuickCheck } from '../types';
 
 interface SettingsMenuProps {
@@ -277,9 +277,9 @@ const SettingsMenu: React.FC<SettingsMenuProps> = ({
         </div>
       )}
 
-      {/* Cloud Sync Modal */}
+      {/* Device Sync Modal */}
       {showCloudSync && userStats && quickCheck && onDataUpdated && (
-        <CloudSync
+        <DeviceSync
           sessions={sessions}
           userStats={userStats}
           quickCheck={quickCheck}
