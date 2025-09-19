@@ -327,7 +327,12 @@ const TrainingLog: React.FC<TrainingLogProps> = ({
                             <span>{session.distance.toFixed(1)} km</span>
                           </div>
                         )}
-                        {session.exercises && (
+                        {session.workoutPlan ? (
+                          <div className="flex items-center gap-1">
+                            <Dumbbell size={14} />
+                            <span>Detaillierter Plan</span>
+                          </div>
+                        ) : session.exercises && (
                           <div className="flex items-center gap-1">
                             <Dumbbell size={14} />
                             <span>{session.exercises.length} Übungen</span>
@@ -338,7 +343,89 @@ const TrainingLog: React.FC<TrainingLogProps> = ({
                       {/* Expanded Details */}
                       {isExpanded && (
                         <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
-                          {session.exercises && (
+                          {/* Neue WorkoutPlan Struktur (detailliert) */}
+                          {session.workoutPlan && (
+                            <div className="mb-4">
+                              <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-3 flex items-center gap-2">
+                                <Dumbbell size={16} className="text-primary-600" />
+                                Detaillierter Trainingsplan:
+                              </h4>
+                              
+                              {/* Warmup */}
+                              {session.workoutPlan.warmup && (
+                                <div className="mb-4 bg-orange-50 dark:bg-orange-900/20 rounded-lg p-3 border border-orange-200 dark:border-orange-800">
+                                  <h5 className="font-medium text-orange-800 dark:text-orange-200 mb-2">
+                                    🔥 {session.workoutPlan.warmup.title} ({session.workoutPlan.warmup.duration})
+                                  </h5>
+                                  <div className="space-y-1">
+                                    {session.workoutPlan.warmup.exercises.map((exercise, index) => (
+                                      <div key={index} className="text-sm text-orange-700 dark:text-orange-300">
+                                        • {exercise.name} - {exercise.sets} x {exercise.reps}
+                                        {exercise.instructions && (
+                                          <div className="text-xs text-orange-600 dark:text-orange-400 ml-4">
+                                            💡 {exercise.instructions}
+                                          </div>
+                                        )}
+                                      </div>
+                                    ))}
+                                  </div>
+                                </div>
+                              )}
+                              
+                              {/* Main Training */}
+                              <div className="mb-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg p-3 border border-blue-200 dark:border-blue-800">
+                                <h5 className="font-medium text-blue-800 dark:text-blue-200 mb-2">
+                                  💪 {session.workoutPlan.main.title} ({session.workoutPlan.main.duration})
+                                </h5>
+                                <div className="space-y-2">
+                                  {session.workoutPlan.main.exercises.map((exercise, index) => (
+                                    <div key={index} className="bg-white dark:bg-gray-800 rounded p-2 border border-blue-200 dark:border-blue-700">
+                                      <div className="font-medium text-blue-900 dark:text-blue-100 text-sm">
+                                        {exercise.name}
+                                      </div>
+                                      <div className="text-xs text-blue-700 dark:text-blue-300">
+                                        {exercise.sets} Sätze × {exercise.reps}
+                                        {exercise.equipment && (
+                                          <span className="ml-2 text-blue-600 dark:text-blue-400">
+                                            📋 {exercise.equipment}
+                                          </span>
+                                        )}
+                                      </div>
+                                      {exercise.instructions && (
+                                        <div className="text-xs text-blue-600 dark:text-blue-400 mt-1">
+                                          💡 {exercise.instructions}
+                                        </div>
+                                      )}
+                                    </div>
+                                  ))}
+                                </div>
+                              </div>
+                              
+                              {/* Cooldown */}
+                              {session.workoutPlan.cooldown && (
+                                <div className="bg-green-50 dark:bg-green-900/20 rounded-lg p-3 border border-green-200 dark:border-green-800">
+                                  <h5 className="font-medium text-green-800 dark:text-green-200 mb-2">
+                                    🧘 {session.workoutPlan.cooldown.title} ({session.workoutPlan.cooldown.duration})
+                                  </h5>
+                                  <div className="space-y-1">
+                                    {session.workoutPlan.cooldown.exercises.map((exercise, index) => (
+                                      <div key={index} className="text-sm text-green-700 dark:text-green-300">
+                                        • {exercise.name} - {exercise.sets} x {exercise.reps}
+                                        {exercise.instructions && (
+                                          <div className="text-xs text-green-600 dark:text-green-400 ml-4">
+                                            💡 {exercise.instructions}
+                                          </div>
+                                        )}
+                                      </div>
+                                    ))}
+                                  </div>
+                                </div>
+                              )}
+                            </div>
+                          )}
+                          
+                          {/* Fallback: Alte Exercise Struktur */}
+                          {!session.workoutPlan && session.exercises && (
                             <div className="mb-4">
                               <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-2">Übungen:</h4>
                               <div className="space-y-2">

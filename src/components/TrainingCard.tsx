@@ -134,6 +134,12 @@ const TrainingCard: React.FC<TrainingCardProps> = ({
               <span>{session.distance}km</span>
             </>
           )}
+          {session.workoutPlan && (
+            <>
+              <Dumbbell size={12} />
+              <span>Plan</span>
+            </>
+          )}
         </div>
         
         <div className={`badge badge-secondary mt-2 text-xs`}>
@@ -206,7 +212,12 @@ const TrainingCard: React.FC<TrainingCardProps> = ({
             <span>{session.distance.toFixed(1)} km</span>
           </div>
         )}
-        {session.exercises && (
+        {session.workoutPlan ? (
+          <div className="flex items-center gap-1">
+            <Dumbbell size={16} />
+            <span>Detaillierter Plan</span>
+          </div>
+        ) : session.exercises && (
           <div className="flex items-center gap-1">
             <Dumbbell size={16} />
             <span>{session.exercises.length} Übungen</span>

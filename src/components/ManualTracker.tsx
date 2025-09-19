@@ -14,7 +14,8 @@ const ManualTracker: React.FC<ManualTrackerProps> = ({ session, onSave, onCancel
     distance: session.distance || 0,
     calories: session.calories || 0,
     notes: session.notes || '',
-    exercises: session.exercises || []
+    exercises: session.exercises || [],
+    workoutPlan: session.workoutPlan || null
   });
 
   const addExercise = () => {
@@ -101,6 +102,7 @@ const ManualTracker: React.FC<ManualTrackerProps> = ({ session, onSave, onCancel
       calories: formData.calories > 0 ? formData.calories : undefined,
       notes: formData.notes || undefined,
       exercises: formData.exercises.length > 0 ? formData.exercises : undefined,
+      workoutPlan: formData.workoutPlan || undefined, // Behalte die workoutPlan Struktur
       completed: true
     };
 
@@ -204,11 +206,65 @@ const ManualTracker: React.FC<ManualTrackerProps> = ({ session, onSave, onCancel
             />
           </div>
 
+          {/* Workout Plan Anzeige (wenn vorhanden) */}
+          {formData.workoutPlan && (
+            <div className="mb-6">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4 flex items-center gap-2">
+                <Dumbbell size={18} className="text-primary-600" />
+                Trainingsplan-Übersicht
+              </h3>
+              
+              <div className="space-y-3 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                {/* Warmup */}
+                {formData.workoutPlan.warmup && (
+                  <div className="bg-orange-100 dark:bg-orange-900/30 p-3 rounded-lg">
+                    <h4 className="font-medium text-orange-800 dark:text-orange-200 text-sm mb-2">
+                      🔥 {formData.workoutPlan.warmup.title} ({formData.workoutPlan.warmup.duration})
+                    </h4>
+                    <div className="text-xs text-orange-700 dark:text-orange-300 space-y-1">
+                      {formData.workoutPlan.warmup.exercises.map((exercise, index) => (
+                        <div key={index}>• {exercise.name} - {exercise.sets} x {exercise.reps}</div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                
+                {/* Main */}
+                <div className="bg-blue-100 dark:bg-blue-900/30 p-3 rounded-lg">
+                  <h4 className="font-medium text-blue-800 dark:text-blue-200 text-sm mb-2">
+                    💪 {formData.workoutPlan.main.title} ({formData.workoutPlan.main.duration})
+                  </h4>
+                  <div className="text-xs text-blue-700 dark:text-blue-300 space-y-1">
+                    {formData.workoutPlan.main.exercises.map((exercise, index) => (
+                      <div key={index}>• {exercise.name} - {exercise.sets} x {exercise.reps}</div>
+                    ))}
+                  </div>
+                </div>
+                
+                {/* Cooldown */}
+                {formData.workoutPlan.cooldown && (
+                  <div className="bg-green-100 dark:bg-green-900/30 p-3 rounded-lg">
+                    <h4 className="font-medium text-green-800 dark:text-green-200 text-sm mb-2">
+                      🧘 {formData.workoutPlan.cooldown.title} ({formData.workoutPlan.cooldown.duration})
+                    </h4>
+                    <div className="text-xs text-green-700 dark:text-green-300 space-y-1">
+                      {formData.workoutPlan.cooldown.exercises.map((exercise, index) => (
+                        <div key={index}>• {exercise.name} - {exercise.sets} x {exercise.reps}</div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
           {/* Exercises (nur bei Krafttraining) */}
           {session.type === 'strength' && (
             <div>
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Übungen</h3>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                  {formData.workoutPlan ? 'Zusätzliche Übungen' : 'Übungen'}
+                </h3>
                 <button
                   onClick={addExercise}
                   className="btn-primary"
