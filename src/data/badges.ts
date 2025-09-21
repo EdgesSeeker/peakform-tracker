@@ -103,6 +103,47 @@ export const badgeDefinitions: Badge[] = [
     icon: '⭐',
     earned: false,
     category: 'special'
+  },
+  // Multi-Workout Badges
+  {
+    id: 'multi-warrior',
+    name: 'Multi-Krieger',
+    description: 'Erstes Multi-Workout Tag absolviert',
+    icon: '⚡',
+    earned: false,
+    category: 'special'
+  },
+  {
+    id: 'triple-threat',
+    name: 'Triple Threat',
+    description: '3 verschiedene Workouts an einem Tag',
+    icon: '🎯',
+    earned: false,
+    category: 'special'
+  },
+  {
+    id: 'endurance-machine',
+    name: 'Ausdauer-Maschine',
+    description: 'Über 3 Stunden Training an einem Tag',
+    icon: '🤖',
+    earned: false,
+    category: 'special'
+  },
+  {
+    id: 'variety-master',
+    name: 'Vielfalt-Meister',
+    description: '10 verschiedene Workout-Typen ausprobiert',
+    icon: '🌈',
+    earned: false,
+    category: 'special'
+  },
+  {
+    id: 'extra-mile',
+    name: 'Extra Mile',
+    description: '50 zusätzliche Workouts absolviert',
+    icon: '🚀',
+    earned: false,
+    category: 'special'
   }
 ];
 
@@ -130,5 +171,106 @@ export const calculatePoints = (session: any): number => {
     points += 5;
   }
   
+  // Bonus für zusätzliche Workouts
+  if (session.isAdditionalWorkout) {
+    points += 15; // Extra Belohnung für zusätzliche Aktivität
+  }
+  
+  // Bonus für Kalorien (falls verfügbar)
+  if (session.calories) {
+    points += Math.floor(session.calories / 50); // 1 Punkt pro 50 Kalorien
+  }
+  
   return points;
+};
+
+// Badge-Überprüfung für Multi-Workouts
+export const checkMultiWorkoutBadges = (sessions: any[], badges: Badge[]): Badge[] => {
+  const updatedBadges = [...badges];
+  const completedSessions = sessions.filter((s: any) => s.completed);
+  const additionalWorkouts = completedSessions.filter((s: any) => s.isAdditionalWorkout);
+  
+  // Multi-Krieger: Erstes Multi-Workout Tag
+  const multiWarriorBadge = updatedBadges.find(b => b.id === 'multi-warrior');
+  if (multiWarriorBadge && !multiWarriorBadge.earned) {
+    const dailyGroups = new Map<string, any[]>();
+    completedSessions.forEach((session: any) => {
+      const dateKey = new Date(session.date).toDateString();
+      if (!dailyGroups.has(dateKey)) {
+        dailyGroups.set(dateKey, []);
+      }
+      dailyGroups.get(dateKey)!.push(session);
+    });
+    
+    const hasMultiWorkoutDay = Array.from(dailyGroups.values()).some((dayWorkouts: any[]) => dayWorkouts.length > 1);
+    if (hasMultiWorkoutDay) {
+      multiWarriorBadge.earned = true;
+      multiWarriorBadge.earnedDate = new Date();
+    }
+  }
+  
+  // Triple Threat: 3 verschiedene Workouts an einem Tag
+  const tripleThreatBadge = updatedBadges.find(b => b.id === 'triple-threat');
+  if (tripleThreatBadge && !tripleThreatBadge.earned) {
+    const dailyGroups = new Map<string, any[]>();
+    completedSessions.forEach((session: any) => {
+      const dateKey = new Date(session.date).toDateString();
+      if (!dailyGroups.has(dateKey)) {
+        dailyGroups.set(dateKey, []);
+      }
+      dailyGroups.get(dateKey)!.push(session);
+    });
+    
+    const hasTripleDay = Array.from(dailyGroups.values()).some((dayWorkouts: any[]) => {
+      const uniqueTypes = new Set(dayWorkouts.map((w: any) => w.subtype || w.type));
+      return uniqueTypes.size >= 3;
+    });
+    
+    if (hasTripleDay) {
+      tripleThreatBadge.earned = true;
+      tripleThreatBadge.earnedDate = new Date();
+    }
+  }
+  
+  // Ausdauer-Maschine: Über 3 Stunden an einem Tag
+  const enduranceMachineBadge = updatedBadges.find(b => b.id === 'endurance-machine');
+  if (enduranceMachineBadge && !enduranceMachineBadge.earned) {
+    const dailyGroups = new Map<string, any[]>();
+    completedSessions.forEach((session: any) => {
+      const dateKey = new Date(session.date).toDateString();
+      if (!dailyGroups.has(dateKey)) {
+        dailyGroups.set(dateKey, []);
+      }
+      dailyGroups.get(dateKey)!.push(session);
+    });
+    
+    const hasEnduranceDay = Array.from(dailyGroups.values()).some((dayWorkouts: any[]) => {
+      const totalDuration = dayWorkouts.reduce((sum: number, w: any) => sum + w.duration, 0);
+      return totalDuration >= 180; // 3 Stunden
+    });
+    
+    if (hasEnduranceDay) {
+      enduranceMachineBadge.earned = true;
+      enduranceMachineBadge.earnedDate = new Date();
+    }
+  }
+  
+  // Vielfalt-Meister: 10 verschiedene Workout-Typen
+  const varietyMasterBadge = updatedBadges.find(b => b.id === 'variety-master');
+  if (varietyMasterBadge && !varietyMasterBadge.earned) {
+    const uniqueTypes = new Set(completedSessions.map((s: any) => s.subtype || s.type));
+    if (uniqueTypes.size >= 10) {
+      varietyMasterBadge.earned = true;
+      varietyMasterBadge.earnedDate = new Date();
+    }
+  }
+  
+  // Extra Mile: 50 zusätzliche Workouts
+  const extraMileBadge = updatedBadges.find(b => b.id === 'extra-mile');
+  if (extraMileBadge && !extraMileBadge.earned && additionalWorkouts.length >= 50) {
+    extraMileBadge.earned = true;
+    extraMileBadge.earnedDate = new Date();
+  }
+  
+  return updatedBadges;
 };

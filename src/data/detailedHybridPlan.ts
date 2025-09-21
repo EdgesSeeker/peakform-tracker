@@ -1,29 +1,31 @@
 import { TrainingSession } from '../types';
 
+// Detaillierter 8-Wochen Hybrid-Trainingsplan (Muskelaufbau + Triathlon)
+// Fokus: Kraftzuwachs, Ausdauer, Technik mit optimaler Recovery
 export const detailedHybridPlan: TrainingSession[] = [
-  // WOCHE 1 - Grundlage, Technik
+  // WOCHE 1 - Eingewöhnungsphase (7 Sessions)
   {
     id: 'w1-mo',
     type: 'cardio',
     subtype: 'running',
-    title: '10 km Lauf (locker)',
-    description: '6:30–7:00/km Pace ODER 2h Rad GA1',
-    duration: 60,
+    title: 'Grundlagen Laufen',
+    description: 'Lockerer Grundlagenlauf zur Eingewöhnung',
+    duration: 45,
     completed: false,
-    date: new Date(2024, 0, 1), // Beispieldatum - wird später angepasst
+    date: new Date(2024, 0, 1),
     week: 1,
     day: 1,
-    distance: 10,
-    pace: '6:30-7:00',
-    notes: 'Alternative: 2h Rad GA1 (Grundlagenausdauer)'
+    distance: 7,
+    pace: '6:00-6:30',
+    notes: 'Ruhiges Tempo, auf Körper hören'
   },
   {
     id: 'w1-tu',
     type: 'strength',
     subtype: 'legs',
-    title: 'Beine/Core',
-    description: 'Squat, RDL, Ausfallschritte, Plank, Leg Raises',
-    duration: 60,
+    title: 'Beine/Core Basis',
+    description: 'Grundlegende Kraftübungen für Beine und Rumpf',
+    duration: 50,
     completed: false,
     date: new Date(2024, 0, 2),
     week: 1,
@@ -34,51 +36,9 @@ export const detailedHybridPlan: TrainingSession[] = [
         name: 'Kniebeuge (Squat)',
         type: 'strength',
         sets: [
-          { reps: 8, weight: 60 },
-          { reps: 8, weight: 60 },
-          { reps: 8, weight: 60 },
-          { reps: 8, weight: 60 }
-        ]
-      },
-      {
-        id: 'rdl',
-        name: 'Romanian Deadlift (RDL)',
-        type: 'strength',
-        sets: [
-          { reps: 10, weight: 50 },
-          { reps: 10, weight: 50 },
-          { reps: 10, weight: 50 },
-          { reps: 10, weight: 50 }
-        ]
-      },
-      {
-        id: 'lunges',
-        name: 'Ausfallschritte',
-        type: 'strength',
-        sets: [
-          { reps: 12, weight: 20 },
-          { reps: 12, weight: 20 },
-          { reps: 12, weight: 20 }
-        ]
-      },
-      {
-        id: 'plank',
-        name: 'Plank',
-        type: 'strength',
-        sets: [
-          { time: 60 },
-          { time: 60 },
-          { time: 60 }
-        ]
-      },
-      {
-        id: 'leg-raises',
-        name: 'Leg Raises',
-        type: 'strength',
-        sets: [
-          { reps: 15 },
-          { reps: 15 },
-          { reps: 15 }
+          { reps: 10, weight: 60 },
+          { reps: 10, weight: 60 },
+          { reps: 10, weight: 60 }
         ]
       }
     ]
@@ -86,186 +46,36 @@ export const detailedHybridPlan: TrainingSession[] = [
   {
     id: 'w1-we',
     type: 'swimming',
-    title: 'Schwimmen Technik',
-    description: '6×100m Technik + 400m am Stück',
-    duration: 45,
+    title: 'Schwimmen Grundlagen',
+    description: 'Techniktraining und Grundlagenausdauer',
+    duration: 50,
     completed: false,
     date: new Date(2024, 0, 3),
     week: 1,
     day: 3,
-    distance: 1.2,
-    notes: '1.200m gesamt: 6×100m Techniktraining + 400m kontinuierlich'
+    distance: 1,
+    notes: '1000m: Technik und Atmung fokussieren'
   },
   {
     id: 'w1-th',
     type: 'strength',
     subtype: 'upper',
-    title: 'Oberkörper',
-    description: 'Kompaktes Oberkörper-Workout mit Langhantel, Kurzhanteln und Kettlebell',
-    duration: 60,
+    title: 'Oberkörper Basis',
+    description: 'Grundlegende Oberkörperkraft',
+    duration: 50,
     completed: false,
     date: new Date(2024, 0, 4),
     week: 1,
     day: 4,
-    workoutPlan: {
-      warmup: {
-        title: 'Aufwärmen',
-        duration: '5–10 Minuten',
-        exercises: [
-          {
-            id: 'warmup-1',
-            name: 'Seilspringen oder Hampelmänner',
-            sets: '1',
-            reps: '5 Min',
-            instructions: 'Lockeres Tempo, Körper aktivieren'
-          },
-          {
-            id: 'warmup-2',
-            name: 'Schulterkreisen & Armkreisen',
-            sets: '2',
-            reps: '10 pro Richtung',
-            instructions: 'Große, kontrollierte Bewegungen'
-          },
-          {
-            id: 'warmup-3',
-            name: 'Leichte Push-ups',
-            sets: '1',
-            reps: '5-10',
-            instructions: 'Auf Knien falls nötig'
-          }
-        ]
-      },
-      main: {
-        title: 'Haupttraining',
-        duration: '~50 Minuten',
-        exercises: [
-          {
-            id: 'main-1',
-            name: 'Schulterdrücken',
-            sets: '4',
-            reps: '8–12',
-            equipment: 'Kurzhanteln oder Langhantel',
-            instructions: 'Kontrollierte Bewegung, Schultern stabilisieren'
-          },
-          {
-            id: 'main-2',
-            name: 'Bankdrücken / Floor Press',
-            sets: '4',
-            reps: '8–12',
-            equipment: 'Kurzhantel oder Langhantel',
-            instructions: 'Vollständige Bewegungsamplitude'
-          },
-          {
-            id: 'main-3',
-            name: 'Einarmiges Kurzhantel-Rudern',
-            sets: '3',
-            reps: '10–12 pro Seite',
-            equipment: 'Kurzhantel',
-            instructions: 'Rücken gerade, Ellbogen nah am Körper'
-          },
-          {
-            id: 'main-4',
-            name: 'Bizeps Curls',
-            sets: '3',
-            reps: '10–12',
-            equipment: 'Kurzhantel oder Langhantel',
-            instructions: 'Keine Schwungbewegung, kontrolliert'
-          },
-          {
-            id: 'main-5',
-            name: 'Trizeps-Kickbacks oder Overhead-Trizeps',
-            sets: '3',
-            reps: '10–12',
-            equipment: 'Kurzhantel/Kettlebell',
-            instructions: 'Oberarm fixiert, nur Unterarm bewegt'
-          },
-          {
-            id: 'main-6',
-            name: 'Seitheben',
-            sets: '3',
-            reps: '12–15',
-            equipment: 'Kurzhantel',
-            instructions: 'Leichte Gewichte, saubere Technik'
-          },
-          {
-            id: 'main-7',
-            name: 'Kettlebell Swings',
-            sets: '3',
-            reps: '15–20',
-            equipment: 'Kettlebell',
-            instructions: 'Hüfte antreiben, Rücken & Core aktivieren'
-          }
-        ]
-      },
-      cooldown: {
-        title: 'Cooldown / Stretch',
-        duration: '5 Minuten',
-        exercises: [
-          {
-            id: 'cooldown-1',
-            name: 'Schulterdehnungen',
-            sets: '2',
-            reps: '30 Sek halten',
-            instructions: 'Arm über Brust ziehen, andere Seite'
-          },
-          {
-            id: 'cooldown-2',
-            name: 'Brustdehnungen',
-            sets: '2',
-            reps: '30 Sek halten',
-            instructions: 'Türrahmen nutzen oder Wand'
-          },
-          {
-            id: 'cooldown-3',
-            name: 'Armdehnungen',
-            sets: '2',
-            reps: '20 Sek pro Arm',
-            instructions: 'Trizeps und Bizeps dehnen'
-          }
-        ]
-      }
-    },
     exercises: [
       {
         id: 'bench',
         name: 'Bankdrücken',
         type: 'strength',
         sets: [
-          { reps: 8, weight: 70 },
-          { reps: 8, weight: 70 },
-          { reps: 9, weight: 70 },
-          { reps: 10, weight: 70 }
-        ]
-      },
-      {
-        id: 'shoulder-press',
-        name: 'Schulterdrücken',
-        type: 'strength',
-        sets: [
-          { reps: 8, weight: 40 },
-          { reps: 9, weight: 40 },
-          { reps: 10, weight: 40 },
-          { reps: 8, weight: 40 }
-        ]
-      },
-      {
-        id: 'rows',
-        name: 'Rudern',
-        type: 'strength',
-        sets: [
           { reps: 10, weight: 50 },
           { reps: 10, weight: 50 },
           { reps: 10, weight: 50 }
-        ]
-      },
-      {
-        id: 'pullups',
-        name: 'Klimmzüge',
-        type: 'strength',
-        sets: [
-          { reps: 6 },
-          { reps: 5 },
-          { reps: 4 }
         ]
       }
     ]
@@ -273,25 +83,24 @@ export const detailedHybridPlan: TrainingSession[] = [
   {
     id: 'w1-fr',
     type: 'cardio',
-    subtype: 'intervals',
-    title: 'Rad Intervalle',
-    description: '5×4 Min hart / 3 Min locker',
+    subtype: 'cycling',
+    title: 'Rad Grundlagen',
+    description: 'Grundlagenausdauer auf dem Rad',
     duration: 60,
     completed: false,
     date: new Date(2024, 0, 5),
     week: 1,
     day: 5,
-    distance: 30,
-    watts: 280,
-    notes: '5 Intervalle: 4 Min bei hoher Intensität, 3 Min Erholung'
+    distance: 25,
+    notes: 'Gleichmäßiges Tempo, Trittfrequenz 80-90 RPM'
   },
   {
     id: 'w1-sa',
     type: 'strength',
     subtype: 'fullbody',
-    title: 'Ganzkörper',
-    description: 'Kreuzheben, Push Press, Klimmzüge, Hip Thrust, Core',
-    duration: 60,
+    title: 'Ganzkörper Basis',
+    description: 'Komplettes Ganzkörpertraining',
+    duration: 55,
     completed: false,
     date: new Date(2024, 0, 6),
     week: 1,
@@ -302,40 +111,9 @@ export const detailedHybridPlan: TrainingSession[] = [
         name: 'Kreuzheben',
         type: 'strength',
         sets: [
-          { reps: 6, weight: 80 },
-          { reps: 7, weight: 80 },
-          { reps: 8, weight: 80 },
-          { reps: 6, weight: 80 }
-        ]
-      },
-      {
-        id: 'push-press',
-        name: 'Push Press',
-        type: 'strength',
-        sets: [
-          { reps: 8, weight: 50 },
-          { reps: 8, weight: 50 },
-          { reps: 8, weight: 50 }
-        ]
-      },
-      {
-        id: 'pullups-fb',
-        name: 'Klimmzüge',
-        type: 'strength',
-        sets: [
-          { reps: 6 },
-          { reps: 5 },
-          { reps: 4 }
-        ]
-      },
-      {
-        id: 'hip-thrust',
-        name: 'Hip Thrust',
-        type: 'strength',
-        sets: [
-          { reps: 12, weight: 60 },
-          { reps: 12, weight: 60 },
-          { reps: 12, weight: 60 }
+          { reps: 8, weight: 70 },
+          { reps: 8, weight: 70 },
+          { reps: 8, weight: 70 }
         ]
       }
     ]
@@ -350,31 +128,61 @@ export const detailedHybridPlan: TrainingSession[] = [
     date: new Date(2024, 0, 7),
     week: 1,
     day: 7,
-    notes: 'Flow für Entspannung und Flexibilität, 30 Minuten'
+    notes: 'Flow für Entspannung und Flexibilität'
   },
 
-  // WOCHE 2 - Grundlage, Technik (gleich wie Woche 1)
+  // WOCHE 2 - Exakte Sessions wie gewünscht (21 Sessions)
+  
+  // === MONTAG - Laufen + Yoga ===
   {
-    id: 'w2-mo',
+    id: 'w2-mo-lauf',
     type: 'cardio',
     subtype: 'running',
-    title: '10 km Lauf (locker)',
-    description: '6:30–7:00/km Pace ODER 2h Rad GA1',
-    duration: 60,
+    title: 'Lockerer Dauerlauf',
+    description: '70 Min lockerer Dauerlauf (Zone 2, 70–75% HFmax), Zielpace: 6:20–6:40/km, Fokus Lauf-Ökonomie und Grundlagenausdauer',
+    duration: 70,
     completed: false,
     date: new Date(2024, 0, 8),
     week: 2,
     day: 1,
     distance: 10,
-    pace: '6:30-7:00',
-    notes: 'Alternative: 2h Rad GA1 (Grundlagenausdauer)'
+    pace: '6:20-6:40',
+    notes: 'Zone 2, 70–75% HFmax, Fokus Lauf-Ökonomie'
   },
   {
-    id: 'w2-tu',
+    id: 'w2-mo-yoga',
+    type: 'yoga',
+    subtype: 'stretching',
+    title: 'Yoga Mobilität',
+    description: '20 Min abends Yoga (Mobilität: Hüfte, Beinrückseite, Wirbelsäule)',
+    duration: 20,
+    completed: false,
+    date: new Date(2024, 0, 8),
+    week: 2,
+    day: 1,
+    notes: 'Mobilität: Hüfte, Beinrückseite, Wirbelsäule'
+  },
+  {
+    id: 'w2-mo-atem',
+    type: 'recovery',
+    subtype: 'breathing',
+    title: 'Atemübungen und Meditation',
+    description: '10 Min Atemübungen und Meditation (Box-Breathing, Nasenatmung)',
+    duration: 10,
+    completed: false,
+    date: new Date(2024, 0, 8),
+    week: 2,
+    day: 1,
+    notes: 'Box-Breathing, Nasenatmung'
+  },
+
+  // === DIENSTAG - Kraft Beine/Core + Stretching ===
+  {
+    id: 'w2-di-kraft',
     type: 'strength',
     subtype: 'legs',
-    title: 'Beine/Core',
-    description: 'Squat, RDL, Ausfallschritte, Plank, Leg Raises',
+    title: 'Kraft Beine/Core',
+    description: '60 Min Kraft Beine/Core: Kniebeugen 4×8–10 (80% 1RM), Ausfallschritte 3×10/Bein, Hip Thrusts 3×12, Core-Zirkel 3×30 Sek.',
     duration: 60,
     completed: false,
     date: new Date(2024, 0, 9),
@@ -383,24 +191,13 @@ export const detailedHybridPlan: TrainingSession[] = [
     exercises: [
       {
         id: 'squat',
-        name: 'Kniebeuge (Squat)',
+        name: 'Kniebeugen',
         type: 'strength',
         sets: [
-          { reps: 8, weight: 62.5 },
-          { reps: 8, weight: 62.5 },
-          { reps: 8, weight: 62.5 },
-          { reps: 8, weight: 62.5 }
-        ]
-      },
-      {
-        id: 'rdl',
-        name: 'Romanian Deadlift (RDL)',
-        type: 'strength',
-        sets: [
-          { reps: 10, weight: 52.5 },
-          { reps: 10, weight: 52.5 },
-          { reps: 10, weight: 52.5 },
-          { reps: 10, weight: 52.5 }
+          { reps: 10, weight: 80 },
+          { reps: 9, weight: 80 },
+          { reps: 8, weight: 80 },
+          { reps: 8, weight: 80 }
         ]
       },
       {
@@ -408,52 +205,85 @@ export const detailedHybridPlan: TrainingSession[] = [
         name: 'Ausfallschritte',
         type: 'strength',
         sets: [
-          { reps: 12, weight: 22.5 },
-          { reps: 12, weight: 22.5 },
-          { reps: 12, weight: 22.5 }
+          { reps: 10 },
+          { reps: 10 },
+          { reps: 10 }
         ]
       },
       {
-        id: 'plank',
-        name: 'Plank',
+        id: 'hip-thrusts',
+        name: 'Hip Thrusts',
         type: 'strength',
         sets: [
-          { time: 60 },
-          { time: 60 },
-          { time: 60 }
-        ]
-      },
-      {
-        id: 'leg-raises',
-        name: 'Leg Raises',
-        type: 'strength',
-        sets: [
-          { reps: 15 },
-          { reps: 15 },
-          { reps: 15 }
+          { reps: 12, weight: 60 },
+          { reps: 12, weight: 60 },
+          { reps: 12, weight: 60 }
         ]
       }
     ]
   },
   {
-    id: 'w2-we',
+    id: 'w2-di-stretch',
+    type: 'recovery',
+    subtype: 'stretching',
+    title: 'Langes Stretching',
+    description: '20 Min langes Stretching (Beine, Hüfte, unterer Rücken)',
+    duration: 20,
+    completed: false,
+    date: new Date(2024, 0, 9),
+    week: 2,
+    day: 2,
+    notes: 'Beine, Hüfte, unterer Rücken'
+  },
+  {
+    id: 'w2-di-meditation',
+    type: 'recovery',
+    subtype: 'meditation',
+    title: 'Meditation/Entspannung',
+    description: '10 Min Meditation/Entspannung',
+    duration: 10,
+    completed: false,
+    date: new Date(2024, 0, 9),
+    week: 2,
+    day: 2,
+    notes: 'Entspannung und mentale Ruhe'
+  },
+
+  // === MITTWOCH - Schwimmen Technik + Mobility ===
+  {
+    id: 'w2-mi-schwimmen',
     type: 'swimming',
     title: 'Schwimmen Technik',
-    description: '6×100m Technik + 400m am Stück',
-    duration: 45,
+    description: '70 Min Schwimmen (ca. 1.8 km): 300m Einschwimmen, 6×50m Technik, 5×100m zügig, 3×200m GA1, 200m Auslockern',
+    duration: 70,
     completed: false,
     date: new Date(2024, 0, 10),
     week: 2,
     day: 3,
-    distance: 1.2,
-    notes: '1.200m gesamt: 6×100m Techniktraining + 400m kontinuierlich'
+    distance: 1.8,
+    notes: '300m + 6×50m Technik + 5×100m + 3×200m + 200m'
   },
   {
-    id: 'w2-th',
+    id: 'w2-mi-mobility',
+    type: 'recovery',
+    subtype: 'stretching',
+    title: 'Mobility-Flow',
+    description: '15 Min Mobility-Flow mit Fokus Schulter/Thorax/Rumpf',
+    duration: 15,
+    completed: false,
+    date: new Date(2024, 0, 10),
+    week: 2,
+    day: 3,
+    notes: 'Fokus Schulter/Thorax/Rumpf'
+  },
+
+  // === DONNERSTAG - Oberkörper Push/Pull + Rad ===
+  {
+    id: 'w2-do-oberkoerper',
     type: 'strength',
     subtype: 'upper',
-    title: 'Oberkörper',
-    description: 'Bankdrücken, Schulterdrücken, Rudern, Klimmzüge',
+    title: 'Kraft Oberkörper',
+    description: '60 Min Kraft Oberkörper: Bankdrücken 4×8, Klimmzüge 4×Max, Kurzhantel-Rudern 3×10/Seite, Facepulls 3×12, Liegestütz 3×15',
     duration: 60,
     completed: false,
     date: new Date(2024, 0, 11),
@@ -465,31 +295,10 @@ export const detailedHybridPlan: TrainingSession[] = [
         name: 'Bankdrücken',
         type: 'strength',
         sets: [
-          { reps: 8, weight: 72.5 },
-          { reps: 8, weight: 72.5 },
-          { reps: 9, weight: 72.5 },
-          { reps: 10, weight: 72.5 }
-        ]
-      },
-      {
-        id: 'shoulder-press',
-        name: 'Schulterdrücken',
-        type: 'strength',
-        sets: [
-          { reps: 8, weight: 42.5 },
-          { reps: 9, weight: 42.5 },
-          { reps: 10, weight: 42.5 },
-          { reps: 8, weight: 42.5 }
-        ]
-      },
-      {
-        id: 'rows',
-        name: 'Rudern',
-        type: 'strength',
-        sets: [
-          { reps: 10, weight: 52.5 },
-          { reps: 10, weight: 52.5 },
-          { reps: 10, weight: 52.5 }
+          { reps: 8, weight: 70 },
+          { reps: 8, weight: 70 },
+          { reps: 8, weight: 70 },
+          { reps: 8, weight: 70 }
         ]
       },
       {
@@ -497,35 +306,119 @@ export const detailedHybridPlan: TrainingSession[] = [
         name: 'Klimmzüge',
         type: 'strength',
         sets: [
-          { reps: 7 },
+          { reps: 10 },
+          { reps: 8 },
           { reps: 6 },
           { reps: 5 }
+        ]
+      },
+      {
+        id: 'dumbbell-rows',
+        name: 'Kurzhantel-Rudern',
+        type: 'strength',
+        sets: [
+          { reps: 10, weight: 25 },
+          { reps: 10, weight: 25 },
+          { reps: 10, weight: 25 }
         ]
       }
     ]
   },
   {
-    id: 'w2-fr',
+    id: 'w2-do-rad',
+    type: 'cardio',
+    subtype: 'cycling',
+    title: 'Lockere Radfahrt',
+    description: '30 Min lockere Radfahrt, 100 Watt GA1, hohe Trittfrequenz (Regeneration)',
+    duration: 30,
+    completed: false,
+    date: new Date(2024, 0, 11),
+    week: 2,
+    day: 4,
+    distance: 15,
+    watts: 100,
+    notes: '100 Watt GA1, hohe Trittfrequenz (Regeneration)'
+  },
+  {
+    id: 'w2-do-stretch',
+    type: 'recovery',
+    subtype: 'stretching',
+    title: 'Stretching Oberkörper',
+    description: '10 Min Stretching Oberkörper',
+    duration: 10,
+    completed: false,
+    date: new Date(2024, 0, 11),
+    week: 2,
+    day: 4,
+    notes: 'Dehnung Oberkörper nach Krafttraining'
+  },
+
+  // === FREITAG - Intervall Rad + Stretching ===
+  {
+    id: 'w2-fr-intervall',
     type: 'cardio',
     subtype: 'intervals',
-    title: 'Rad Intervalle',
-    description: '5×4 Min hart / 3 Min locker',
-    duration: 60,
+    title: 'Rad Intervall',
+    description: '80 Min Rad Intervall: 20 Min Einrollen, 6×4 Min Schwellenbereich (85–95% FTP), 20 Min Ausrollen',
+    duration: 80,
     completed: false,
     date: new Date(2024, 0, 12),
     week: 2,
     day: 5,
-    distance: 30,
-    watts: 290,
-    notes: '5 Intervalle: 4 Min bei hoher Intensität, 3 Min Erholung'
+    distance: 35,
+    watts: 320,
+    notes: '6×4 Min Schwellenbereich (85–95% FTP), 3 Min Pause'
   },
   {
-    id: 'w2-sa',
+    id: 'w2-fr-yoga',
+    type: 'yoga',
+    subtype: 'stretching',
+    title: 'Yoga/Mobility',
+    description: '15 Min Yoga/Mobility, Schwerpunkt Rücken/Hüfte',
+    duration: 15,
+    completed: false,
+    date: new Date(2024, 0, 12),
+    week: 2,
+    day: 5,
+    notes: 'Schwerpunkt Rücken/Hüfte'
+  },
+  {
+    id: 'w2-fr-atem',
+    type: 'recovery',
+    subtype: 'breathing',
+    title: 'Atemtechnik Wechselatmung',
+    description: '10 Min Atemtechnik: Wechselatmung',
+    duration: 10,
+    completed: false,
+    date: new Date(2024, 0, 12),
+    week: 2,
+    day: 5,
+    notes: 'Wechselatmung-Technik'
+  },
+
+  // === SAMSTAG - Koppeleinheit + Kraft Ganzkörper ===
+  {
+    id: 'w2-sa-koppel',
+    type: 'cardio',
+    subtype: 'cycling',
+    title: 'Koppeleinheit Rad-Lauf',
+    description: '50 Min Rad (GA2, 75–80% HFmax), direkt gefolgt von 25 Min Lauf (lockeres Tempo, 6:30/km)',
+    duration: 75,
+    completed: false,
+    date: new Date(2024, 0, 13),
+    week: 2,
+    day: 6,
+    distance: 30,
+    pace: '6:30',
+    notes: '50min Rad + 25min Lauf, Fokus: Frequenz und Abrollgefühl'
+  },
+  {
+    id: 'w2-sa-ganzkoerper',
     type: 'strength',
     subtype: 'fullbody',
-    title: 'Ganzkörper',
-    description: 'Kreuzheben, Push Press, Klimmzüge, Hip Thrust, Core',
-    duration: 60,
+    title: 'Ganzkörper Kraft',
+    description: '45 Min Ganzkörper Kraft: Kreuzheben 3×8, Bulgarian Split Squat 3×8/Bein, Schulterdrücken 3×10, Plank-Varianten 3×30–45 Sek.',
+    duration: 45,
     completed: false,
     date: new Date(2024, 0, 13),
     week: 2,
@@ -536,55 +429,87 @@ export const detailedHybridPlan: TrainingSession[] = [
         name: 'Kreuzheben',
         type: 'strength',
         sets: [
-          { reps: 6, weight: 82.5 },
-          { reps: 7, weight: 82.5 },
-          { reps: 8, weight: 82.5 },
-          { reps: 6, weight: 82.5 }
+          { reps: 8, weight: 80 },
+          { reps: 8, weight: 80 },
+          { reps: 8, weight: 80 }
         ]
       },
       {
-        id: 'push-press',
-        name: 'Push Press',
+        id: 'bulgarian-split',
+        name: 'Bulgarian Split Squat',
         type: 'strength',
         sets: [
-          { reps: 8, weight: 52.5 },
-          { reps: 8, weight: 52.5 },
-          { reps: 8, weight: 52.5 }
+          { reps: 8 },
+          { reps: 8 },
+          { reps: 8 }
         ]
       },
       {
-        id: 'pullups-fb',
-        name: 'Klimmzüge',
+        id: 'shoulder-press',
+        name: 'Schulterdrücken',
         type: 'strength',
         sets: [
-          { reps: 7 },
-          { reps: 6 },
-          { reps: 5 }
-        ]
-      },
-      {
-        id: 'hip-thrust',
-        name: 'Hip Thrust',
-        type: 'strength',
-        sets: [
-          { reps: 12, weight: 62.5 },
-          { reps: 12, weight: 62.5 },
-          { reps: 12, weight: 62.5 }
+          { reps: 10, weight: 20 },
+          { reps: 10, weight: 20 },
+          { reps: 10, weight: 20 }
         ]
       }
     ]
   },
   {
-    id: 'w2-su',
-    type: 'yoga',
-    title: 'Yoga/Mobility',
-    description: 'Entspannung und Beweglichkeit',
+    id: 'w2-sa-dehnen',
+    type: 'recovery',
+    subtype: 'stretching',
+    title: 'Dehnen Beine/Glutes',
+    description: '10 Min Dehnen (Fokus Beine/Glutes)',
+    duration: 10,
+    completed: false,
+    date: new Date(2024, 0, 13),
+    week: 2,
+    day: 6,
+    notes: 'Fokus Beine/Glutes'
+  },
+
+  // === SONNTAG - Schwimmen Recovery + Yoga/Meditation ===
+  {
+    id: 'w2-so-schwimmen',
+    type: 'swimming',
+    title: 'Schwimmen Recovery',
+    description: '30 Min lockeres Schwimmen (Technik, Fokus Atmung und Wasserlage, Pace 2:15–2:30/100m)',
     duration: 30,
     completed: false,
     date: new Date(2024, 0, 14),
     week: 2,
     day: 7,
-    notes: 'Flow für Entspannung und Flexibilität, 30 Minuten'
+    distance: 0.8,
+    pace: '2:15-2:30',
+    notes: 'Technik, Fokus Atmung und Wasserlage'
+  },
+  {
+    id: 'w2-so-yoga',
+    type: 'yoga',
+    subtype: 'stretching',
+    title: 'Yoga Recovery Flow',
+    description: '30 Min Yoga Recovery Flow (ruhig, dehnend)',
+    duration: 30,
+    completed: false,
+    date: new Date(2024, 0, 14),
+    week: 2,
+    day: 7,
+    notes: 'Ruhig, dehnend'
+  },
+  {
+    id: 'w2-so-meditation',
+    type: 'recovery',
+    subtype: 'meditation',
+    title: 'Geführte Meditation',
+    description: '15 Min geführte Meditation/Atemübungen',
+    duration: 15,
+    completed: false,
+    date: new Date(2024, 0, 14),
+    week: 2,
+    day: 7,
+    notes: 'Geführte Meditation/Atemübungen'
   }
 
   // Weitere Wochen würden hier folgen...
@@ -593,29 +518,34 @@ export const detailedHybridPlan: TrainingSession[] = [
 
 // Funktion um Plan für aktuelles Datum anzupassen
 export const getAdjustedPlan = (startDate: Date = new Date()): TrainingSession[] => {
-  const today = new Date(startDate);
-  const currentWeekday = today.getDay() === 0 ? 7 : today.getDay(); // So=7, Mo=1, Di=2, Mi=3, Do=4, Fr=5, Sa=6
+  // Feste Startdaten für die Wochen
+  const week1Start = new Date(2024, 8, 16); // 16.09.2024 (Montag) - Woche 1 Start
+  const week2Start = new Date(2024, 8, 22); // 22.09.2024 (Montag) - Woche 2 Start
   
-  // Finde den Montag dieser Woche
-  const mondayOfThisWeek = new Date(today);
-  mondayOfThisWeek.setDate(today.getDate() - (currentWeekday - 1));
-  
-  console.log('Plan Generation:');
-  console.log('Heute:', today.toLocaleDateString('de-DE'), 'Wochentag:', currentWeekday);
-  console.log('Montag dieser Woche:', mondayOfThisWeek.toLocaleDateString('de-DE'));
+  console.log('📅 Plan Generation mit festen Daten:');
+  console.log('Woche 1 Start:', week1Start.toLocaleDateString('de-DE'));
+  console.log('Woche 2 Start:', week2Start.toLocaleDateString('de-DE'));
   
   return detailedHybridPlan.map((session) => {
-    // Berechne das korrekte Datum basierend auf Woche und Tag
-    const sessionDate = new Date(mondayOfThisWeek);
-    const daysToAdd = (session.week - 1) * 7 + (session.day - 1);
-    sessionDate.setDate(mondayOfThisWeek.getDate() + daysToAdd);
+    let sessionDate: Date;
     
-    console.log(`Session: ${session.title}, Woche: ${session.week}, Tag: ${session.day}, Datum: ${sessionDate.toLocaleDateString('de-DE')}`);
+    if (session.week === 1) {
+      // Woche 1: Ab 16.09.2024 (Montag = Tag 1)
+      sessionDate = new Date(week1Start);
+      sessionDate.setDate(week1Start.getDate() + (session.day - 1));
+    } else if (session.week === 2) {
+      // Woche 2: Ab 22.09.2024 (Montag = Tag 1)
+      sessionDate = new Date(week2Start);
+      sessionDate.setDate(week2Start.getDate() + (session.day - 1));
+    } else {
+      // Weitere Wochen: Berechnung basierend auf Woche 1
+      sessionDate = new Date(week1Start);
+      sessionDate.setDate(week1Start.getDate() + ((session.week - 1) * 7) + (session.day - 1));
+    }
     
     return {
       ...session,
-      date: sessionDate,
-      id: `plan-w${session.week}-d${session.day}-${sessionDate.getTime()}`
+      date: sessionDate
     };
   });
 };

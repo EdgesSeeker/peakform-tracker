@@ -10,10 +10,15 @@ import StravaIntegration from './components/StravaIntegration';
 import StravaCallback from './components/StravaCallback';
 import ResetPlan from './components/ResetPlan';
 import PWAInstall from './components/PWAInstall';
+import QuickWorkoutLibrary from './components/QuickWorkoutLibrary';
+import SimpleStravaImport from './components/SimpleStravaImport';
+import DuplicateWorkoutCleaner from './components/DuplicateWorkoutCleaner';
+import AIPerformancePanel from './components/AIPerformancePanel';
+import TrainingPlanUploader from './components/TrainingPlanUploader';
 import { ThemeProvider } from './contexts/ThemeContext';
 import { TrainingSession, UserStats, QuickCheck } from './types';
-import { getAdjustedPlan } from './data/detailedHybridPlan';
-import { badgeDefinitions, calculatePoints } from './data/badges';
+import { getAdjustedPlan, detailedHybridPlan } from './data/detailedHybridPlan';
+import { badgeDefinitions, calculatePoints, checkMultiWorkoutBadges } from './data/badges';
 import storageManager from './utils/storage';
 import firebaseSync from './services/firebaseSync';
 
@@ -40,11 +45,29 @@ function App() {
   useEffect(() => {
     console.log('🚀 App wird initialisiert...');
     
-    // Sessions laden
+    // NOTFALL-BEREINIGUNG: Lösche falsch geparste Sessions
     const savedSessions = storageManager.loadSessions();
+    console.log('💾 Geladene Sessions:', savedSessions?.length || 0);
+    
     if (savedSessions && savedSessions.length > 0) {
-      setSessions(savedSessions);
-      console.log('✅ Sessions erfolgreich geladen:', savedSessions.length);
+      // Prüfe auf falsch geparste Sessions (zu viele Sessions in Woche 2)
+      const week2Sessions = savedSessions.filter(s => s.week === 2);
+      const hasFalselyParsedSessions = week2Sessions.length > 25 || 
+        week2Sessions.some(s => s.title === 'Einrollen' || s.title === 'Ausrollen' || s.title === '300 m Einschwimmen');
+      
+      if (hasFalselyParsedSessions) {
+        console.log('🚨 NOTFALL-BEREINIGUNG: Falsch geparste Sessions entdeckt!');
+        // Behalte nur Woche 1 und zusätzliche Workouts
+        const cleanSessions = savedSessions.filter(s => 
+          s.week === 1 || s.isAdditionalWorkout || s.id.includes('strava')
+        );
+        console.log(`🔧 Bereinigt: ${savedSessions.length} → ${cleanSessions.length} Sessions`);
+        setSessions(cleanSessions);
+        storageManager.saveSessions(cleanSessions);
+      } else {
+        setSessions(savedSessions);
+        console.log('✅ Sessions geladen:', savedSessions.length);
+      }
     } else {
       // Versuche Backup wiederherzustellen
       const backup = storageManager.restoreFromBackup();
@@ -54,11 +77,13 @@ function App() {
         setQuickCheck(backup.quickCheck);
         console.log('🔄 Backup wiederhergestellt mit', backup.sessions.length, 'Sessions');
       } else {
-        // Neuen Plan erstellen
-        console.log('📅 Erstelle neuen 8-Wochen-Plan...');
+        // NUR WOCHE 1 aus dem alten Plan laden - WOCHE 2 LEER LASSEN
+        console.log('📅 Erstelle SICHEREN Plan: Nur Woche 1, Woche 2 bleibt leer...');
         const detailedPlan = getAdjustedPlan(new Date());
-        setSessions(detailedPlan);
-        storageManager.saveSessions(detailedPlan);
+        const onlyWeek1Sessions = detailedPlan.filter(s => s.week === 1);
+        console.log(`🔒 Nur Woche 1 geladen: ${onlyWeek1Sessions.length} Sessions`);
+        setSessions(onlyWeek1Sessions);
+        storageManager.saveSessions(onlyWeek1Sessions);
       }
     }
 
@@ -106,46 +131,98 @@ function App() {
 
   // Stats aus Sessions berechnen
   const calculateStatsFromSessions = (allSessions: TrainingSession[]): UserStats => {
-    const completedSessions = allSessions.filter(s => s.completed);
+    const completedSessions = allSessions.filter(s => s.completed && !s.excludeFromStats);
     
     const totalSessions = completedSessions.length;
     const totalDistance = completedSessions.reduce((sum, s) => sum + (s.distance || 0), 0);
     const totalDuration = completedSessions.reduce((sum, s) => sum + s.duration, 0);
     const points = completedSessions.reduce((sum, s) => sum + calculatePoints(s), 0);
     
-    // Streak-Berechnung (Reset erst nach 2 verpassten Sessions)
+    // Verbesserte Streak-Berechnung basierend auf Tagen (nicht Sessions)
     let currentStreak = 0;
     let longestStreak = 0;
-    let tempStreak = 0;
     
     const today = new Date();
-    const sortedSessions = completedSessions
-      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+    today.setHours(0, 0, 0, 0); // Normalisiere auf Tagesbeginn
     
-    for (let i = 0; i < sortedSessions.length; i++) {
-      const sessionDate = new Date(sortedSessions[i].date);
-      const daysDiff = Math.floor((today.getTime() - sessionDate.getTime()) / (1000 * 60 * 60 * 24));
+    // Gruppiere Sessions nach Tagen
+    const sessionsByDay = new Map<string, TrainingSession[]>();
+    completedSessions.forEach(session => {
+      const sessionDate = new Date(session.date);
+      sessionDate.setHours(0, 0, 0, 0);
+      const dateKey = sessionDate.toDateString();
       
-      if (i === 0 && daysDiff <= 2) { // Erweitert auf 2 Tage Toleranz
-        currentStreak = 1;
-        tempStreak = 1;
-      } else if (i > 0) {
-        const prevDate = new Date(sortedSessions[i - 1].date);
-        const daysBetween = Math.floor((prevDate.getTime() - sessionDate.getTime()) / (1000 * 60 * 60 * 24));
-        
-        if (daysBetween <= 2) { // Erweitert auf 2 Tage zwischen Sessions
-          tempStreak++;
-          if (i === 1) currentStreak = tempStreak;
+      if (!sessionsByDay.has(dateKey)) {
+        sessionsByDay.set(dateKey, []);
+      }
+      sessionsByDay.get(dateKey)!.push(session);
+    });
+    
+    // Sortiere Tage (neueste zuerst)
+    const sortedDays = Array.from(sessionsByDay.keys())
+      .map(dateKey => new Date(dateKey))
+      .sort((a, b) => b.getTime() - a.getTime());
+    
+    console.log('🔥 Streak-Debug:');
+    console.log('Heute:', today.toDateString());
+    console.log('Trainingstage:', sortedDays.map(d => d.toDateString()));
+    
+    // Berechne aktuelle Serie
+    let streakDays = [];
+    for (let i = 0; i < sortedDays.length; i++) {
+      const dayDate = sortedDays[i];
+      const daysDiff = Math.floor((today.getTime() - dayDate.getTime()) / (1000 * 60 * 60 * 24));
+      
+      if (i === 0) {
+        // Erster Tag: Muss heute oder gestern sein
+        if (daysDiff <= 1) {
+          currentStreak = 1;
+          streakDays.push(dayDate);
         } else {
-          if (longestStreak < tempStreak) longestStreak = tempStreak;
-          tempStreak = 1;
-          if (i === 1) currentStreak = 0; // Reset nur bei > 2 Tagen Pause
+          break; // Zu lange her, keine aktuelle Serie
+        }
+      } else {
+        // Folgetage: Müssen aufeinanderfolgend sein
+        const prevDay = sortedDays[i - 1];
+        const daysBetween = Math.floor((prevDay.getTime() - dayDate.getTime()) / (1000 * 60 * 60 * 24));
+        
+        if (daysBetween === 1) {
+          currentStreak++;
+          streakDays.push(dayDate);
+        } else {
+          break; // Lücke in der Serie
         }
       }
     }
     
-    if (longestStreak < tempStreak) longestStreak = tempStreak;
+    // Berechne längste Serie
+    let tempStreak = 0;
+    let maxTempStreak = 0;
     
+    for (let i = 0; i < sortedDays.length; i++) {
+      if (i === 0) {
+        tempStreak = 1;
+      } else {
+        const currentDay = sortedDays[i];
+        const prevDay = sortedDays[i - 1];
+        const daysBetween = Math.floor((prevDay.getTime() - currentDay.getTime()) / (1000 * 60 * 60 * 24));
+        
+        if (daysBetween === 1) {
+          tempStreak++;
+        } else {
+          maxTempStreak = Math.max(maxTempStreak, tempStreak);
+          tempStreak = 1;
+        }
+      }
+    }
+    longestStreak = Math.max(maxTempStreak, tempStreak, currentStreak);
+    
+    console.log(`🔥 Aktuelle Serie: ${currentStreak} Tage`);
+    console.log(`🏆 Längste Serie: ${longestStreak} Tage`);
+    
+    // Badge-Überprüfung mit Multi-Workout Support
+    const updatedBadges = checkMultiWorkoutBadges(allSessions, badgeDefinitions);
+
     return {
       totalSessions,
       totalDistance,
@@ -153,7 +230,7 @@ function App() {
       currentStreak,
       longestStreak,
       points,
-      badges: badgeDefinitions,
+      badges: updatedBadges,
       personalRecords: []
     };
   };
@@ -219,6 +296,143 @@ function App() {
       // Stats werden automatisch durch useEffect neu berechnet
       return prev.filter(s => s.id !== sessionId);
     });
+  };
+
+  const addMultipleWorkouts = (workouts: TrainingSession[]) => {
+    setSessions(prev => {
+      const newSessions = [...prev];
+      workouts.forEach(workout => {
+        const existingIndex = newSessions.findIndex(s => s.id === workout.id);
+        if (existingIndex >= 0) {
+          newSessions[existingIndex] = workout;
+        } else {
+          newSessions.push(workout);
+        }
+      });
+      console.log(`➕ ${workouts.length} Multi-Workouts hinzugefügt`);
+      return newSessions;
+    });
+  };
+
+  const uncompleteSession = (sessionId: string) => {
+    console.log('↩️ Session wird enthakt:', sessionId);
+    
+    const sessionToUncomplete = sessions.find(s => s.id === sessionId);
+    if (sessionToUncomplete && sessionToUncomplete.completed) {
+      const uncompletedSession = { ...sessionToUncomplete, completed: false };
+      updateSession(uncompletedSession);
+    }
+  };
+
+  // Intelligente Wochen-Zuordnung für Trainingsplan
+  const getTrainingWeek = (date: Date): number => {
+    const today = new Date();
+    const daysDiff = Math.floor((today.getTime() - date.getTime()) / (1000 * 60 * 60 * 24));
+    
+    // Workouts der letzten 7 Tage = Woche 1
+    if (daysDiff <= 7) {
+      return 1; // Aktuelle Woche
+    } else if (daysDiff <= 14) {
+      return 2; // Letzte Woche 
+    } else if (daysDiff <= 21) {
+      return 3; // Vorletzte Woche
+    } else if (daysDiff <= 28) {
+      return 4; // 3 Wochen zurück
+    } else {
+      return Math.min(8, Math.ceil(daysDiff / 7)); // Max 8 Wochen
+    }
+  };
+
+  // Korrigiere nur offensichtlich falsche Wochen (wie Woche 38)
+  useEffect(() => {
+    if (sessions.length > 0) {
+      let needsUpdate = false;
+      const correctedSessions = sessions.map(session => {
+        // Nur korrigieren wenn Woche offensichtlich falsch ist (> 8)
+        if (session.week > 8 && (session.isAdditionalWorkout || session.id.includes('strava'))) {
+          const correctWeek = getTrainingWeek(new Date(session.date));
+          console.log(`🔧 Korrigiere falsche Woche für ${session.title}: ${session.week} → ${correctWeek}`);
+          needsUpdate = true;
+          return { ...session, week: correctWeek };
+        }
+        return session;
+      });
+
+      if (needsUpdate) {
+        setSessions(correctedSessions);
+        console.log('✅ Falsche Wochen-Zuordnungen korrigiert');
+      }
+    }
+  }, [sessions.length]); // Nur beim ersten Laden ausführen
+
+  // Funktion zum Hochladen eines benutzerdefinierten Trainingsplans
+  const uploadTrainingPlan = (weekNumber: number, newSessions: TrainingSession[]) => {
+    console.log(`📤 Lade Plan für Woche ${weekNumber} hoch: ${newSessions.length} Sessions`);
+    
+    // Entferne bestehende Sessions für diese Woche (behalte zusätzliche Workouts)
+    const filteredSessions = sessions.filter(s => 
+      !(s.week === weekNumber && !s.isAdditionalWorkout)
+    );
+    
+    // Füge neue Sessions hinzu
+    const updatedSessions = [...filteredSessions, ...newSessions];
+    setSessions(updatedSessions);
+    storageManager.saveSessions(updatedSessions);
+    
+    console.log(`✅ Woche ${weekNumber} erfolgreich aktualisiert!`);
+  };
+
+  // Funktion zum Aktualisieren von Woche 2 mit dem neuen Triathlon-Plan
+  const updateWeek2WithTriathlonPlan = () => {
+    console.log('🔄 Starte SICHERES Woche 2 Update...');
+    console.log('🔒 Woche 1 wird NICHT verändert!');
+    
+    // SCHRITT 1: Sichere Woche 1 Sessions (UNVERÄNDERT!)
+    const week1Sessions = sessions.filter(s => s.week === 1);
+    const otherSessions = sessions.filter(s => s.week !== 1 && s.week !== 2);
+    
+    console.log(`🛡️ Woche 1 gesichert: ${week1Sessions.length} Sessions`);
+    console.log('🔍 Woche 1 Titles:', week1Sessions.map(s => s.title));
+    console.log(`📦 Andere Wochen: ${otherSessions.length} Sessions`);
+    
+    // SCHRITT 2: Hole NUR Woche 2 Sessions direkt aus detailedHybridPlan
+    const week2Start = new Date(2024, 8, 22); // 22.09.2024 (Montag) - Woche 2 Start
+    const rawWeek2Sessions = detailedHybridPlan.filter(s => s.week === 2);
+    
+    // SCHRITT 3: Setze korrekte Daten und WIRKLICH eindeutige IDs
+    const timestamp = Date.now();
+    const newWeek2Sessions = rawWeek2Sessions.map((session, index) => {
+      const sessionDate = new Date(week2Start);
+      sessionDate.setDate(week2Start.getDate() + (session.day - 1));
+      
+      return {
+        ...session,
+        date: sessionDate,
+        completed: false,
+        id: `w2-final-${timestamp}-${index}-${session.day}-${Math.random().toString(36).substr(2, 9)}`
+      };
+    });
+    
+    console.log(`🆕 Neue Woche 2 Sessions: ${newWeek2Sessions.length}`);
+    console.log('📋 Neue Titles:', newWeek2Sessions.map(s => s.title));
+    
+    // SCHRITT 4: Kombiniere SICHER: Woche 1 bleibt + Neue Woche 2
+    const finalSessions = [
+      ...week1Sessions,     // Woche 1 KOMPLETT UNVERÄNDERT
+      ...newWeek2Sessions,  // Nur neue Woche 2 Sessions
+      ...otherSessions      // Andere Wochen falls vorhanden
+    ];
+    
+    setSessions(finalSessions);
+    storageManager.saveSessions(finalSessions);
+    
+    console.log(`✅ SICHERES Update abgeschlossen:`);
+    console.log(`   🔒 Woche 1: ${week1Sessions.length} Sessions (UNVERÄNDERT)`);
+    console.log(`   🆕 Woche 2: ${newWeek2Sessions.length} Sessions (NEU)`);
+    console.log(`   📦 Andere: ${otherSessions.length} Sessions`);
+    console.log(`   📊 Gesamt: ${finalSessions.length} Sessions`);
+    
+    return true;
   };
 
   // Callback für Sync-Updates
@@ -323,6 +537,10 @@ function App() {
                   userStats={userStats}
                   onCompleteSession={completeSession}
                   onUpdateSession={updateSession}
+                  onAddMultipleWorkouts={addMultipleWorkouts}
+                  onUncompleteSession={uncompleteSession}
+                  onDeleteSession={deleteSession}
+                  onUpdateWeek2={updateWeek2WithTriathlonPlan}
                 />
               } 
             />
@@ -347,11 +565,45 @@ function App() {
               } 
             />
             <Route 
+              path="/library" 
+              element={
+                <QuickWorkoutLibrary 
+                  onAddWorkouts={addMultipleWorkouts}
+                />
+              } 
+            />
+            <Route 
+              path="/upload-plan" 
+              element={
+                <TrainingPlanUploader 
+                  onUploadPlan={uploadTrainingPlan}
+                />
+              } 
+            />
+            <Route 
+              path="/ai-analysis" 
+              element={
+                <AIPerformancePanel 
+                  sessions={sessions}
+                  userStats={userStats}
+                  onUpdateSession={updateSession}
+                />
+              } 
+            />
+            <Route 
               path="/strava" 
               element={
-                <StravaIntegration 
-                  onImportActivities={importStravaActivities}
-                />
+                <div className="space-y-8">
+                  <StravaIntegration 
+                    onImportActivities={importStravaActivities}
+                  />
+                  <SimpleStravaImport 
+                    onAddWorkouts={addMultipleWorkouts}
+                    onDeleteWorkout={deleteSession}
+                    onUpdateSession={updateSession}
+                    existingSessions={sessions}
+                  />
+                </div>
               } 
             />
             <Route 
@@ -372,7 +624,7 @@ function App() {
                   onUpdateSession={updateSession}
                   onDeleteSession={deleteSession}
                 />
-              } 
+              }
             />
             <Route 
               path="/auth/strava/callback" 

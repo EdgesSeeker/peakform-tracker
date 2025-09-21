@@ -1,13 +1,16 @@
 import React, { useState } from 'react';
 import { TrainingSession } from '../types';
-import { Plus, Save, X, Dumbbell, Heart, Waves, Flower, Clock, MapPin, Zap } from 'lucide-react';
+import { Plus, Save, X, Dumbbell, Heart, Waves, Flower, Clock, MapPin, Zap, Target, Calendar } from 'lucide-react';
+import MultiWorkoutTracker from './MultiWorkoutTracker';
 
 interface AddTrainingProps {
   onAddTraining: (training: TrainingSession) => void;
+  onAddMultipleWorkouts?: (workouts: TrainingSession[]) => void;
 }
 
-const AddTraining: React.FC<AddTrainingProps> = ({ onAddTraining }) => {
+const AddTraining: React.FC<AddTrainingProps> = ({ onAddTraining, onAddMultipleWorkouts }) => {
   const [showForm, setShowForm] = useState(false);
+  const [showMultiWorkout, setShowMultiWorkout] = useState(false);
   const [formData, setFormData] = useState({
     type: 'strength' as 'strength' | 'cardio' | 'swimming' | 'yoga',
     title: '',
@@ -15,7 +18,8 @@ const AddTraining: React.FC<AddTrainingProps> = ({ onAddTraining }) => {
     duration: 60,
     distance: 0,
     notes: '',
-    completed: true
+    completed: true,
+    date: new Date()
   });
 
   const trainingTypes = [
@@ -42,9 +46,9 @@ const AddTraining: React.FC<AddTrainingProps> = ({ onAddTraining }) => {
       distance: formData.distance > 0 ? formData.distance : undefined,
       notes: formData.notes || undefined,
       completed: formData.completed,
-      date: new Date(),
+      date: formData.date,
       week: 1,
-      day: new Date().getDay() || 7
+      day: formData.date.getDay() || 7
     };
 
     onAddTraining(newTraining);
@@ -57,15 +61,44 @@ const AddTraining: React.FC<AddTrainingProps> = ({ onAddTraining }) => {
       duration: 60,
       distance: 0,
       notes: '',
-      completed: true
+      completed: true,
+      date: new Date()
     });
     
     setShowForm(false);
     alert('Training erfolgreich hinzugefügt! 🎉');
   };
 
+  const handleMultipleWorkouts = (workouts: TrainingSession[]) => {
+    if (onAddMultipleWorkouts) {
+      onAddMultipleWorkouts(workouts);
+    } else {
+      // Fallback: Einzeln hinzufügen
+      workouts.forEach(workout => onAddTraining(workout));
+    }
+    setShowMultiWorkout(false);
+  };
+
   const selectedType = trainingTypes.find(t => t.value === formData.type);
   const Icon = selectedType?.icon || Dumbbell;
+
+  // Multi-Workout View
+  if (showMultiWorkout) {
+    return (
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <button
+            onClick={() => setShowMultiWorkout(false)}
+            className="flex items-center gap-2 text-gray-600 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200"
+          >
+            <X size={18} />
+            Zurück zur Einzeltraining-Ansicht
+          </button>
+        </div>
+        <MultiWorkoutTracker onSaveWorkouts={handleMultipleWorkouts} />
+      </div>
+    );
+  }
 
   if (!showForm) {
     return (
@@ -80,15 +113,29 @@ const AddTraining: React.FC<AddTrainingProps> = ({ onAddTraining }) => {
             Training hinzufügen
           </h3>
           <p className="text-gray-600 dark:text-gray-400 mb-8 max-w-sm mx-auto">
-            Füge ein abgeschlossenes Training zu deiner Historie hinzu und sammle Punkte
+            Füge Trainings zu deiner Historie hinzu und sammle Punkte - einzeln oder als Multi-Workout Tag
           </p>
-          <button
-            onClick={() => setShowForm(true)}
-            className="w-full max-w-xs mx-auto bg-primary-500 hover:bg-primary-600 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-200 flex items-center justify-center gap-3 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
-          >
-            <Plus size={20} />
-            Neues Training hinzufügen
-          </button>
+          <div className="space-y-4">
+            <button
+              onClick={() => setShowForm(true)}
+              className="w-full max-w-xs mx-auto bg-primary-500 hover:bg-primary-600 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-200 flex items-center justify-center gap-3 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+            >
+              <Plus size={20} />
+              Einzelnes Training hinzufügen
+            </button>
+            
+            <div className="text-center">
+              <span className="text-gray-400 text-sm">oder</span>
+            </div>
+            
+            <button
+              onClick={() => setShowMultiWorkout(true)}
+              className="w-full max-w-xs mx-auto bg-gradient-to-r from-secondary-500 to-primary-500 hover:from-secondary-600 hover:to-primary-600 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-200 flex items-center justify-center gap-3 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+            >
+              <Target size={20} />
+              Multi-Workout Tag
+            </button>
+          </div>
           
           <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
             <div className="flex items-center justify-center gap-6 text-sm text-gray-500 dark:text-gray-500">
@@ -159,6 +206,31 @@ const AddTraining: React.FC<AddTrainingProps> = ({ onAddTraining }) => {
                 </button>
               );
             })}
+          </div>
+        </div>
+
+        {/* Date Selection */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <Calendar size={16} className="inline mr-1" />
+            Datum *
+          </label>
+          <div className="flex items-center gap-4">
+            <input
+              type="date"
+              value={formData.date.toISOString().split('T')[0]}
+              onChange={(e) => setFormData(prev => ({ ...prev, date: new Date(e.target.value + 'T12:00:00') }))}
+              max={new Date().toISOString().split('T')[0]}
+              className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+              required
+            />
+            <div className="text-sm text-gray-500 dark:text-gray-400">
+              {formData.date.toLocaleDateString('de-DE', { 
+                weekday: 'short', 
+                day: 'numeric', 
+                month: 'short' 
+              })}
+            </div>
           </div>
         </div>
 

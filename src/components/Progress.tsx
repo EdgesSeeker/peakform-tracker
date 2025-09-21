@@ -13,22 +13,33 @@ interface ProgressProps {
 const Progress: React.FC<ProgressProps> = ({ sessions, userStats }) => {
   const [activeTab, setActiveTab] = useState<'charts' | 'records' | 'badges'>('charts');
 
-  // Calculate weekly progress
+  // Calculate weekly progress - nur für Wochen mit tatsächlichen Aktivitäten
   const weeklyProgress = Array.from({ length: 8 }, (_, i) => {
     const week = i + 1;
-    const weekSessions = sessions.filter(s => s.week === week);
-    const completedSessions = weekSessions.filter(s => s.completed);
-    const strengthSessions = weekSessions.filter(s => s.type === 'strength');
-    const cardioSessions = weekSessions.filter(s => ['cardio', 'swimming'].includes(s.type));
+    
+    // Nur geplante Sessions für "geplante Sessions" Zählung
+    const plannedWeekSessions = sessions.filter(s => s.week === week && !s.isAdditionalWorkout);
+    const allWeekSessions = sessions.filter(s => s.week === week);
+    
+    const completedPlannedSessions = plannedWeekSessions.filter(s => s.completed);
+    const completedAllSessions = allWeekSessions.filter(s => s.completed);
+    
+    const strengthSessions = allWeekSessions.filter(s => s.type === 'strength');
+    const cardioSessions = allWeekSessions.filter(s => ['cardio', 'swimming'].includes(s.type));
+    
+    // Nur Trainingszeit für Wochen mit abgeschlossenen Sessions zeigen
+    const hasCompletedSessions = completedAllSessions.length > 0;
     
     return {
       week,
-      completedSessions: completedSessions.length,
-      totalSessions: weekSessions.length,
-      strengthPercentage: weekSessions.length > 0 ? (strengthSessions.length / weekSessions.length) * 100 : 0,
-      cardioPercentage: weekSessions.length > 0 ? (cardioSessions.length / weekSessions.length) * 100 : 0,
-      totalDistance: weekSessions.reduce((sum, s) => sum + (s.distance || 0), 0),
-      totalDuration: weekSessions.reduce((sum, s) => sum + s.duration, 0)
+      completedSessions: completedAllSessions.length, // Alle abgeschlossenen (Plan + Zusätzliche)
+      totalSessions: plannedWeekSessions.length, // Nur geplante Sessions
+      plannedCompleted: completedPlannedSessions.length, // Abgeschlossene geplante Sessions
+      additionalCompleted: completedAllSessions.length - completedPlannedSessions.length, // Zusätzliche Sessions
+      strengthPercentage: allWeekSessions.length > 0 ? (strengthSessions.length / allWeekSessions.length) * 100 : 0,
+      cardioPercentage: allWeekSessions.length > 0 ? (cardioSessions.length / allWeekSessions.length) * 100 : 0,
+      totalDistance: allWeekSessions.reduce((sum, s) => sum + (s.distance || 0), 0),
+      totalDuration: completedAllSessions.reduce((sum, s) => sum + s.duration, 0) // Nur abgeschlossene Sessions zählen
     };
   });
 

@@ -40,16 +40,24 @@ const ProgressCharts: React.FC<ProgressChartsProps> = ({
     labels: weeklyProgress.map(w => `Woche ${w.week}`),
     datasets: [
       {
-        label: 'Abgeschlossene Sessions',
-        data: weeklyProgress.map(w => w.completedSessions),
-        backgroundColor: 'rgba(14, 165, 233, 0.5)',
-        borderColor: 'rgba(14, 165, 233, 1)',
+        label: 'Geplante Sessions (abgeschlossen)',
+        data: weeklyProgress.map(w => w.plannedCompleted || w.completedSessions),
+        backgroundColor: 'rgba(34, 197, 94, 0.6)',
+        borderColor: 'rgba(34, 197, 94, 1)',
         borderWidth: 2,
         borderRadius: 4,
       },
       {
-        label: 'Geplante Sessions',
-        data: weeklyProgress.map(w => w.totalSessions),
+        label: 'Zusätzliche Workouts',
+        data: weeklyProgress.map(w => w.additionalCompleted || 0),
+        backgroundColor: 'rgba(168, 85, 247, 0.6)',
+        borderColor: 'rgba(168, 85, 247, 1)',
+        borderWidth: 2,
+        borderRadius: 4,
+      },
+      {
+        label: 'Geplante Sessions (offen)',
+        data: weeklyProgress.map(w => w.totalSessions - (w.plannedCompleted || w.completedSessions)),
         backgroundColor: 'rgba(229, 231, 235, 0.5)',
         borderColor: 'rgba(156, 163, 175, 1)',
         borderWidth: 2,
@@ -202,16 +210,16 @@ const ProgressCharts: React.FC<ProgressChartsProps> = ({
         <h3 className="text-lg font-semibold text-gray-900 mb-4">
           📈 Zusammenfassung seit Start
         </h3>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
           <div className="text-center">
             <div className="text-2xl font-bold text-blue-600 mb-1">
-              {sessions.filter(s => s.completed && s.type === 'cardio' && s.subtype === 'running').reduce((sum, s) => sum + (s.distance || 0), 0).toFixed(1)} km
+              {sessions.filter(s => s.completed && ((s.type === 'cardio' && s.subtype === 'running') || s.subtype === 'running')).reduce((sum, s) => sum + (s.distance || 0), 0).toFixed(1)} km
             </div>
             <div className="text-sm text-gray-600">🏃‍♂️ Gelaufen</div>
           </div>
           <div className="text-center">
             <div className="text-2xl font-bold text-green-600 mb-1">
-              {sessions.filter(s => s.completed && (s.type === 'cardio' && s.subtype === 'cycling' || s.subtype === 'intervals')).reduce((sum, s) => sum + (s.distance || 0), 0).toFixed(1)} km
+              {sessions.filter(s => s.completed && ((s.type === 'cardio' && s.subtype === 'cycling') || s.subtype === 'cycling' || s.subtype === 'intervals')).reduce((sum, s) => sum + (s.distance || 0), 0).toFixed(1)} km
             </div>
             <div className="text-sm text-gray-600">🚴‍♂️ Radgefahren</div>
           </div>
@@ -220,6 +228,38 @@ const ProgressCharts: React.FC<ProgressChartsProps> = ({
               {(sessions.filter(s => s.completed && s.type === 'swimming').reduce((sum, s) => sum + (s.distance || 0), 0) * 1000).toFixed(0)} m
             </div>
             <div className="text-sm text-gray-600">🏊‍♂️ Geschwommen</div>
+          </div>
+          <div className="text-center">
+            <div className="text-2xl font-bold text-purple-600 mb-1">
+              {sessions.filter(s => s.completed && s.isAdditionalWorkout).length}
+            </div>
+            <div className="text-sm text-gray-600">⚡ Extra Workouts</div>
+          </div>
+        </div>
+        
+        {/* Additional workout types breakdown */}
+        <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
+          <h4 className="text-md font-medium text-gray-700 mb-3">Zusätzliche Aktivitäten</h4>
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-4 text-sm">
+            {[
+              { type: 'yoga', icon: '🧘‍♀️', label: 'Yoga' },
+              { type: 'hiking', icon: '🥾', label: 'Wandern' },
+              { type: 'climbing', icon: '🧗‍♀️', label: 'Klettern' },
+              { type: 'boxing', icon: '🥊', label: 'Boxen' },
+              { type: 'dancing', icon: '💃', label: 'Tanzen' }
+            ].map(activity => {
+              const count = sessions.filter(s => 
+                s.completed && s.isAdditionalWorkout && 
+                (s.subtype === activity.type || s.type === activity.type)
+              ).length;
+              
+              return count > 0 ? (
+                <div key={activity.type} className="text-center">
+                  <div className="text-lg font-bold text-gray-700">{count}</div>
+                  <div className="text-xs text-gray-500">{activity.icon} {activity.label}</div>
+                </div>
+              ) : null;
+            }).filter(Boolean)}
           </div>
         </div>
       </div>

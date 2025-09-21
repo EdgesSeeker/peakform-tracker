@@ -17,9 +17,12 @@ import {
   ChevronDown,
   ChevronUp,
   Timer,
-  Watch
+  Watch,
+  Target,
+  Zap
 } from 'lucide-react';
 import ManualTracker from './ManualTracker';
+import DailyWorkoutSummary from './DailyWorkoutSummary';
 
 interface TrainingLogProps {
   sessions: TrainingSession[];
@@ -53,10 +56,18 @@ const TrainingLog: React.FC<TrainingLogProps> = ({
     return new Set(saved);
   });
 
+  const [groupByDay, setGroupByDay] = useState(() =>
+    storageManager.getUIState('trainingLog.groupByDay', false)
+  );
+
   // Persistiere UI-Zustände
   useEffect(() => {
     storageManager.saveUIState('expandedSessions', Array.from(expandedSessions));
   }, [expandedSessions]);
+
+  useEffect(() => {
+    storageManager.saveUIState('trainingLog.groupByDay', groupByDay);
+  }, [groupByDay]);
 
   useEffect(() => {
     storageManager.saveUIState('trainingLog.searchTerm', searchTerm);

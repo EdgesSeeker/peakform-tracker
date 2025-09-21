@@ -1,7 +1,7 @@
 export interface TrainingSession {
   id: string;
   type: 'cardio' | 'strength' | 'swimming' | 'yoga' | 'recovery';
-  subtype?: 'running' | 'cycling' | 'intervals' | 'legs' | 'upper' | 'fullbody';
+  subtype?: 'running' | 'cycling' | 'intervals' | 'legs' | 'upper' | 'fullbody' | 'meditation' | 'stretching' | 'breathing';
   title: string;
   description: string;
   duration: number; // in minutes
@@ -16,6 +16,34 @@ export interface TrainingSession {
   notes?: string;
   calories?: number;
   workoutPlan?: WorkoutPlan;
+  // Multi-workout support
+  isAdditionalWorkout?: boolean; // Kennzeichnet zusätzliche Workouts
+  parentWorkoutId?: string; // Verknüpfung zu anderen Workouts desselben Tages
+  workoutGroup?: string; // Gruppierung für Multi-Workouts
+  excludeFromStats?: boolean; // Workout aus Statistiken ausschließen
+}
+
+// Neue Interfaces für Multi-Workout System
+export interface DailyWorkoutGroup {
+  date: Date;
+  workouts: TrainingSession[];
+  totalDuration: number;
+  totalDistance: number;
+  completed: boolean;
+  notes?: string;
+}
+
+export interface AdditionalWorkout {
+  id: string;
+  type: 'cycling' | 'swimming' | 'strength' | 'running' | 'yoga' | 'hiking' | 'climbing' | 'boxing' | 'dancing' | 'other';
+  title: string;
+  duration: number;
+  distance?: number;
+  intensity?: 'low' | 'moderate' | 'high' | 'very_high';
+  calories?: number;
+  notes?: string;
+  equipment?: string[];
+  location?: string;
 }
 
 export interface WorkoutPlan {
