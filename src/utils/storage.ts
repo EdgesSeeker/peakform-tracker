@@ -1,9 +1,13 @@
-import { TrainingSession, UserStats, QuickCheck } from '../types';
+import { TrainingSession, UserStats, QuickCheck, WeightEntry, WeightGoal, ProteinEntry, NutritionGoal } from '../types';
 
 interface BackupData {
   sessions: TrainingSession[];
   userStats: UserStats;
   quickCheck: QuickCheck;
+  weightEntries: WeightEntry[];
+  weightGoal: WeightGoal | null;
+  proteinEntries: ProteinEntry[];
+  nutritionGoal: NutritionGoal | null;
   timestamp: number;
   version: string;
 }
@@ -13,6 +17,10 @@ class StorageManager {
     sessions: 'peakform-sessions',
     stats: 'peakform-stats',
     quickcheck: 'peakform-quickcheck',
+    weightEntries: 'peakform-weight-entries',
+    weightGoal: 'peakform-weight-goal',
+    proteinEntries: 'peakform-protein-entries',
+    nutritionGoal: 'peakform-nutrition-goal',
     backup: 'peakform-backup',
     lastBackup: 'peakform-last-backup',
     uiState: 'peakform-ui-state',
@@ -85,7 +93,31 @@ class StorageManager {
   loadStats(): UserStats | null {
     try {
       const data = localStorage.getItem(this.STORAGE_KEYS.stats);
-      return data ? JSON.parse(data) : null;
+      if (!data) return null;
+      
+      const stats = JSON.parse(data);
+      
+      // Lade Gewichts-Daten separat
+      const weightEntries = this.loadWeightEntries();
+      const weightGoal = this.loadWeightGoal();
+      
+      // Lade Ernährung-Daten separat
+      const proteinEntries = this.loadProteinEntries();
+      const nutritionGoal = this.loadNutritionGoal();
+      
+      return {
+        ...stats,
+        weightEntries,
+        weightGoal: weightGoal || {
+          targetWeight: 70,
+          startWeight: 75,
+          startDate: new Date()
+        },
+        proteinEntries,
+        nutritionGoal: nutritionGoal || {
+          dailyProtein: 140
+        }
+      };
     } catch (error) {
       console.error('❌ Fehler beim Laden der Stats:', error);
       return this.restoreFromBackup()?.userStats || null;
@@ -131,6 +163,10 @@ class StorageManager {
         sessions,
         userStats: stats,
         quickCheck,
+        weightEntries: this.loadWeightEntries(),
+        weightGoal: this.loadWeightGoal(),
+        proteinEntries: this.loadProteinEntries(),
+        nutritionGoal: this.loadNutritionGoal(),
         timestamp: Date.now(),
         version: this.VERSION
       };
@@ -261,7 +297,17 @@ class StorageManager {
       longestStreak: 0,
       points: 0,
       badges: [],
-      personalRecords: []
+      personalRecords: [],
+      weightEntries: [],
+      weightGoal: {
+        targetWeight: 70,
+        startWeight: 75,
+        startDate: new Date()
+      },
+      proteinEntries: [],
+      nutritionGoal: {
+        dailyProtein: 140
+      }
     };
   }
 
@@ -302,6 +348,139 @@ class StorageManager {
   getUIState(key: string, defaultValue: any = null): any {
     const state = this.loadUIState();
     return state[key] !== undefined ? state[key] : defaultValue;
+  }
+
+  // Gewichts-Einträge speichern
+  saveWeightEntry(weightEntry: WeightEntry): boolean {
+    try {
+      const existing = this.loadWeightEntries();
+      const updated = [...existing.filter(w => w.id !== weightEntry.id), weightEntry]
+        .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+      localStorage.setItem(this.STORAGE_KEYS.weightEntries, JSON.stringify(updated));
+      console.log('✅ Gewichts-Eintrag gespeichert');
+      return true;
+    } catch (error) {
+      console.error('❌ Fehler beim Speichern des Gewichts-Eintrags:', error);
+      return false;
+    }
+  }
+
+  // Gewichts-Einträge laden
+  loadWeightEntries(): WeightEntry[] {
+    try {
+      const data = localStorage.getItem(this.STORAGE_KEYS.weightEntries);
+      if (!data) return [];
+      
+      const entries = JSON.parse(data);
+      return entries.map((entry: any) => ({
+        ...entry,
+        date: new Date(entry.date)
+      }));
+    } catch (error) {
+      console.error('❌ Fehler beim Laden der Gewichts-Einträge:', error);
+      return [];
+    }
+  }
+
+  // Gewichts-Ziel speichern
+  saveWeightGoal(weightGoal: WeightGoal): boolean {
+    try {
+      localStorage.setItem(this.STORAGE_KEYS.weightGoal, JSON.stringify(weightGoal));
+      console.log('✅ Gewichts-Ziel gespeichert');
+      return true;
+    } catch (error) {
+      console.error('❌ Fehler beim Speichern des Gewichts-Ziels:', error);
+      return false;
+    }
+  }
+
+  // Gewichts-Ziel laden
+  loadWeightGoal(): WeightGoal | null {
+    try {
+      const data = localStorage.getItem(this.STORAGE_KEYS.weightGoal);
+      if (!data) return null;
+      
+      const goal = JSON.parse(data);
+      return {
+        ...goal,
+        startDate: new Date(goal.startDate),
+        targetDate: goal.targetDate ? new Date(goal.targetDate) : undefined
+      };
+    } catch (error) {
+      console.error('❌ Fehler beim Laden des Gewichts-Ziels:', error);
+      return null;
+    }
+  }
+
+  // Eiweiß-Einträge speichern
+  saveProteinEntry(proteinEntry: ProteinEntry): boolean {
+    try {
+      const existing = this.loadProteinEntries();
+      const updated = [...existing.filter(p => p.id !== proteinEntry.id), proteinEntry]
+        .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+      localStorage.setItem(this.STORAGE_KEYS.proteinEntries, JSON.stringify(updated));
+      console.log('✅ Eiweiß-Eintrag gespeichert');
+      return true;
+    } catch (error) {
+      console.error('❌ Fehler beim Speichern des Eiweiß-Eintrags:', error);
+      return false;
+    }
+  }
+
+  // Eiweiß-Einträge laden
+  loadProteinEntries(): ProteinEntry[] {
+    try {
+      const data = localStorage.getItem(this.STORAGE_KEYS.proteinEntries);
+      if (!data) return [];
+      
+      const entries = JSON.parse(data);
+      return entries.map((entry: any) => ({
+        ...entry,
+        date: new Date(entry.date)
+      }));
+    } catch (error) {
+      console.error('❌ Fehler beim Laden der Eiweiß-Einträge:', error);
+      return [];
+    }
+  }
+
+  // Ernährungs-Ziel speichern
+  saveNutritionGoal(nutritionGoal: NutritionGoal): boolean {
+    try {
+      localStorage.setItem(this.STORAGE_KEYS.nutritionGoal, JSON.stringify(nutritionGoal));
+      console.log('✅ Ernährungs-Ziel gespeichert');
+      return true;
+    } catch (error) {
+      console.error('❌ Fehler beim Speichern des Ernährungs-Ziels:', error);
+      return false;
+    }
+  }
+
+  // Ernährungs-Ziel laden
+  loadNutritionGoal(): NutritionGoal | null {
+    try {
+      const data = localStorage.getItem(this.STORAGE_KEYS.nutritionGoal);
+      if (!data) return null;
+      
+      return JSON.parse(data);
+    } catch (error) {
+      console.error('❌ Fehler beim Laden des Ernährungs-Ziels:', error);
+      return null;
+    }
+  }
+
+  // Eiweiß-Eintrag löschen
+  deleteProteinEntry(id: string): boolean {
+    try {
+      const existing = this.loadProteinEntries();
+      const updated = existing.filter(entry => entry.id !== id);
+      localStorage.setItem(this.STORAGE_KEYS.proteinEntries, JSON.stringify(updated));
+      console.log('✅ Eiweiß-Eintrag gelöscht');
+      return true;
+    } catch (error) {
+      console.error('❌ Fehler beim Löschen des Eiweiß-Eintrags:', error);
+      return false;
+    }
   }
 
   // Erweiterte Persistierung-Funktionen

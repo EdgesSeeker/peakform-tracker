@@ -8,6 +8,7 @@ import BadgeShowcase from './BadgeShowcase';
 import SyncManager from './SyncManager';
 import DuplicateWorkoutCleaner from './DuplicateWorkoutCleaner';
 import QuickWeekPlanner from './QuickWeekPlanner';
+import WeightProgress from './WeightProgress';
 
 interface DashboardProps {
   sessions: TrainingSession[];
@@ -32,9 +33,9 @@ const Dashboard: React.FC<DashboardProps> = ({
 }) => {
   // Wochen-Navigation State
   const [selectedWeek, setSelectedWeek] = useState<number>(() => {
-    // Lade gespeicherte Woche oder verwende aktuelle Woche
+    // Lade gespeicherte Woche oder verwende aktuelle Woche (Woche 2)
     const saved = localStorage.getItem('dashboard-selected-week');
-    return saved ? parseInt(saved) : 1;
+    return saved ? parseInt(saved) : 2; // Starte standardmäßig mit Woche 2
   });
 
   // Speichere ausgewählte Woche
@@ -105,13 +106,13 @@ const Dashboard: React.FC<DashboardProps> = ({
   });
 
   return (
-    <div className="space-y-8 animate-fade-in">
+    <div className="space-y-4 md:space-y-8 px-4 md:px-0 animate-fade-in">
       {/* Header */}
       <div className="text-center">
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">
+        <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">
           Willkommen zurück! 👋
         </h1>
-        <p className="text-gray-600 dark:text-gray-400">
+        <p className="text-sm md:text-base text-gray-600 dark:text-gray-400">
           Bereit für dein nächstes Training? Lass uns deine Ziele erreichen!
         </p>
       </div>
@@ -127,15 +128,15 @@ const Dashboard: React.FC<DashboardProps> = ({
       />
 
       {/* Week Navigation */}
-      <div className="card mb-6">
-        <div className="flex items-center justify-between">
+      <div className="card mb-4 md:mb-6">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
             Wochenansicht
           </h3>
           
-          <div className="flex items-center gap-3">
-            <span className="text-sm text-gray-600 dark:text-gray-400">Woche:</span>
-            <div className="flex items-center gap-1">
+          <div className="flex items-center gap-2 md:gap-3">
+            <span className="text-sm text-gray-600 dark:text-gray-400 hidden md:inline">Woche:</span>
+            <div className="flex items-center gap-1 overflow-x-auto pb-2 md:pb-0">
               {[1, 2, 3, 4, 5, 6, 7, 8].map((week) => {
                 const weekSessions = sessions.filter(s => s.week === week && !s.isAdditionalWorkout);
                 const completedCount = weekSessions.filter(s => s.completed).length;
@@ -148,7 +149,7 @@ const Dashboard: React.FC<DashboardProps> = ({
                     key={week}
                     onClick={() => setSelectedWeek(week)}
                     disabled={!hasContent}
-                    className={`px-3 py-2 rounded-lg text-sm font-medium transition-all ${
+                    className={`px-2 md:px-3 py-2 rounded-lg text-sm font-medium transition-all min-w-[44px] ${
                       isActive
                         ? 'bg-primary-500 text-white shadow-md'
                         : hasContent
@@ -245,6 +246,8 @@ const Dashboard: React.FC<DashboardProps> = ({
           onCompleteSession={onCompleteSession}
           onUpdateSession={onUpdateSession}
           onUncompleteSession={onUncompleteSession}
+          onDeleteSession={onDeleteSession}
+          onAddWorkout={(workout) => onAddMultipleWorkouts ? onAddMultipleWorkouts([workout]) : null}
         />
       ) : (
         <QuickWeekPlanner 
@@ -262,9 +265,15 @@ const Dashboard: React.FC<DashboardProps> = ({
         />
       )}
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* Add Training - Always available */}
-        <div>
+      {/* Mobile-optimierte Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+        {/* Gewichts-Fortschritt - Mobile: Vollbreite, Desktop: Erste Spalte */}
+        <div className="md:col-span-1">
+          <WeightProgress />
+        </div>
+
+        {/* Add Training - Mobile: Vollbreite, Desktop: Zweite Spalte */}
+        <div className="md:col-span-1">
           <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
             {upcomingSessions.length > 0 ? 'Zusätzliche Trainings' : 'Training hinzufügen'}
           </h3>
@@ -274,8 +283,10 @@ const Dashboard: React.FC<DashboardProps> = ({
           />
         </div>
 
-        {/* Badge Showcase */}
-        <BadgeShowcase badges={userStats.badges} />
+        {/* Badge Showcase - Mobile: Vollbreite, Desktop: Dritte Spalte */}
+        <div className="md:col-span-2 lg:col-span-1">
+          <BadgeShowcase badges={userStats.badges} />
+        </div>
       </div>
 
       {/* Sync Manager */}

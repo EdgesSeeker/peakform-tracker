@@ -1,7 +1,11 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
-import App from './App';
+
+// Wähle zwischen Web-Version und Mobile App
+const App = process.env.REACT_APP_MOBILE_MODE === 'true' ? 
+  require('./AppMobile').default : 
+  require('./App').default;
 
 // Service Worker für PWA (nur in Production)
 if ('serviceWorker' in navigator && process.env.NODE_ENV === 'production') {

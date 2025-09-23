@@ -45,7 +45,26 @@ const SettingsMenu: React.FC<SettingsMenuProps> = ({
 
   const createManualBackup = () => {
     const sessions = storageManager.loadSessions() || [];
-    const stats = storageManager.loadStats() || { totalSessions: 0, totalDistance: 0, totalDuration: 0, currentStreak: 0, longestStreak: 0, points: 0, badges: [], personalRecords: [] };
+    const stats = storageManager.loadStats() || { 
+      totalSessions: 0, 
+      totalDistance: 0, 
+      totalDuration: 0, 
+      currentStreak: 0, 
+      longestStreak: 0, 
+      points: 0, 
+      badges: [], 
+      personalRecords: [],
+      weightEntries: [],
+      weightGoal: {
+        targetWeight: 70,
+        startWeight: 75,
+        startDate: new Date()
+      },
+      proteinEntries: [],
+      nutritionGoal: {
+        dailyProtein: 140
+      }
+    };
     const quickCheck = storageManager.loadQuickCheck() || { sleep: 3, nutrition: 3, stress: 3, date: new Date() };
     
     if (storageManager.createBackup(sessions, stats, quickCheck)) {

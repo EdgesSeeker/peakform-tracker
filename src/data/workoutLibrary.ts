@@ -67,7 +67,7 @@ export const workoutLibrary: WorkoutTemplate[] = [
     description: 'Intensive Rad-Intervalle für Kraftausdauer',
     category: 'cardio',
     intensity: 'very_high',
-    icon: '🚴‍♂️⚡',
+    icon: '🚴‍♂️',
     calories: 500,
     equipment: ['Fahrrad']
   },
@@ -199,7 +199,7 @@ export const workoutLibrary: WorkoutTemplate[] = [
     description: 'Sanfte Yoga-Routine für den Morgen',
     category: 'flexibility',
     intensity: 'low',
-    icon: '🌅🧘‍♀️',
+    icon: '🧘‍♀️',
     calories: 80,
     equipment: ['Yogamatte']
   },
@@ -253,7 +253,7 @@ export const workoutLibrary: WorkoutTemplate[] = [
     description: 'Längere Meditationssession',
     category: 'mindfulness',
     intensity: 'low',
-    icon: '🧘✨',
+    icon: '🧘',
     calories: 40,
     equipment: []
   },
@@ -266,7 +266,7 @@ export const workoutLibrary: WorkoutTemplate[] = [
     description: 'Atemtechniken für Entspannung und Fokus',
     category: 'mindfulness',
     intensity: 'low',
-    icon: '💨🧘',
+    icon: '🧘',
     calories: 15,
     equipment: []
   },
@@ -279,7 +279,7 @@ export const workoutLibrary: WorkoutTemplate[] = [
     description: 'Intensive Atemarbeit für Stressabbau',
     category: 'mindfulness',
     intensity: 'moderate',
-    icon: '💨✨',
+    icon: '💨',
     calories: 60,
     equipment: []
   },
@@ -295,7 +295,7 @@ export const workoutLibrary: WorkoutTemplate[] = [
     description: 'Lockerer Dauerlauf Zone 2 (70-75% HFmax), Pace 6:20-6:40/km, Fokus Lauf-Ökonomie',
     category: 'cardio',
     intensity: 'moderate',
-    icon: '🏃‍♂️⏱️',
+    icon: '🏃‍♂️',
     calories: 700,
     equipment: ['Laufschuhe', 'Pulsuhr']
   },
@@ -308,7 +308,7 @@ export const workoutLibrary: WorkoutTemplate[] = [
     description: 'Kniebeugen 4×8-10 (80% 1RM), Ausfallschritte 3×10/Bein, Hip Thrusts 3×12, Core-Zirkel 3×30s',
     category: 'strength',
     intensity: 'high',
-    icon: '🦵💪',
+    icon: '🦵',
     calories: 400,
     equipment: ['Langhantel', 'Kurzhanteln']
   },
@@ -321,7 +321,7 @@ export const workoutLibrary: WorkoutTemplate[] = [
     description: '300m Einschwimmen, 6×50m Technik, 5×100m zügig (1:55-2:05), 3×200m GA1 (2:00-2:10), 200m Auslockern',
     category: 'swimming',
     intensity: 'moderate',
-    icon: '🏊‍♂️🎯',
+    icon: '🏊‍♂️',
     calories: 500,
     equipment: ['Schwimmbrille', 'Pullbuoy']
   },
@@ -334,7 +334,7 @@ export const workoutLibrary: WorkoutTemplate[] = [
     description: 'Bankdrücken 4×8, Klimmzüge 4×Max, KH-Rudern 3×10/Seite, Facepulls 3×12, Liegestütz 3×15',
     category: 'strength',
     intensity: 'high',
-    icon: '🏋️‍♂️💪',
+    icon: '🏋️‍♂️',
     calories: 350,
     equipment: ['Langhantel', 'Klimmzugstange', 'Kurzhanteln']
   },
@@ -348,7 +348,7 @@ export const workoutLibrary: WorkoutTemplate[] = [
     description: '20min Einrollen (100-120W), 6×4min Schwellenbereich (85-95% FTP), 3min Pause, 20min Ausrollen',
     category: 'cardio',
     intensity: 'very_high',
-    icon: '🚴‍♂️⚡',
+    icon: '🚴‍♂️',
     calories: 650,
     equipment: ['Rad', 'Powermeter']
   },
@@ -362,7 +362,7 @@ export const workoutLibrary: WorkoutTemplate[] = [
     description: '50min Rad GA2 (75-80% HFmax) direkt gefolgt von 25min Lauf (6:30/km), Fokus Frequenz',
     category: 'cardio',
     intensity: 'high',
-    icon: '🚴‍♂️🏃‍♂️',
+    icon: '🚴‍♂️',
     calories: 600,
     equipment: ['Rad', 'Laufschuhe']
   },
@@ -375,7 +375,7 @@ export const workoutLibrary: WorkoutTemplate[] = [
     description: 'Kreuzheben 3×8, Bulgarian Split Squat 3×8/Bein, Schulterdrücken 3×10, Plank-Varianten 3×30-45s',
     category: 'strength',
     intensity: 'high',
-    icon: '💪🏋️‍♂️',
+    icon: '💪',
     calories: 300,
     equipment: ['Langhantel', 'Kurzhanteln']
   },
@@ -388,7 +388,7 @@ export const workoutLibrary: WorkoutTemplate[] = [
     description: 'Lockeres Schwimmen, Fokus Atmung und Wasserlage, Pace 2:15-2:30/100m',
     category: 'recovery',
     intensity: 'low',
-    icon: '🏊‍♂️😌',
+    icon: '🏊‍♂️',
     calories: 200,
     equipment: ['Schwimmbrille']
   },
@@ -402,7 +402,7 @@ export const workoutLibrary: WorkoutTemplate[] = [
     description: 'Lockere Radfahrt 100W GA1, hohe Trittfrequenz (Regeneration)',
     category: 'recovery',
     intensity: 'low',
-    icon: '🚴‍♂️💨',
+    icon: '🚴‍♂️',
     calories: 200,
     equipment: ['Rad']
   },
@@ -477,7 +477,7 @@ export const workoutLibrary: WorkoutTemplate[] = [
     description: 'Box-Breathing, Nasenatmung und Meditation',
     category: 'mindfulness',
     intensity: 'low',
-    icon: '💨🧘',
+    icon: '🧘',
     calories: 20,
     equipment: []
   },
@@ -490,7 +490,7 @@ export const workoutLibrary: WorkoutTemplate[] = [
     description: 'Wechselatmung und Atemtechnik-Training',
     category: 'mindfulness',
     intensity: 'low',
-    icon: '💨✨',
+    icon: '💨',
     calories: 20,
     equipment: []
   },
@@ -503,7 +503,7 @@ export const workoutLibrary: WorkoutTemplate[] = [
     description: 'Geführte Meditation und Entspannung',
     category: 'mindfulness',
     intensity: 'low',
-    icon: '🧘✨',
+    icon: '🧘',
     calories: 20,
     equipment: []
   },

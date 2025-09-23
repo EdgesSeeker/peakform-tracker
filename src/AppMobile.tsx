@@ -1,28 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Dashboard from './components/Dashboard';
-import TodayOverview from './components/TodayOverview';
-import TrainingLog from './components/TrainingLog';
-import Calendar from './components/Calendar';
-import Progress from './components/Progress';
-import Navigation from './components/Navigation';
-import StravaIntegration from './components/StravaIntegration';
-import StravaCallback from './components/StravaCallback';
-import ResetPlan from './components/ResetPlan';
+import NavigationMobile from './components/NavigationMobile';
 import PWAInstall from './components/PWAInstall';
-import QuickWorkoutLibrary from './components/QuickWorkoutLibrary';
-import SimpleStravaImport from './components/SimpleStravaImport';
-import DuplicateWorkoutCleaner from './components/DuplicateWorkoutCleaner';
-import AIPerformancePanel from './components/AIPerformancePanel';
-import TrainingPlanUploader from './components/TrainingPlanUploader';
+import Nutrition from './components/Nutrition';
 import { ThemeProvider } from './contexts/ThemeContext';
-import { TrainingSession, UserStats, QuickCheck } from './types';
+import { TrainingSession, UserStats, QuickCheck, WeightGoal, ProteinEntry, NutritionGoal } from './types';
 import { getAdjustedPlan, detailedHybridPlan } from './data/detailedHybridPlan';
 import { badgeDefinitions, calculatePoints, checkMultiWorkoutBadges } from './data/badges';
 import storageManager from './utils/storage';
 import firebaseSync from './services/firebaseSync';
 
-function App() {
+function AppMobile() {
   const [sessions, setSessions] = useState<TrainingSession[]>([]);
   const [userStats, setUserStats] = useState<UserStats>({
     totalSessions: 0,
@@ -53,7 +42,7 @@ function App() {
 
   // Load data from localStorage on mount
   useEffect(() => {
-    console.log('🚀 App wird initialisiert...');
+    console.log('🚀 Mobile App wird initialisiert...');
     
     // NOTFALL-BEREINIGUNG: Lösche falsch geparste Sessions
     const savedSessions = storageManager.loadSessions();
@@ -67,9 +56,12 @@ function App() {
       
       if (hasFalselyParsedSessions) {
         console.log('🚨 NOTFALL-BEREINIGUNG: Falsch geparste Sessions entdeckt!');
-        // Behalte nur Woche 1 und zusätzliche Workouts
+        // Behalte Woche 1, zusätzliche Workouts UND hochgeladene Pläne (nicht falsch geparste)
         const cleanSessions = savedSessions.filter(s => 
-          s.week === 1 || s.isAdditionalWorkout || s.id.includes('strava')
+          s.week === 1 || 
+          s.isAdditionalWorkout || 
+          s.id.includes('strava') ||
+          s.id.includes('plan-w') // Hochgeladene Pläne behalten
         );
         console.log(`🔧 Bereinigt: ${savedSessions.length} → ${cleanSessions.length} Sessions`);
         setSessions(cleanSessions);
@@ -87,8 +79,8 @@ function App() {
         setQuickCheck(backup.quickCheck);
         console.log('🔄 Backup wiederhergestellt mit', backup.sessions.length, 'Sessions');
       } else {
-        // NUR WOCHE 1 aus dem alten Plan laden - WOCHE 2 LEER LASSEN
-        console.log('📅 Erstelle SICHEREN Plan: Nur Woche 1, Woche 2 bleibt leer...');
+        // Nur laden wenn wirklich keine Sessions vorhanden sind (erste Installation)
+        console.log('📅 Keine gespeicherten Sessions gefunden - lade Standard-Plan...');
         const detailedPlan = getAdjustedPlan(new Date());
         const onlyWeek1Sessions = detailedPlan.filter(s => s.week === 1);
         console.log(`🔒 Nur Woche 1 geladen: ${onlyWeek1Sessions.length} Sessions`);
@@ -97,7 +89,41 @@ function App() {
       }
     }
 
-    // Stats werden aus Sessions berechnet, nicht geladen
+    // Lade Gewichts-Daten
+    const savedWeightEntries = storageManager.loadWeightEntries();
+    const savedWeightGoal = storageManager.loadWeightGoal();
+    
+    if (savedWeightEntries.length > 0) {
+      setUserStats(prev => ({
+        ...prev,
+        weightEntries: savedWeightEntries
+      }));
+    }
+    
+    if (savedWeightGoal) {
+      setUserStats(prev => ({
+        ...prev,
+        weightGoal: savedWeightGoal
+      }));
+    }
+
+    // Lade Ernährung-Daten
+    const savedProteinEntries = storageManager.loadProteinEntries();
+    const savedNutritionGoal = storageManager.loadNutritionGoal();
+    
+    if (savedProteinEntries.length > 0) {
+      setUserStats(prev => ({
+        ...prev,
+        proteinEntries: savedProteinEntries
+      }));
+    }
+    
+    if (savedNutritionGoal) {
+      setUserStats(prev => ({
+        ...prev,
+        nutritionGoal: savedNutritionGoal
+      }));
+    }
 
     // QuickCheck laden
     const savedQuickCheck = storageManager.loadQuickCheck();
@@ -141,11 +167,9 @@ function App() {
 
   // Stats aus Sessions berechnen
   const calculateStatsFromSessions = (allSessions: TrainingSession[]): UserStats => {
-    // Behalte bestehende Gewichts- und Ernährungs-Daten
+    // Behalte bestehende Gewichts-Daten
     const currentWeightEntries = userStats.weightEntries;
     const currentWeightGoal = userStats.weightGoal;
-    const currentProteinEntries = userStats.proteinEntries;
-    const currentNutritionGoal = userStats.nutritionGoal;
     const completedSessions = allSessions.filter(s => s.completed && !s.excludeFromStats);
     
     const totalSessions = completedSessions.length;
@@ -249,8 +273,8 @@ function App() {
       personalRecords: [],
       weightEntries: currentWeightEntries,
       weightGoal: currentWeightGoal,
-      proteinEntries: currentProteinEntries,
-      nutritionGoal: currentNutritionGoal
+      proteinEntries: userStats.proteinEntries,
+      nutritionGoal: userStats.nutritionGoal
     };
   };
 
@@ -384,23 +408,6 @@ function App() {
     }
   }, [sessions.length]); // Nur beim ersten Laden ausführen
 
-  // Funktion zum Hochladen eines benutzerdefinierten Trainingsplans
-  const uploadTrainingPlan = (weekNumber: number, newSessions: TrainingSession[]) => {
-    console.log(`📤 Lade Plan für Woche ${weekNumber} hoch: ${newSessions.length} Sessions`);
-    
-    // Entferne bestehende Sessions für diese Woche (behalte zusätzliche Workouts)
-    const filteredSessions = sessions.filter(s => 
-      !(s.week === weekNumber && !s.isAdditionalWorkout)
-    );
-    
-    // Füge neue Sessions hinzu
-    const updatedSessions = [...filteredSessions, ...newSessions];
-    setSessions(updatedSessions);
-    storageManager.saveSessions(updatedSessions);
-    
-    console.log(`✅ Woche ${weekNumber} erfolgreich aktualisiert!`);
-  };
-
   // Funktion zum Aktualisieren von Woche 2 mit dem neuen Triathlon-Plan
   const updateWeek2WithTriathlonPlan = () => {
     console.log('🔄 Starte SICHERES Woche 2 Update...');
@@ -472,46 +479,6 @@ function App() {
     storageManager.saveQuickCheck(newQuickCheck);
   };
 
-  const swapSessions = (sessionId1: string, sessionId2: string) => {
-    setSessions(prev => {
-      const newSessions = [...prev];
-      const session1Index = newSessions.findIndex(s => s.id === sessionId1);
-      const session2Index = newSessions.findIndex(s => s.id === sessionId2);
-
-      if (session1Index !== -1 && session2Index !== -1) {
-        // Komplett tauschen - alle Eigenschaften inklusive day und date
-        const session1 = newSessions[session1Index];
-        const session2 = newSessions[session2Index];
-        
-        // Tausche day und date zwischen den Sessions
-        const tempDay = session1.day;
-        const tempDate = session1.date;
-        
-        newSessions[session1Index] = {
-          ...session1,
-          day: session2.day,
-          date: session2.date
-        };
-        
-        newSessions[session2Index] = {
-          ...session2,
-          day: tempDay,
-          date: tempDate
-        };
-
-        console.log('🔄 Sessions getauscht:', {
-          session1: `${newSessions[session1Index].title} (Tag ${newSessions[session1Index].day})`,
-          session2: `${newSessions[session2Index].title} (Tag ${newSessions[session2Index].day})`
-        });
-        
-        // Explizite Benachrichtigung über erfolgreichen Tausch
-        console.log('✅ Tausch erfolgreich! Dashboard und Heute-Sessions werden automatisch aktualisiert.');
-      }
-
-      return newSessions;
-    });
-  };
-
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const updateQuickCheck = (field: keyof Omit<QuickCheck, 'date'>, value: 1 | 2 | 3 | 4 | 5) => {
     setQuickCheck(prev => ({
@@ -521,26 +488,11 @@ function App() {
     }));
   };
 
-  const importStravaActivities = (newSessions: TrainingSession[]) => {
-    setSessions(prev => {
-      // Duplikate vermeiden (basierend auf ID)
-      const existingIds = new Set(prev.map(s => s.id));
-      const uniqueNewSessions = newSessions.filter(s => !existingIds.has(s.id));
-      
-      if (uniqueNewSessions.length === 0) {
-        return prev;
-      }
-
-      // Neue Sessions hinzufügen - Stats werden automatisch durch useEffect neu berechnet
-      return [...prev, ...uniqueNewSessions];
-    });
-  };
-
   return (
     <ThemeProvider>
       <Router>
         <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col transition-colors duration-200">
-          <Navigation 
+          <NavigationMobile 
             sessions={sessions} 
             userStats={userStats}
             quickCheck={quickCheck}
@@ -564,103 +516,18 @@ function App() {
               } 
             />
             <Route 
-              path="/calendar" 
-              element={
-                <Calendar 
-                  sessions={sessions}
-                  onCompleteSession={completeSession}
-                  onUpdateSession={updateSession}
-                  onSwapSessions={swapSessions}
-                />
-              } 
-            />
-            <Route 
-              path="/progress" 
-              element={
-                <Progress 
-                  sessions={sessions}
-                  userStats={userStats}
-                />
-              } 
-            />
-            <Route 
-              path="/library" 
-              element={
-                <QuickWorkoutLibrary 
-                  onAddWorkouts={addMultipleWorkouts}
-                />
-              } 
-            />
-            <Route 
-              path="/upload-plan" 
-              element={
-                <TrainingPlanUploader 
-                  onUploadPlan={uploadTrainingPlan}
-                />
-              } 
-            />
-            <Route 
-              path="/ai-analysis" 
-              element={
-                <AIPerformancePanel 
-                  sessions={sessions}
-                  userStats={userStats}
-                  onUpdateSession={updateSession}
-                />
-              } 
-            />
-            <Route 
-              path="/strava" 
-              element={
-                <div className="space-y-8">
-                  <StravaIntegration 
-                    onImportActivities={importStravaActivities}
-                  />
-                  <SimpleStravaImport 
-                    onAddWorkouts={addMultipleWorkouts}
-                    onDeleteWorkout={deleteSession}
-                    onUpdateSession={updateSession}
-                    existingSessions={sessions}
-                  />
-                </div>
-              } 
-            />
-            <Route 
-              path="/today" 
-              element={
-                <TodayOverview 
-                  sessions={sessions}
-                  onCompleteSession={completeSession}
-                  onUpdateSession={updateSession}
-                />
-              } 
-            />
-            <Route 
-              path="/log" 
-              element={
-                <TrainingLog 
-                  sessions={sessions}
-                  onUpdateSession={updateSession}
-                  onDeleteSession={deleteSession}
-                />
-              }
-            />
-            <Route 
-              path="/auth/strava/callback" 
-              element={<StravaCallback />} 
+              path="/nutrition" 
+              element={<Nutrition />} 
             />
           </Routes>
           </main>
           
           {/* PWA Install Prompt */}
           <PWAInstall />
-          
-          {/* Reset Plan Button */}
-          <ResetPlan />
         </div>
       </Router>
     </ThemeProvider>
   );
 }
 
-export default App;
+export default AppMobile;

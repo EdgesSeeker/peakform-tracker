@@ -29,17 +29,35 @@ const TrainingCard: React.FC<TrainingCardProps> = ({
 }) => {
   const [showTracker, setShowTracker] = useState(false);
   const getIcon = () => {
+    // Prüfe zuerst, ob das Workout bereits ein Icon hat (aus der Bibliothek)
+    if (session.icon) {
+      return session.icon;
+    }
+
+    // Fallback basierend auf Typ
     switch (session.type) {
-      case 'strength':
-        return Dumbbell;
       case 'cardio':
-        return Heart;
+        if (session.subtype === 'running') return '🏃‍♂️';
+        if (session.subtype === 'cycling') return '🚴‍♂️';
+        if (session.subtype === 'intervals') return '⚡';
+        return '❤️';
+      case 'strength':
+        if (session.subtype === 'legs') return '🦵';
+        if (session.subtype === 'upper') return '🏋️‍♂️';
+        if (session.subtype === 'fullbody') return '💪';
+        return '💪';
       case 'swimming':
-        return Waves;
+        return '🏊‍♂️';
       case 'yoga':
-        return Flower;
+        if (session.subtype === 'stretching') return '🤸‍♀️';
+        return '🧘‍♀️';
+      case 'recovery':
+        if (session.subtype === 'meditation') return '🧘';
+        if (session.subtype === 'breathing') return '💨';
+        if (session.subtype === 'stretching') return '🤸‍♀️';
+        return '😌';
       default:
-        return Zap;
+        return '💪';
     }
   };
 
@@ -73,7 +91,7 @@ const TrainingCard: React.FC<TrainingCardProps> = ({
     }
   };
 
-  const Icon = getIcon();
+  const icon = getIcon();
   const colorClasses = getTypeColor();
 
   const handleTrackingComplete = (updatedSession: TrainingSession) => {
@@ -92,7 +110,7 @@ const TrainingCard: React.FC<TrainingCardProps> = ({
     >
       <div className="flex items-center justify-between mb-2">
         <div className={`p-2 rounded-lg ${colorClasses}`}>
-          <Icon size={16} />
+          <span className="text-lg">{icon}</span>
         </div>
         <button
           onClick={(e) => {
@@ -155,7 +173,7 @@ const TrainingCard: React.FC<TrainingCardProps> = ({
     >
       <div className="flex items-start justify-between mb-4">
         <div className={`p-3 rounded-lg ${colorClasses}`}>
-          <Icon size={24} />
+          <span className="text-2xl">{icon}</span>
         </div>
         <button
           onClick={(e) => {

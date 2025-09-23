@@ -1,5 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { TrainingSession } from '../types';
+import WorkoutContextMenu from './WorkoutContextMenu';
+import WorkoutActionMenu from './WorkoutActionMenu';
+import EditWorkoutModal from './EditWorkoutModal';
 
 interface WeekOverviewProps {
   sessions: TrainingSession[];
@@ -7,6 +10,8 @@ interface WeekOverviewProps {
   onCompleteSession: (sessionId: string) => void;
   onUpdateSession?: (updatedSession: TrainingSession) => void;
   onUncompleteSession?: (sessionId: string) => void;
+  onDeleteSession?: (sessionId: string) => void;
+  onAddWorkout?: (workout: TrainingSession) => void;
 }
 
 const WeekOverview: React.FC<WeekOverviewProps> = ({ 
@@ -14,8 +19,40 @@ const WeekOverview: React.FC<WeekOverviewProps> = ({
   weekNumber, 
   onCompleteSession,
   onUpdateSession,
-  onUncompleteSession
+  onUncompleteSession,
+  onDeleteSession,
+  onAddWorkout
 }) => {
+  // Kontextmenü State
+  const [contextMenu, setContextMenu] = useState<{
+    isOpen: boolean;
+    position: { x: number; y: number };
+    targetDay: number;
+    targetDate: Date;
+  }>({
+    isOpen: false,
+    position: { x: 0, y: 0 },
+    targetDay: 1,
+    targetDate: new Date()
+  });
+
+  const [workoutActionMenu, setWorkoutActionMenu] = useState<{
+    isOpen: boolean;
+    position: { x: number; y: number };
+    workout: TrainingSession | null;
+  }>({
+    isOpen: false,
+    position: { x: 0, y: 0 },
+    workout: null
+  });
+
+  const [editModal, setEditModal] = useState<{
+    isOpen: boolean;
+    workout: TrainingSession | null;
+  }>({
+    isOpen: false,
+    workout: null
+  });
   // Debug: Log sessions für diese Woche
   console.log(`📅 WeekOverview Woche ${weekNumber}:`);
   sessions.forEach(s => {
@@ -37,6 +74,40 @@ const WeekOverview: React.FC<WeekOverviewProps> = ({
 
   const dayNames = ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'];
 
+  // Funktion um das passende Icon für ein Workout zu bekommen
+  const getWorkoutIcon = (session: TrainingSession): string => {
+    // Prüfe zuerst, ob das Workout bereits ein Icon hat (aus der Bibliothek)
+    if (session.icon) {
+      return session.icon;
+    }
+
+    // Fallback basierend auf Typ
+    switch (session.type) {
+      case 'cardio':
+        if (session.subtype === 'running') return '🏃‍♂️';
+        if (session.subtype === 'cycling') return '🚴‍♂️';
+        if (session.subtype === 'intervals') return '⚡';
+        return '❤️';
+      case 'strength':
+        if (session.subtype === 'legs') return '🦵';
+        if (session.subtype === 'upper') return '🏋️‍♂️';
+        if (session.subtype === 'fullbody') return '💪';
+        return '💪';
+      case 'swimming':
+        return '🏊‍♂️';
+      case 'yoga':
+        if (session.subtype === 'stretching') return '🤸‍♀️';
+        return '🧘‍♀️';
+      case 'recovery':
+        if (session.subtype === 'meditation') return '🧘';
+        if (session.subtype === 'breathing') return '💨';
+        if (session.subtype === 'stretching') return '🤸‍♀️';
+        return '😌';
+      default:
+        return '💪';
+    }
+  };
+
   // Gruppiere Sessions nach Tagen (1=Mo, 2=Di, ..., 7=So)
   const sessionsByDay = sessions.reduce((acc, session) => {
     const day = session.day;
@@ -44,6 +115,82 @@ const WeekOverview: React.FC<WeekOverviewProps> = ({
     acc[day].push(session);
     return acc;
   }, {} as { [key: number]: TrainingSession[] });
+
+  // Handler für Rechtsklick
+  const handleRightClick = (event: React.MouseEvent, dayNumber: number) => {
+    event.preventDefault();
+    
+    console.log('🖱️ Rechtsklick auf Tag:', dayNumber, 'Woche:', weekNumber);
+    
+    // Berechne das Datum für diesen Tag
+    const weekStartDate = new Date(2024, 8, 16); // 16.09.2024 (Montag Woche 1)
+    const targetDate = new Date(weekStartDate);
+    targetDate.setDate(weekStartDate.getDate() + ((weekNumber - 1) * 7) + (dayNumber - 1));
+    
+    console.log('📅 Ziel-Datum:', targetDate);
+    
+    setContextMenu({
+      isOpen: true,
+      position: { x: event.clientX, y: event.clientY },
+      targetDay: dayNumber,
+      targetDate: targetDate
+    });
+    
+    console.log('🔧 Kontextmenü State gesetzt:', { isOpen: true, targetDay: dayNumber });
+  };
+
+  // Handler für Workout hinzufügen
+  const handleAddWorkout = (workout: TrainingSession) => {
+    if (onAddWorkout) {
+      onAddWorkout(workout);
+    }
+  };
+
+  // Handler für Kontextmenü schließen
+  const handleCloseContextMenu = () => {
+    setContextMenu(prev => ({ ...prev, isOpen: false }));
+  };
+
+  const handleWorkoutRightClick = (e: React.MouseEvent, workout: TrainingSession) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    setWorkoutActionMenu({
+      isOpen: true,
+      position: { x: e.clientX, y: e.clientY },
+      workout: workout
+    });
+  };
+
+  const handleCloseWorkoutActionMenu = () => {
+    setWorkoutActionMenu(prev => ({ ...prev, isOpen: false }));
+  };
+
+  const handleEditWorkout = (workout: TrainingSession) => {
+    setEditModal({
+      isOpen: true,
+      workout: workout
+    });
+  };
+
+  const handleCloseEditModal = () => {
+    setEditModal({
+      isOpen: false,
+      workout: null
+    });
+  };
+
+  const handleSaveWorkout = (updatedWorkout: TrainingSession) => {
+    if (onUpdateSession) {
+      onUpdateSession(updatedWorkout);
+    }
+  };
+
+  const handleDeleteWorkout = (workoutId: string) => {
+    if (onDeleteSession) {
+      onDeleteSession(workoutId);
+    }
+  };
 
   return (
     <div className="card">
@@ -78,11 +225,16 @@ const WeekOverview: React.FC<WeekOverviewProps> = ({
           const isToday = dayNumber === todayWeekday;
           
           return (
-            <div key={dayNumber} className={`min-h-[140px] p-3 rounded-lg border-2 transition-all ${
-              isToday 
-                ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/20 shadow-lg' 
-                : 'border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700'
-            }`}>
+            <div 
+              key={dayNumber} 
+              className={`min-h-[140px] p-3 rounded-lg border-2 transition-all cursor-context-menu ${
+                isToday 
+                  ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/20 shadow-lg' 
+                  : 'border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700'
+              }`}
+              onContextMenu={(e) => handleRightClick(e, dayNumber)}
+              title="Rechtsklick für Workout hinzufügen"
+            >
               {/* Day Header */}
               <div className={`text-center mb-3 pb-2 border-b ${
                 isToday 
@@ -132,9 +284,14 @@ const WeekOverview: React.FC<WeekOverviewProps> = ({
                           onCompleteSession(session.id);
                         }
                       }}
+                      onContextMenu={(e) => handleWorkoutRightClick(e, session)}
+                      title="Linksklick: Abhaken | Rechtsklick: Aktionen"
                     >
-                      <div className="font-semibold truncate mb-1" title={session.title}>
-                        {session.title}
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="text-lg">{getWorkoutIcon(session)}</span>
+                        <div className="font-semibold truncate" title={session.title}>
+                          {session.title}
+                        </div>
                       </div>
                       
                       <div className="text-xs opacity-80 flex items-center justify-between">
@@ -186,6 +343,33 @@ const WeekOverview: React.FC<WeekOverviewProps> = ({
           </span>
         </div>
       </div>
+
+      {/* Kontextmenü */}
+      <WorkoutContextMenu
+        isOpen={contextMenu.isOpen}
+        position={contextMenu.position}
+        targetDay={contextMenu.targetDay}
+        targetWeek={weekNumber}
+        targetDate={contextMenu.targetDate}
+        onClose={handleCloseContextMenu}
+        onAddWorkout={handleAddWorkout}
+      />
+
+      <WorkoutActionMenu
+        isOpen={workoutActionMenu.isOpen}
+        position={workoutActionMenu.position}
+        workout={workoutActionMenu.workout}
+        onClose={handleCloseWorkoutActionMenu}
+        onEdit={handleEditWorkout}
+        onDelete={handleDeleteWorkout}
+      />
+
+      <EditWorkoutModal
+        isOpen={editModal.isOpen}
+        workout={editModal.workout}
+        onClose={handleCloseEditModal}
+        onSave={handleSaveWorkout}
+      />
     </div>
   );
 };

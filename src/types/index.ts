@@ -16,6 +16,7 @@ export interface TrainingSession {
   notes?: string;
   calories?: number;
   workoutPlan?: WorkoutPlan;
+  icon?: string; // Emoji-Icon für das Workout
   // Multi-workout support
   isAdditionalWorkout?: boolean; // Kennzeichnet zusätzliche Workouts
   parentWorkoutId?: string; // Verknüpfung zu anderen Workouts desselben Tages
@@ -106,6 +107,10 @@ export interface UserStats {
   points: number;
   badges: Badge[];
   personalRecords: PersonalRecord[];
+  weightEntries: WeightEntry[];
+  weightGoal: WeightGoal;
+  proteinEntries: ProteinEntry[];
+  nutritionGoal: NutritionGoal;
 }
 
 export interface Badge {
@@ -130,6 +135,36 @@ export interface QuickCheck {
   nutrition: 1 | 2 | 3 | 4 | 5;
   stress: 1 | 2 | 3 | 4 | 5;
   date: Date;
+}
+
+export interface WeightEntry {
+  id: string;
+  weight: number; // in kg
+  date: Date;
+  notes?: string;
+}
+
+export interface WeightGoal {
+  targetWeight: number; // in kg
+  startWeight: number; // in kg
+  startDate: Date;
+  targetDate?: Date;
+}
+
+export interface ProteinEntry {
+  id: string;
+  protein: number; // in gram
+  food: string; // Lebensmittel
+  date: Date;
+  meal: 'breakfast' | 'lunch' | 'dinner' | 'snack';
+  notes?: string;
+}
+
+export interface NutritionGoal {
+  dailyProtein: number; // in gram (Ziel: 140g)
+  dailyCalories?: number;
+  dailyCarbs?: number;
+  dailyFat?: number;
 }
 
 export interface CalendarEvent {
