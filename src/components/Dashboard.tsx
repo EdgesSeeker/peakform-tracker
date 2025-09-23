@@ -134,9 +134,9 @@ const Dashboard: React.FC<DashboardProps> = ({
             Wochenansicht
           </h3>
           
-          <div className="flex items-center gap-2 md:gap-3">
-            <span className="text-sm text-gray-600 dark:text-gray-400 hidden md:inline">Woche:</span>
-            <div className="flex items-center gap-1 overflow-x-auto pb-2 md:pb-0">
+          <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-3">
+            <span className="text-sm text-gray-600 dark:text-gray-400">Woche:</span>
+            <div className="grid grid-cols-4 md:flex md:items-center gap-2 md:gap-1">
               {[1, 2, 3, 4, 5, 6, 7, 8].map((week) => {
                 const weekSessions = sessions.filter(s => s.week === week && !s.isAdditionalWorkout);
                 const completedCount = weekSessions.filter(s => s.completed).length;
@@ -149,7 +149,7 @@ const Dashboard: React.FC<DashboardProps> = ({
                     key={week}
                     onClick={() => setSelectedWeek(week)}
                     disabled={!hasContent}
-                    className={`px-2 md:px-3 py-2 rounded-lg text-sm font-medium transition-all min-w-[44px] ${
+                    className={`px-3 py-2 rounded-lg text-sm font-medium transition-all ${
                       isActive
                         ? 'bg-primary-500 text-white shadow-md'
                         : hasContent
@@ -158,7 +158,7 @@ const Dashboard: React.FC<DashboardProps> = ({
                     }`}
                   >
                     <div className="flex flex-col items-center">
-                      <span>{week}</span>
+                      <span className="font-semibold">W{week}</span>
                       {hasContent && (
                         <span className="text-xs opacity-75">
                           {completedCount}/{totalCount}
@@ -189,7 +189,7 @@ const Dashboard: React.FC<DashboardProps> = ({
         
         {/* Week Info */}
         <div className="mt-4 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-2">
             <div>
               <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
                 Woche {selectedWeek}: {getWeekFocus(selectedWeek)}
@@ -230,7 +230,7 @@ const Dashboard: React.FC<DashboardProps> = ({
             </div>
             
             {selectedWeek > 1 && currentWeekSessions.filter(s => !s.isAdditionalWorkout).length === 0 && (
-              <div className="text-xs text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/20 px-2 py-1 rounded">
+              <div className="text-xs text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/20 px-2 py-1 rounded self-start">
                 ⚠️ Noch keine Sessions geplant
               </div>
             )}
