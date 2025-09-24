@@ -72,6 +72,28 @@ const WeekOverview: React.FC<WeekOverviewProps> = ({
   const strengthPercentage = totalSessions > 0 ? (strengthSessions / totalSessions) * 100 : 0;
   const cardioPercentage = totalSessions > 0 ? (cardioSessions / totalSessions) * 100 : 0;
 
+  // Calculate total kilometers for completed sessions
+  const completedSessionsWithDistance = sessions.filter(s => s.completed && s.distance);
+  const totalKilometers = completedSessionsWithDistance.reduce((sum, session) => sum + (session.distance || 0), 0);
+  
+  // Weekly distance goals based on week number (can be customized)
+  const getWeeklyDistanceGoal = (week: number): number => {
+    const goals = [
+      20, // Woche 1: 20km
+      25, // Woche 2: 25km  
+      30, // Woche 3: 30km
+      35, // Woche 4: 35km
+      40, // Woche 5: 40km
+      45, // Woche 6: 45km
+      50, // Woche 7: 50km
+      55  // Woche 8: 55km
+    ];
+    return goals[week - 1] || 30; // Default 30km
+  };
+
+  const weeklyGoal = getWeeklyDistanceGoal(weekNumber);
+  const distanceProgressPercentage = weeklyGoal > 0 ? (totalKilometers / weeklyGoal) * 100 : 0;
+
   const dayNames = ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'];
 
   // Funktion um das passende Icon für ein Workout zu bekommen
@@ -198,8 +220,15 @@ const WeekOverview: React.FC<WeekOverviewProps> = ({
         <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">
           Woche {weekNumber} Übersicht
         </h2>
-        <div className="text-sm text-gray-600 dark:text-gray-400">
-          {completedSessions}/{totalSessions} Sessions
+        <div className="text-right">
+          <div className="text-sm text-gray-600 dark:text-gray-400">
+            {completedSessions}/{totalSessions} Sessions
+          </div>
+          {totalKilometers > 0 && (
+            <div className="text-sm text-blue-600 dark:text-blue-400 font-medium">
+              {totalKilometers.toFixed(1)}km / {weeklyGoal}km
+            </div>
+          )}
         </div>
       </div>
 
@@ -214,6 +243,44 @@ const WeekOverview: React.FC<WeekOverviewProps> = ({
             className="progress-fill bg-primary-500"
             style={{ width: `${completionPercentage}%` }}
           />
+        </div>
+      </div>
+
+      {/* Distance Progress */}
+      <div className="mb-6">
+        <div className="flex justify-between items-center mb-2">
+          <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Kilometer</span>
+          <span className="text-sm text-gray-500 dark:text-gray-500">
+            {totalKilometers.toFixed(1)}km / {weeklyGoal}km
+          </span>
+        </div>
+        <div className="progress-bar">
+          <div 
+            className={`progress-fill ${
+              distanceProgressPercentage >= 100 
+                ? 'bg-green-500' 
+                : distanceProgressPercentage >= 75 
+                ? 'bg-blue-500' 
+                : distanceProgressPercentage >= 50 
+                ? 'bg-yellow-500' 
+                : 'bg-orange-500'
+            }`}
+            style={{ width: `${Math.min(distanceProgressPercentage, 100)}%` }}
+          />
+        </div>
+        <div className="flex justify-between items-center mt-2">
+          <span className="text-xs text-gray-500 dark:text-gray-400">
+            {distanceProgressPercentage >= 100 ? '🎉 Ziel erreicht!' : 
+             distanceProgressPercentage >= 75 ? '🔥 Fast geschafft!' :
+             distanceProgressPercentage >= 50 ? '💪 Auf gutem Weg!' :
+             '🏃‍♂️ Weiter so!'}
+          </span>
+          <span className="text-xs text-gray-500 dark:text-gray-400">
+            {distanceProgressPercentage >= 100 
+              ? `+${(totalKilometers - weeklyGoal).toFixed(1)}km über Ziel`
+              : `${(weeklyGoal - totalKilometers).toFixed(1)}km bis Ziel`
+            }
+          </span>
         </div>
       </div>
 
@@ -321,7 +388,7 @@ const WeekOverview: React.FC<WeekOverviewProps> = ({
       </div>
 
       {/* Kraft vs Ausdauer Balance - kompakter */}
-      <div className="flex items-center gap-4 text-sm">
+      <div className="flex items-center gap-4 text-sm mb-4">
         <span className="text-gray-700 dark:text-gray-300 font-medium">Balance:</span>
         <div className="flex items-center gap-2">
           <div className="flex rounded-full overflow-hidden h-2 w-24">
@@ -343,6 +410,43 @@ const WeekOverview: React.FC<WeekOverviewProps> = ({
           </span>
         </div>
       </div>
+
+      {/* Kilometer-Details */}
+      {completedSessionsWithDistance.length > 0 && (
+        <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
+          <h4 className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-3">
+            📊 Kilometer-Aufschlüsselung
+          </h4>
+          <div className="space-y-2">
+            {completedSessionsWithDistance.map((session) => (
+              <div key={session.id} className="flex items-center justify-between text-sm">
+                <div className="flex items-center gap-2">
+                  <span className="text-lg">{getWorkoutIcon(session)}</span>
+                  <span className="text-gray-700 dark:text-gray-300 truncate max-w-[200px]" title={session.title}>
+                    {session.title}
+                  </span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-blue-600 dark:text-blue-400 font-medium">
+                    {session.distance}km
+                  </span>
+                  <span className="text-xs text-gray-500">
+                    {session.duration}min
+                  </span>
+                </div>
+              </div>
+            ))}
+            <div className="border-t border-gray-200 dark:border-gray-600 pt-2 mt-2">
+              <div className="flex items-center justify-between text-sm font-semibold">
+                <span className="text-gray-900 dark:text-gray-100">Gesamt:</span>
+                <span className="text-blue-600 dark:text-blue-400">
+                  {totalKilometers.toFixed(1)}km
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Kontextmenü */}
       <WorkoutContextMenu

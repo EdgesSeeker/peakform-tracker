@@ -203,11 +203,16 @@ class StravaService {
     return `${minutes}:${seconds.toString().padStart(2, '0')}`;
   }
 
-  // Helper: Wochennummer berechnen
+  // Helper: Wochennummer berechnen (angepasst für Training-Plan)
   private getWeekNumber(date: Date): number {
-    const startOfYear = new Date(date.getFullYear(), 0, 1);
-    const days = Math.floor((date.getTime() - startOfYear.getTime()) / (24 * 60 * 60 * 1000));
-    return Math.ceil((days + startOfYear.getDay() + 1) / 7);
+    // Verwende eine feste Startwoche für den Training-Plan
+    // Startdatum: 16. September 2024 (Montag Woche 1)
+    const planStartDate = new Date(2024, 8, 16); // 16.09.2024
+    const daysDiff = Math.floor((date.getTime() - planStartDate.getTime()) / (24 * 60 * 60 * 1000));
+    const weekNumber = Math.floor(daysDiff / 7) + 1;
+    
+    // Begrenze auf Woche 1-8 für den aktuellen Plan
+    return Math.max(1, Math.min(8, weekNumber));
   }
 
   // 6. Check ob User mit Strava verbunden ist

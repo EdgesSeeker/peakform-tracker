@@ -33,9 +33,9 @@ const Dashboard: React.FC<DashboardProps> = ({
 }) => {
   // Wochen-Navigation State
   const [selectedWeek, setSelectedWeek] = useState<number>(() => {
-    // Lade gespeicherte Woche oder verwende aktuelle Woche (Woche 2)
+    // Lade gespeicherte Woche oder verwende aktuelle Woche (Woche 8)
     const saved = localStorage.getItem('dashboard-selected-week');
-    return saved ? parseInt(saved) : 2; // Starte standardmäßig mit Woche 2
+    return saved ? parseInt(saved) : 8; // Starte standardmäßig mit Woche 8
   });
 
   // Speichere ausgewählte Woche

@@ -59,9 +59,9 @@ const TodayOverview: React.FC<TodayOverviewProps> = ({
   
   console.log('🔄 TodayOverview aktualisiert - Sessions neu gefiltert nach Tausch');
   
-  // Nur die erste Session für heute nehmen (aus der ersten Woche)
+  // Nur die erste Session für heute nehmen (aus der aktuellen Woche 8)
   const todaySessions = allTodaySessions.length > 0 
-    ? [allTodaySessions.find(s => s.week === 1) || allTodaySessions[0]].filter(Boolean)
+    ? [allTodaySessions.find(s => s.week === 8) || allTodaySessions[0]].filter(Boolean)
     : [];
   
   console.log('Alle Sessions für heute:', allTodaySessions.length);

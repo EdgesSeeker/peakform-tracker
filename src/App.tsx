@@ -11,6 +11,7 @@ import StravaCallback from './components/StravaCallback';
 import ResetPlan from './components/ResetPlan';
 import PWAInstall from './components/PWAInstall';
 import QuickWorkoutLibrary from './components/QuickWorkoutLibrary';
+import QuickWorkout from './components/QuickWorkout';
 import SimpleStravaImport from './components/SimpleStravaImport';
 import DuplicateWorkoutCleaner from './components/DuplicateWorkoutCleaner';
 import AIPerformancePanel from './components/AIPerformancePanel';
@@ -634,6 +635,10 @@ function App() {
                   onUpdateSession={updateSession}
                 />
               } 
+            />
+            <Route 
+              path="/quick-workout" 
+              element={<QuickWorkout />} 
             />
             <Route 
               path="/log" 

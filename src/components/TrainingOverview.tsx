@@ -58,9 +58,9 @@ const TrainingOverview: React.FC<TrainingOverviewProps> = ({
       
       // Verwende Wochentag-basierte Logik (einfacher und zuverlässiger)
       // Heute = Donnerstag = 4, zeige ab Tag 4 (heute) bis Ende der Woche
-      const isCurrentWeek = s.week === 1; // Aktuelle Woche
+      const isCurrentWeek = s.week === 8; // Aktuelle Woche (Woche 8)
       const isTodayOrLater = s.day >= todayWeekday; // Ab heute
-      const isNextWeek = s.week === 2; // Nächste Woche
+      const isNextWeek = s.week === 9; // Nächste Woche (falls vorhanden)
       
       console.log(`Session: ${s.title}, Woche: ${s.week}, Tag: ${s.day}, Heute-Tag: ${todayWeekday}, Show: ${isCurrentWeek && isTodayOrLater || isNextWeek}`);
       

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Home, Calendar, TrendingUp, Zap, Activity, Clock, BookOpen, Library, Brain, Upload } from 'lucide-react';
+import { Home, Calendar, TrendingUp, Zap, Activity, Clock, BookOpen, Library, Brain, Upload, Dumbbell } from 'lucide-react';
 import SettingsMenu from './SettingsMenu';
 import { TrainingSession, UserStats, QuickCheck } from '../types';
 import ThemeToggle from './ThemeToggle';
@@ -25,6 +25,7 @@ const Navigation: React.FC<NavigationProps> = ({
   const navItems = [
     { path: '/', icon: Home, label: 'Dashboard' },
     { path: '/today', icon: Clock, label: 'Heute' },
+    { path: '/quick-workout', icon: Dumbbell, label: 'Quick Workout' },
     { path: '/calendar', icon: Calendar, label: 'Kalender' },
     { path: '/progress', icon: TrendingUp, label: 'Fortschritt' },
     { path: '/upload-plan', icon: Upload, label: 'Plan Upload' },
