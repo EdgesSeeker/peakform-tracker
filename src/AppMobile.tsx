@@ -4,6 +4,7 @@ import Dashboard from './components/Dashboard';
 import NavigationMobile from './components/NavigationMobile';
 import PWAInstall from './components/PWAInstall';
 import Nutrition from './components/Nutrition';
+import QuickWorkout from './components/QuickWorkout';
 import { ThemeProvider } from './contexts/ThemeContext';
 import { TrainingSession, UserStats, QuickCheck, WeightGoal, ProteinEntry, NutritionGoal } from './types';
 import { getAdjustedPlan, detailedHybridPlan } from './data/detailedHybridPlan';
@@ -514,6 +515,10 @@ function AppMobile() {
                   onUpdateWeek2={updateWeek2WithTriathlonPlan}
                 />
               } 
+            />
+            <Route 
+              path="/quick-workout" 
+              element={<QuickWorkout />} 
             />
             <Route 
               path="/nutrition" 

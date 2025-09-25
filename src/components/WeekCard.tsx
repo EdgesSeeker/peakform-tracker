@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { TrainingSession } from '../types';
 import TrainingCard from './TrainingCard';
 import { Calendar, Circle, Move } from 'lucide-react';
@@ -95,13 +95,27 @@ const WeekCard: React.FC<WeekCardProps> = ({
   onSwapSessions,
   detailed = false 
 }) => {
-  const completedSessions = sessions.filter(s => s.completed).length;
+  const [showOnlyCompleted, setShowOnlyCompleted] = useState(false);
+  
+  const completedSessionsCount = sessions.filter(s => s.completed).length;
   const totalSessions = sessions.length;
-  const completionPercentage = totalSessions > 0 ? (completedSessions / totalSessions) * 100 : 0;
+  const completionPercentage = totalSessions > 0 ? (completedSessionsCount / totalSessions) * 100 : 0;
 
   // Calculate total distance and duration for the week
-  const totalDistance = sessions.reduce((sum, s) => sum + (s.distance || 0), 0);
-  const totalDuration = sessions.reduce((sum, s) => sum + s.duration, 0);
+  // Wähle zwischen allen Sessions oder nur abgeschlossenen
+  const sessionsToCalculate = showOnlyCompleted ? sessions.filter(s => s.completed) : sessions;
+  const totalDistance = sessionsToCalculate.reduce((sum, s) => sum + (s.distance || 0), 0);
+  const totalDuration = sessionsToCalculate.reduce((sum, s) => sum + s.duration, 0);
+  
+  // Format time display
+  const formatDuration = (minutes: number): string => {
+    const hours = Math.floor(minutes / 60);
+    const mins = minutes % 60;
+    if (hours > 0) {
+      return `${hours}h ${mins}min`;
+    }
+    return `${mins}min`;
+  };
 
   const dayNames = ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'];
 
@@ -158,19 +172,54 @@ const WeekCard: React.FC<WeekCardProps> = ({
   if (detailed) {
     return (
       <div className="space-y-6">
+        {/* Toggle für Berechnungsmodus */}
+        <div className="mb-4">
+          <div className="flex items-center justify-between">
+            <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+              Statistiken anzeigen:
+            </span>
+            <div className="flex gap-2">
+              <button
+                onClick={() => setShowOnlyCompleted(false)}
+                className={`px-3 py-1 rounded-lg text-sm font-medium transition-colors ${
+                  !showOnlyCompleted
+                    ? 'bg-primary-500 text-white'
+                    : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
+                }`}
+              >
+                Alle Sessions
+              </button>
+              <button
+                onClick={() => setShowOnlyCompleted(true)}
+                className={`px-3 py-1 rounded-lg text-sm font-medium transition-colors ${
+                  showOnlyCompleted
+                    ? 'bg-primary-500 text-white'
+                    : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
+                }`}
+              >
+                Nur Abgeschlossene
+              </button>
+            </div>
+          </div>
+        </div>
+
         {/* Week Stats */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
           <div className="text-center">
-            <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">{completedSessions}/{totalSessions}</div>
+            <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">{completedSessionsCount}/{totalSessions}</div>
             <div className="text-sm text-gray-600 dark:text-gray-400">Sessions</div>
           </div>
           <div className="text-center">
             <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">{totalDistance.toFixed(1)}km</div>
-            <div className="text-sm text-gray-600 dark:text-gray-400">Gesamt-Distanz</div>
+            <div className="text-sm text-gray-600 dark:text-gray-400">
+              {showOnlyCompleted ? 'Abgeschlossene Distanz' : 'Geplante Distanz'}
+            </div>
           </div>
           <div className="text-center">
-            <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">{Math.floor(totalDuration / 60)}h {totalDuration % 60}min</div>
-            <div className="text-sm text-gray-600 dark:text-gray-400">Trainingszeit</div>
+            <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">{formatDuration(totalDuration)}</div>
+            <div className="text-sm text-gray-600 dark:text-gray-400">
+              {showOnlyCompleted ? 'Trainingszeit' : 'Geplante Zeit'}
+            </div>
           </div>
         </div>
 
@@ -234,7 +283,7 @@ const WeekCard: React.FC<WeekCardProps> = ({
         <div className="flex justify-between items-center mb-2">
           <span className="text-sm text-gray-600 dark:text-gray-400">Fortschritt</span>
           <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
-            {completedSessions}/{totalSessions}
+            {completedSessionsCount}/{totalSessions}
           </span>
         </div>
         <div className="progress-bar">
@@ -251,13 +300,17 @@ const WeekCard: React.FC<WeekCardProps> = ({
           <div className="text-lg font-semibold text-gray-900 dark:text-gray-100">
             {totalDistance.toFixed(1)}km
           </div>
-          <div className="text-xs text-gray-600 dark:text-gray-400">Distanz</div>
+          <div className="text-xs text-gray-600 dark:text-gray-400">
+            {showOnlyCompleted ? 'Abgeschlossene Distanz' : 'Geplante Distanz'}
+          </div>
         </div>
         <div>
           <div className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-            {Math.floor(totalDuration / 60)}h {totalDuration % 60}min
+            {formatDuration(totalDuration)}
           </div>
-          <div className="text-xs text-gray-600 dark:text-gray-400">Zeit</div>
+          <div className="text-xs text-gray-600 dark:text-gray-400">
+            {showOnlyCompleted ? 'Trainingszeit' : 'Geplante Zeit'}
+          </div>
         </div>
       </div>
 

@@ -183,26 +183,26 @@ function App() {
     console.log('Heute:', today.toDateString());
     console.log('Trainingstage:', sortedDays.map(d => d.toDateString()));
     
-    // Berechne aktuelle Serie
+    // Berechne aktuelle Serie - flexibler für kontinuierliches Training
     let streakDays = [];
     for (let i = 0; i < sortedDays.length; i++) {
       const dayDate = sortedDays[i];
       const daysDiff = Math.floor((today.getTime() - dayDate.getTime()) / (1000 * 60 * 60 * 24));
       
       if (i === 0) {
-        // Erster Tag: Muss heute oder gestern sein
-        if (daysDiff <= 1) {
+        // Erster Tag: Muss heute oder gestern sein (flexibler)
+        if (daysDiff <= 2) { // Erlaubt 1-2 Tage Pause
           currentStreak = 1;
           streakDays.push(dayDate);
         } else {
           break; // Zu lange her, keine aktuelle Serie
         }
       } else {
-        // Folgetage: Müssen aufeinanderfolgend sein
+        // Folgetage: Müssen aufeinanderfolgend sein (mit kleiner Toleranz)
         const prevDay = sortedDays[i - 1];
         const daysBetween = Math.floor((prevDay.getTime() - dayDate.getTime()) / (1000 * 60 * 60 * 24));
         
-        if (daysBetween === 1) {
+        if (daysBetween <= 2) { // Erlaubt 1-2 Tage Pause zwischen Trainingstagen
           currentStreak++;
           streakDays.push(dayDate);
         } else {
@@ -211,7 +211,7 @@ function App() {
       }
     }
     
-    // Berechne längste Serie
+    // Berechne längste Serie - flexibler für realistischere Werte
     let tempStreak = 0;
     let maxTempStreak = 0;
     
@@ -223,7 +223,7 @@ function App() {
         const prevDay = sortedDays[i - 1];
         const daysBetween = Math.floor((prevDay.getTime() - currentDay.getTime()) / (1000 * 60 * 60 * 24));
         
-        if (daysBetween === 1) {
+        if (daysBetween <= 2) { // Erlaubt 1-2 Tage Pause
           tempStreak++;
         } else {
           maxTempStreak = Math.max(maxTempStreak, tempStreak);
@@ -233,8 +233,19 @@ function App() {
     }
     longestStreak = Math.max(maxTempStreak, tempStreak, currentStreak);
     
+    // Alternative Berechnung: Wenn alle 8 Wochen abgeschlossen sind, setze Serie auf 8
+    const allWeeksCompleted = Array.from({ length: 8 }, (_, i) => i + 1).every(week => 
+      allSessions.some(s => s.week === week && s.completed)
+    );
+    
+    if (allWeeksCompleted && currentStreak < 8) {
+      currentStreak = 8;
+      longestStreak = Math.max(longestStreak, 8);
+    }
+    
     console.log(`🔥 Aktuelle Serie: ${currentStreak} Tage`);
     console.log(`🏆 Längste Serie: ${longestStreak} Tage`);
+    console.log(`📅 Alle 8 Wochen abgeschlossen: ${allWeeksCompleted}`);
     
     // Badge-Überprüfung mit Multi-Workout Support
     const updatedBadges = checkMultiWorkoutBadges(allSessions, badgeDefinitions);

@@ -42,6 +42,26 @@ const QuickWorkout: React.FC = () => {
     return () => clearInterval(interval);
   }, [isRunning]);
 
+  // Schnelles 15-Minuten Workout
+  const createQuick15MinWorkout = (): QuickWorkoutSession => {
+    const exercises: Exercise[] = [
+      { id: 'warmup-1', name: 'Hampelmänner', sets: 1, reps: 1, duration: 120, rest: 0, completed: false }, // 2 Min
+      { id: 'main-1', name: 'Push-ups', sets: 3, reps: 10, rest: 45, completed: false },
+      { id: 'main-2', name: 'Squats', sets: 3, reps: 15, rest: 45, completed: false },
+      { id: 'main-3', name: 'Plank', sets: 3, reps: 1, duration: 30, rest: 45, completed: false },
+      { id: 'main-4', name: 'Burpees', sets: 2, reps: 8, rest: 60, completed: false },
+      { id: 'cooldown-1', name: 'Dehnen', sets: 1, reps: 1, duration: 120, rest: 0, completed: false } // 2 Min
+    ];
+
+    return {
+      id: 'quick-15min',
+      name: 'Quick 15-Min Workout',
+      exercises,
+      totalDuration: 15 * 60, // 15 Minuten
+      completed: false
+    };
+  };
+
   // Spezifisches Oberkörper-Workout erstellen
   const createUpperBodyWorkout = (): QuickWorkoutSession => {
     const exercises: Exercise[] = [
@@ -68,6 +88,91 @@ const QuickWorkout: React.FC = () => {
     return {
       id: 'upper-body-detailed',
       name: 'Oberkörper Workout (Detailliert)',
+      exercises,
+      totalDuration: 60 * 60, // 60 Minuten
+      completed: false
+    };
+  };
+
+  // Cardio HIIT Workout
+  const createCardioHIITWorkout = (): QuickWorkoutSession => {
+    const exercises: Exercise[] = [
+      { id: 'warmup-1', name: 'Leichtes Joggen auf der Stelle', sets: 1, reps: 1, duration: 180, rest: 0, completed: false }, // 3 Min
+      { id: 'main-1', name: 'High Knees', sets: 4, reps: 1, duration: 30, rest: 30, completed: false },
+      { id: 'main-2', name: 'Jumping Jacks', sets: 4, reps: 1, duration: 30, rest: 30, completed: false },
+      { id: 'main-3', name: 'Mountain Climbers', sets: 4, reps: 1, duration: 30, rest: 30, completed: false },
+      { id: 'main-4', name: 'Burpees', sets: 3, reps: 1, duration: 45, rest: 45, completed: false },
+      { id: 'main-5', name: 'Jump Squats', sets: 3, reps: 1, duration: 30, rest: 30, completed: false },
+      { id: 'cooldown-1', name: 'Gehen und tiefes Atmen', sets: 1, reps: 1, duration: 180, rest: 0, completed: false } // 3 Min
+    ];
+
+    return {
+      id: 'cardio-hiit',
+      name: 'Cardio HIIT (25 Min)',
+      exercises,
+      totalDuration: 25 * 60, // 25 Minuten
+      completed: false
+    };
+  };
+
+  // Yoga Workout
+  const createYogaWorkout = (): QuickWorkoutSession => {
+    const exercises: Exercise[] = [
+      { id: 'warmup-1', name: 'Meditation & Atmung', sets: 1, reps: 1, duration: 180, rest: 0, completed: false }, // 3 Min
+      { id: 'main-1', name: 'Cat-Cow Stretch', sets: 2, reps: 10, rest: 30, completed: false },
+      { id: 'main-2', name: 'Downward Dog', sets: 3, reps: 1, duration: 45, rest: 30, completed: false },
+      { id: 'main-3', name: 'Warrior I (links)', sets: 1, reps: 1, duration: 60, rest: 30, completed: false },
+      { id: 'main-4', name: 'Warrior I (rechts)', sets: 1, reps: 1, duration: 60, rest: 30, completed: false },
+      { id: 'main-5', name: 'Tree Pose (links)', sets: 1, reps: 1, duration: 45, rest: 30, completed: false },
+      { id: 'main-6', name: 'Tree Pose (rechts)', sets: 1, reps: 1, duration: 45, rest: 30, completed: false },
+      { id: 'main-7', name: 'Child\'s Pose', sets: 2, reps: 1, duration: 60, rest: 30, completed: false },
+      { id: 'cooldown-1', name: 'Savasana (Entspannung)', sets: 1, reps: 1, duration: 300, rest: 0, completed: false } // 5 Min
+    ];
+
+    return {
+      id: 'yoga-flow',
+      name: 'Yoga Flow (20 Min)',
+      exercises,
+      totalDuration: 20 * 60, // 20 Minuten
+      completed: false
+    };
+  };
+
+  // Ganzkörper Langhantel-Workout (60 Minuten)
+  const createFullBodyBarbellWorkout = (): QuickWorkoutSession => {
+    const exercises: Exercise[] = [
+      // Aufwärmen (10 Minuten)
+      { id: 'warmup-1', name: '5 Min leichtes Cardiotraining', sets: 1, reps: 1, duration: 300, rest: 0, completed: false }, // 5 Min
+      { id: 'warmup-2', name: 'Dynamisches Dehnen', sets: 1, reps: 1, duration: 180, rest: 0, completed: false }, // 3 Min
+      { id: 'warmup-3', name: '2 Sätze leichtes Aufwärmen mit Langhantel', sets: 2, reps: 10, rest: 60, completed: false }, // 2 Min
+      
+      // Beine
+      { id: 'main-1', name: 'Kniebeugen mit Langhantel (Back Squat)', sets: 4, reps: 10, rest: 120, completed: false }, // 4x8-12 Wdh
+      { id: 'main-2', name: 'Ausfallschritte mit Langhantel (Barbell Lunges)', sets: 3, reps: 10, rest: 90, completed: false }, // 3x8-12 Wdh je Bein
+      { id: 'main-3', name: 'Langhantel Hüftstoß (Hip Thrusts)', sets: 3, reps: 10, rest: 90, completed: false }, // 3x8-12 Wdh
+      
+      // Rücken
+      { id: 'main-4', name: 'Kreuzheben (Deadlift)', sets: 4, reps: 8, rest: 120, completed: false }, // 4x8-12 Wdh
+      { id: 'main-5', name: 'Langhantel Rudern (Bent-over Rows)', sets: 3, reps: 10, rest: 90, completed: false }, // 3x8-12 Wdh
+      
+      // Arme
+      { id: 'main-6', name: 'Langhantel Bankdrücken', sets: 4, reps: 10, rest: 120, completed: false }, // 4x8-12 Wdh
+      { id: 'main-7', name: 'Langhantel Schulterdrücken (Overhead Press)', sets: 3, reps: 10, rest: 90, completed: false }, // 3x8-12 Wdh
+      { id: 'main-8', name: 'Bizeps-Curls mit Langhantel', sets: 3, reps: 12, rest: 60, completed: false }, // 3x10-15 Wdh
+      
+      // Core
+      { id: 'main-9', name: 'Front Plank', sets: 2, reps: 1, duration: 30, rest: 30, completed: false }, // 2 Runden à 30 Sek
+      { id: 'main-10', name: 'Russian Twists mit Gewicht', sets: 2, reps: 1, duration: 30, rest: 30, completed: false }, // 2 Runden à 30 Sek
+      { id: 'main-11', name: 'Hanging Leg Raises oder Beinheben', sets: 2, reps: 1, duration: 30, rest: 30, completed: false }, // 2 Runden à 30 Sek
+      
+      // Cool Down (10 Minuten)
+      { id: 'cooldown-1', name: 'Statisches Dehnen aller Muskelgruppen', sets: 1, reps: 1, duration: 300, rest: 0, completed: false }, // 5 Min
+      { id: 'cooldown-2', name: 'Leichte Yogaübungen für Regeneration', sets: 1, reps: 1, duration: 300, rest: 0, completed: false } // 5 Min
+    ];
+
+    return {
+      id: 'fullbody-barbell',
+      name: 'Ganzkörper Langhantel-Workout (60 Min)',
       exercises,
       totalDuration: 60 * 60, // 60 Minuten
       completed: false
@@ -131,7 +236,11 @@ const QuickWorkout: React.FC = () => {
   };
 
   const availableWorkouts = [
-    createUpperBodyWorkout(), // Füge das detaillierte Oberkörper-Workout hinzu
+    createQuick15MinWorkout(), // Schnelles 15-Min Workout
+    createCardioHIITWorkout(), // Cardio HIIT Workout
+    createYogaWorkout(), // Yoga Flow Workout
+    createFullBodyBarbellWorkout(), // Ganzkörper Langhantel-Workout
+    createUpperBodyWorkout(), // Detailliertes Oberkörper-Workout
     ...workoutLibrary
       .filter(w => ['strength', 'cardio', 'yoga'].includes(w.type))
       .map(convertToQuickWorkout)
@@ -209,7 +318,7 @@ const QuickWorkout: React.FC = () => {
 
   if (showWorkoutList) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-4">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-4 pb-20">
         <div className="max-w-2xl mx-auto">
           {/* Header */}
           <div className="text-center mb-8">
@@ -240,8 +349,8 @@ const QuickWorkout: React.FC = () => {
             </div>
           </div>
 
-          {/* Workout Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* Workout Grid - Mobile optimiert */}
+          <div className="grid grid-cols-1 gap-4">
             {filteredWorkouts.map((workout) => (
               <div
                 key={workout.id}
@@ -250,7 +359,14 @@ const QuickWorkout: React.FC = () => {
               >
                 <div className="flex items-center gap-3 mb-4">
                   <div className="p-2 bg-primary-100 dark:bg-primary-900 rounded-lg">
-                    <Target className="w-6 h-6 text-primary-600 dark:text-primary-400" />
+                    {workout.name.includes('Langhantel') && '🏋️'}
+                    {workout.name.includes('Quick') && '⚡'}
+                    {workout.name.includes('Cardio') && '🏃'}
+                    {workout.name.includes('Yoga') && '🧘'}
+                    {workout.name.includes('Oberkörper') && '💪'}
+                    {!workout.name.includes('Langhantel') && !workout.name.includes('Quick') && !workout.name.includes('Cardio') && !workout.name.includes('Yoga') && !workout.name.includes('Oberkörper') && (
+                      <Target className="w-6 h-6 text-primary-600 dark:text-primary-400" />
+                    )}
                   </div>
                   <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
                     {workout.name}
@@ -309,7 +425,7 @@ const QuickWorkout: React.FC = () => {
   if (!selectedWorkout) return null;
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pb-20">
       {/* Header */}
       <div className="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700 sticky top-0 z-10">
         <div className="p-4">
@@ -432,11 +548,12 @@ const QuickWorkout: React.FC = () => {
           </h3>
           <div className="space-y-4">
             {/* Aufwärmen */}
+            {selectedWorkout.exercises.filter(ex => ex.id.startsWith('warmup-')).length > 0 && (
             <div>
               <h4 className="text-sm font-semibold text-orange-600 dark:text-orange-400 mb-2 flex items-center gap-2">
-                🔥 Aufwärmen (5-10 Minuten)
+                🔥 Aufwärmen
                 <span className="text-xs bg-orange-100 dark:bg-orange-900/30 px-2 py-1 rounded-full">
-                  {selectedWorkout.exercises.filter(ex => ex.id.startsWith('warmup-') && ex.completed).length}/3
+                  {selectedWorkout.exercises.filter(ex => ex.id.startsWith('warmup-') && ex.completed).length}/{selectedWorkout.exercises.filter(ex => ex.id.startsWith('warmup-')).length}
                 </span>
               </h4>
               <div className="space-y-2">
@@ -482,17 +599,19 @@ const QuickWorkout: React.FC = () => {
                 })}
               </div>
             </div>
+            )}
 
-            {/* Haupttraining */}
+            {/* Haupttraining - Beine */}
+            {selectedWorkout.exercises.filter(ex => ex.id === 'main-1' || ex.id === 'main-2' || ex.id === 'main-3').length > 0 && (
             <div>
-              <h4 className="text-sm font-semibold text-blue-600 dark:text-blue-400 mb-2 flex items-center gap-2">
-                💪 Haupttraining (~50 Minuten)
-                <span className="text-xs bg-blue-100 dark:bg-blue-900/30 px-2 py-1 rounded-full">
-                  {selectedWorkout.exercises.filter(ex => ex.id.startsWith('main-') && ex.completed).length}/7
+              <h4 className="text-sm font-semibold text-purple-600 dark:text-purple-400 mb-2 flex items-center gap-2">
+                🦵 Beine
+                <span className="text-xs bg-purple-100 dark:bg-purple-900/30 px-2 py-1 rounded-full">
+                  {selectedWorkout.exercises.filter(ex => ['main-1', 'main-2', 'main-3'].includes(ex.id) && ex.completed).length}/3
                 </span>
               </h4>
               <div className="space-y-2">
-                {selectedWorkout.exercises.filter(ex => ex.id.startsWith('main-')).map((exercise, index) => {
+                {selectedWorkout.exercises.filter(ex => ['main-1', 'main-2', 'main-3'].includes(ex.id)).map((exercise, index) => {
                   const globalIndex = selectedWorkout.exercises.findIndex(ex => ex.id === exercise.id);
                   return (
                     <div
@@ -534,13 +653,177 @@ const QuickWorkout: React.FC = () => {
                 })}
               </div>
             </div>
+            )}
+
+            {/* Haupttraining - Rücken */}
+            {selectedWorkout.exercises.filter(ex => ex.id === 'main-4' || ex.id === 'main-5').length > 0 && (
+            <div>
+              <h4 className="text-sm font-semibold text-blue-600 dark:text-blue-400 mb-2 flex items-center gap-2">
+                🏋️ Rücken
+                <span className="text-xs bg-blue-100 dark:bg-blue-900/30 px-2 py-1 rounded-full">
+                  {selectedWorkout.exercises.filter(ex => ['main-4', 'main-5'].includes(ex.id) && ex.completed).length}/2
+                </span>
+              </h4>
+              <div className="space-y-2">
+                {selectedWorkout.exercises.filter(ex => ['main-4', 'main-5'].includes(ex.id)).map((exercise, index) => {
+                  const globalIndex = selectedWorkout.exercises.findIndex(ex => ex.id === exercise.id);
+                  return (
+                    <div
+                      key={exercise.id}
+                      className={`flex items-center justify-between p-3 rounded-lg transition-colors ${
+                        exercise.completed
+                          ? 'bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-700'
+                          : globalIndex === currentExerciseIndex
+                          ? 'bg-primary-50 dark:bg-primary-900/20 border border-primary-200 dark:border-primary-700'
+                          : 'bg-gray-50 dark:bg-gray-700'
+                      }`}
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className={`w-6 h-6 rounded-full flex items-center justify-center text-sm font-semibold ${
+                          exercise.completed
+                            ? 'bg-green-500 text-white'
+                            : globalIndex === currentExerciseIndex
+                            ? 'bg-primary-500 text-white'
+                            : 'bg-gray-300 dark:bg-gray-600 text-gray-700 dark:text-gray-300'
+                        }`}>
+                          {exercise.completed ? '✓' : index + 1}
+                        </div>
+                        <span className={`font-medium ${
+                          exercise.completed
+                            ? 'text-green-700 dark:text-green-300 line-through'
+                            : globalIndex === currentExerciseIndex
+                            ? 'text-primary-700 dark:text-primary-300'
+                            : 'text-gray-900 dark:text-gray-100'
+                        }`}>
+                          {exercise.name}
+                        </span>
+                      </div>
+                      <div className="text-sm text-gray-500 dark:text-gray-400">
+                        {exercise.sets && exercise.reps && `${exercise.sets}x${exercise.reps}`}
+                        {exercise.duration && `${exercise.duration}s`}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+            )}
+
+            {/* Haupttraining - Arme */}
+            {selectedWorkout.exercises.filter(ex => ex.id === 'main-6' || ex.id === 'main-7' || ex.id === 'main-8').length > 0 && (
+            <div>
+              <h4 className="text-sm font-semibold text-red-600 dark:text-red-400 mb-2 flex items-center gap-2">
+                💪 Arme
+                <span className="text-xs bg-red-100 dark:bg-red-900/30 px-2 py-1 rounded-full">
+                  {selectedWorkout.exercises.filter(ex => ['main-6', 'main-7', 'main-8'].includes(ex.id) && ex.completed).length}/3
+                </span>
+              </h4>
+              <div className="space-y-2">
+                {selectedWorkout.exercises.filter(ex => ['main-6', 'main-7', 'main-8'].includes(ex.id)).map((exercise, index) => {
+                  const globalIndex = selectedWorkout.exercises.findIndex(ex => ex.id === exercise.id);
+                  return (
+                    <div
+                      key={exercise.id}
+                      className={`flex items-center justify-between p-3 rounded-lg transition-colors ${
+                        exercise.completed
+                          ? 'bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-700'
+                          : globalIndex === currentExerciseIndex
+                          ? 'bg-primary-50 dark:bg-primary-900/20 border border-primary-200 dark:border-primary-700'
+                          : 'bg-gray-50 dark:bg-gray-700'
+                      }`}
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className={`w-6 h-6 rounded-full flex items-center justify-center text-sm font-semibold ${
+                          exercise.completed
+                            ? 'bg-green-500 text-white'
+                            : globalIndex === currentExerciseIndex
+                            ? 'bg-primary-500 text-white'
+                            : 'bg-gray-300 dark:bg-gray-600 text-gray-700 dark:text-gray-300'
+                        }`}>
+                          {exercise.completed ? '✓' : index + 1}
+                        </div>
+                        <span className={`font-medium ${
+                          exercise.completed
+                            ? 'text-green-700 dark:text-green-300 line-through'
+                            : globalIndex === currentExerciseIndex
+                            ? 'text-primary-700 dark:text-primary-300'
+                            : 'text-gray-900 dark:text-gray-100'
+                        }`}>
+                          {exercise.name}
+                        </span>
+                      </div>
+                      <div className="text-sm text-gray-500 dark:text-gray-400">
+                        {exercise.sets && exercise.reps && `${exercise.sets}x${exercise.reps}`}
+                        {exercise.duration && `${exercise.duration}s`}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+            )}
+
+            {/* Haupttraining - Core */}
+            {selectedWorkout.exercises.filter(ex => ex.id === 'main-9' || ex.id === 'main-10' || ex.id === 'main-11').length > 0 && (
+            <div>
+              <h4 className="text-sm font-semibold text-orange-600 dark:text-orange-400 mb-2 flex items-center gap-2">
+                🏃 Core
+                <span className="text-xs bg-orange-100 dark:bg-orange-900/30 px-2 py-1 rounded-full">
+                  {selectedWorkout.exercises.filter(ex => ['main-9', 'main-10', 'main-11'].includes(ex.id) && ex.completed).length}/3
+                </span>
+              </h4>
+              <div className="space-y-2">
+                {selectedWorkout.exercises.filter(ex => ['main-9', 'main-10', 'main-11'].includes(ex.id)).map((exercise, index) => {
+                  const globalIndex = selectedWorkout.exercises.findIndex(ex => ex.id === exercise.id);
+                  return (
+                    <div
+                      key={exercise.id}
+                      className={`flex items-center justify-between p-3 rounded-lg transition-colors ${
+                        exercise.completed
+                          ? 'bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-700'
+                          : globalIndex === currentExerciseIndex
+                          ? 'bg-primary-50 dark:bg-primary-900/20 border border-primary-200 dark:border-primary-700'
+                          : 'bg-gray-50 dark:bg-gray-700'
+                      }`}
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className={`w-6 h-6 rounded-full flex items-center justify-center text-sm font-semibold ${
+                          exercise.completed
+                            ? 'bg-green-500 text-white'
+                            : globalIndex === currentExerciseIndex
+                            ? 'bg-primary-500 text-white'
+                            : 'bg-gray-300 dark:bg-gray-600 text-gray-700 dark:text-gray-300'
+                        }`}>
+                          {exercise.completed ? '✓' : index + 1}
+                        </div>
+                        <span className={`font-medium ${
+                          exercise.completed
+                            ? 'text-green-700 dark:text-green-300 line-through'
+                            : globalIndex === currentExerciseIndex
+                            ? 'text-primary-700 dark:text-primary-300'
+                            : 'text-gray-900 dark:text-gray-100'
+                        }`}>
+                          {exercise.name}
+                        </span>
+                      </div>
+                      <div className="text-sm text-gray-500 dark:text-gray-400">
+                        {exercise.sets && exercise.reps && `${exercise.sets}x${exercise.reps}`}
+                        {exercise.duration && `${exercise.duration}s`}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+            )}
 
             {/* Cooldown */}
+            {selectedWorkout.exercises.filter(ex => ex.id.startsWith('cooldown-')).length > 0 && (
             <div>
               <h4 className="text-sm font-semibold text-green-600 dark:text-green-400 mb-2 flex items-center gap-2">
-                🧘 Cooldown / Stretch (5 Minuten)
+                🧘 Cooldown / Stretch
                 <span className="text-xs bg-green-100 dark:bg-green-900/30 px-2 py-1 rounded-full">
-                  {selectedWorkout.exercises.filter(ex => ex.id.startsWith('cooldown-') && ex.completed).length}/3
+                  {selectedWorkout.exercises.filter(ex => ex.id.startsWith('cooldown-') && ex.completed).length}/{selectedWorkout.exercises.filter(ex => ex.id.startsWith('cooldown-')).length}
                 </span>
               </h4>
               <div className="space-y-2">
@@ -586,6 +869,7 @@ const QuickWorkout: React.FC = () => {
                 })}
               </div>
             </div>
+            )}
           </div>
         </div>
 

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Home, Zap, Utensils } from 'lucide-react';
+import { Home, Zap, Utensils, Dumbbell } from 'lucide-react';
 import SettingsMenu from './SettingsMenu';
 import { TrainingSession, UserStats, QuickCheck } from '../types';
 import ThemeToggle from './ThemeToggle';
@@ -22,9 +22,10 @@ const NavigationMobile: React.FC<NavigationMobileProps> = ({
   
   const isActive = (path: string) => location.pathname === path;
   
-  // Mobile App Navigation: nur Dashboard und Ernährung
+  // Mobile App Navigation: Dashboard, Quick Workout und Ernährung
   const mainNavItems = [
     { path: '/', icon: Home, label: 'Dashboard' },
+    { path: '/quick-workout', icon: Dumbbell, label: 'Quick Workout' },
     { path: '/nutrition', icon: Utensils, label: 'Ernährung' },
   ];
 
