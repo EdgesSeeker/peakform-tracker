@@ -246,10 +246,26 @@ const QuickWorkout: React.FC = () => {
       .map(convertToQuickWorkout)
   ];
 
+  // Debug-Log für verfügbare Workouts
+  console.log('🏋️ Available workouts:', availableWorkouts.map(w => w.name));
+
   // Filtere Workouts basierend auf Suchbegriff
-  const filteredWorkouts = availableWorkouts.filter(workout =>
-    workout.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredWorkouts = availableWorkouts.filter(workout => {
+    const searchLower = searchTerm.toLowerCase();
+    const matches = workout.name.toLowerCase().includes(searchLower) ||
+           workout.id.toLowerCase().includes(searchLower) ||
+           // Suche auch in Übungsnamen
+           workout.exercises.some(exercise => 
+             exercise.name.toLowerCase().includes(searchLower)
+           );
+    
+    // Debug-Log für Suchfunktion
+    if (searchTerm && matches) {
+      console.log(`🔍 Workout "${workout.name}" matches search "${searchTerm}"`);
+    }
+    
+    return matches;
+  });
 
   const formatTime = (seconds: number): string => {
     const mins = Math.floor(seconds / 60);
